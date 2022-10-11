@@ -1,0 +1,87 @@
+ {
+  "nodeDataArray": [
+    {
+      "id": 1,
+      "xpos": 537.5,
+      "ypos": 162
+    },
+    {
+      "id": 2,
+      "xpos": 457.5,
+      "ypos": 349
+    },
+    {
+      "id": 3,
+      "xpos": 396.5,
+      "ypos": 508
+    }
+  ],
+  "linkDataArray": [
+    {
+      "fromNode": 0,
+      "toNode": 1,
+      "fromPort": "mainControlIn",
+      "toPort": "controlIn"
+    },
+    {
+      "fromNode": 1,
+      "toNode": 2,
+      "fromPort": "controlOutL",
+      "toPort": "controlIn"
+    },
+    {
+      "fromNode": 1,
+      "toNode": 2,
+      "fromPort": "controlOutR",
+      "toPort": "controlIn"
+    },
+    {
+      "fromNode": 2,
+      "toNode": 3,
+      "fromPort": "controlOutL",
+      "toPort": "controlIn"
+    },
+    {
+      "fromNode": 2,
+      "toNode": 3,
+      "fromPort": "controlOutR",
+      "toPort": "controlIn"
+    },
+    {
+      "fromNode": 1,
+      "toNode": 2,
+      "fromPort": "dataOut",
+      "toPort": "dataInDown"
+    },
+    {
+      "fromNode": 0,
+      "toNode": 3,
+      "fromPort": "mainDataInUp",
+      "toPort": "dataInDown"
+    },
+    {
+      "fromNode": 2,
+      "toNode": 3,
+      "fromPort": "dataOut",
+      "toPort": "dataInUp"
+    },
+    {
+      "fromNode": 3,
+      "toNode": 0,
+      "fromPort": "dataOut",
+      "toPort": "mainDataOut"
+    },
+    {
+      "fromNode": 3,
+      "toNode": 0,
+      "fromPort": "controlOutL",
+      "toPort": "mainControlOutL"
+    },
+    {
+      "fromNode": 3,
+      "toNode": 0,
+      "fromPort": "controlOutR",
+      "toPort": "mainControlOutR"
+    }
+  ]
+}

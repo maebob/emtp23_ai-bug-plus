@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./sketch.js"></script>
+    <script src="./state.js"></script>
+    <script src="./constants.js"></script>
+    <script src="./overlapps.js"></script>
+    <script src="./utils.js"></script>
+    <script src="./actions.js"></script>
+    <script src="./buttonActions.js"></script>
+    <script src="./drawing.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="controls">
+      <div class="button-wrapper">
+        <button onclick="toggleCreateNodeMode()">CREATE NODE</button>
+        <button onclick="toggleCreateLinkMode()">CREATE LINK</button>
+        <button onclick="toggleDeleteNodeMode()">DELETE NODE</button>
+        <button onclick="toggleDeleteLinkMode()">DELETE LINK</button>
+        <button onclick="toggleMoveNodeMode()">MOVE NODE</button>
+        <button id="executer">EXECUTE</button>
+      </div>
+      <div class="data-input">
+        <label for="yValue">Data Input Up</label>
+        <input
+          id="xValue"
+          placeholder="Input Up"
+          type="number"
+          onblur="getXValue()"
+        />
+      </div>
+      <div class="data-input">
+        <label for="yValue">Data Input Down</label>
+        <input
+          id="yValue"
+          placeholder="Data down"
+          type="number"
+          onblur="getYValue()"
+        />
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+      sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 600px;
+  }
+  .button-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .data-input {
+    display: flex;
+    flex-direction: column;
+    background-color: #ccc;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 1rem;
+    color: #111;
+    margin: 2rem auto;
+  }
+  input {
+    border: none;
+    padding: 0.4rem 0.4rem;
+    margin-top: 0.4rem;
+    border-radius: 0.2rem;
+  }
+</style>
