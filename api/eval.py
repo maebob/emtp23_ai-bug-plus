@@ -1,44 +1,78 @@
+from multiprocessing import connection
 import string
+import json
 
+"""
+my_memory{
+    ports{
+        port: value
+    }
+    connections{
+        from_port: [to_ports]
+    }
+}
+"""
 
-my_memory = {}
+memory_ports = {}
+memory_connections = {}
 
-bugsPorts = ['dataInUp', 'controlIn', 'dataInDown',
+BUGPORTS = ['dataInUp', 'controlIn', 'dataInDown',
              'controlOutL', 'controlOutR', 'dataOut']
 
 
-def initialize_memory(bug_id: int) -> None:
+def initialize_port_memory(bug_id: int) -> None:
     """Initialize all port values in memory to None for a given bug id
     
     Arguments:
         bug_id {int} -- the id of the bug to be initialized
     """
-    for port in bugsPorts:
-        my_memory[f"{bug_id}_{port}"] = None
+    for port in BUGPORTS:
+       memory_ports[f"{bug_id}_{port}"] = None
 
 
-def initialize_child_memory(bugs: list) -> None:
-    """Initialize all port values in memory to None for a given list of bugs"""
+def initialize_child_port_memory(bugs: list) -> None:
+    """Initialize all port values in memory to None for a given list of bugs
+    
+    Arguments:
+
+    """
     for bug in bugs:
-        initialize_memory(bug["id"])
+        initialize_port_memory(bug["id"])
 
 
-def get_next_bug(edges: list, fromPort: string, fromBug: int) -> int:
-    """Get the next bug in the chain based on the fromPort and fromBug"""
-    for edge in edges:
-        if edge["fromPort"] == fromPort and edge["fromNode"] == fromBug:
-            return edge["toNode"]
-
-
-def get_next_port(edges: list, fromPort: string, fromBug: int) -> string:
-    """Get the next port in the chain based on the fromPort and fromBug
+def initialize_connection_memory(edges: list) -> None:
+    """Initialize the connection memory
 
     Arguments:
 
     """
     for edge in edges:
-        if edge["fromPort"] == fromPort and edge["fromNode"] == fromBug:
-            return edge["toPort"]
+        if ("control" in edge["fromPort"].lower()):
+            memory_connections[f"{edge['fromNode']}_{edge['fromPort']}"] = (f"{edge['toNode']}_{edge['toPort']}")
+            continue
+        if (memory_connections.get(f"{edge['fromNode']}_{edge['fromPort']}") is None):
+            memory_connections[f"{edge['fromNode']}_{edge['fromPort']}"] = list()
+        memory_connections[f"{edge['fromNode']}_{edge['fromPort']}"].append(f"{edge['toNode']}_{edge['toPort']}")
+
+
+def get_next_bug(fromBug: int, fromPort: str) -> int:
+    """Get the next bug in the chain based on the fromPort and fromBug"""
+    if (memory_connections.get(f"{fromBug}_{fromPort}") is None):
+        #TODO check if this is needed as ports that are not connected should not be
+        return None
+    return int(memory_connections[f"{fromBug}_{fromPort}"][0].split("_")[0])
+
+
+def get_next_port(fromBug: int, fromPort: str) -> str:
+    """Get the next port in the chain based on the fromPort and fromBug
+
+    Arguments:
+
+    """
+    if (memory_connections.get(f"{fromBug}_{fromPort}") is None):
+        #TODO check if this is needed as ports that are not connected should not be
+        return None
+    return memory_connections[f"{fromBug}_{fromPort}"][0].split("_")[1]
 
 
 def eval_plus_bug(up: int or None, down: int or None) -> int and int:
@@ -72,7 +106,7 @@ def write_to_memory(bug_id: int, port: string, value: int) -> None:
         port {string} -- The port to write to
         value {int} -- The value to write to the port
     """
-    my_memory[f"{bug_id}_{port}"] = value
+    memory_ports[f"{bug_id}_{port}"] = value
 
 
 def read_from_memory(bug_id: int, port: string) -> int:
@@ -84,7 +118,7 @@ def read_from_memory(bug_id: int, port: string) -> int:
     Returns:
         int -- The value of the port
     """
-    return my_memory[f"{bug_id}_{port}"]
+    return memory_ports[f"{bug_id}_{port}"]
 
 
 def set_control_value(bug: object, control_value: int) -> int:
@@ -100,8 +134,7 @@ def set_control_value(bug: object, control_value: int) -> int:
         # Deactivate the right control out port
         write_to_memory(bug["id"], "controlOutR", 0)
         # Get the id of the next bug based on the left control out port
-        return get_next_bug(
-            board_main["edges"], "controlOutL", bug["id"])
+        return get_next_bug(bug.get("id"), "controlOutL")
     elif control_value == 1:
         # bugs right control out port is active
         # Deactivate the left control out port
@@ -109,31 +142,32 @@ def set_control_value(bug: object, control_value: int) -> int:
         # Activate the right control out port
         write_to_memory(bug["id"], "controlOutR", 1)
         # Get the id of the next bug based on the right control out port
-        return get_next_bug(
-            board_main["edges"], "controlOutR", bug["id"])
+        return get_next_bug(bug.get("id"), "controlOutR")
 
 
 def eval_bug(bug, up, down) -> None:
     if ("id" not in bug):
         """Initialize memory for main bug"""
-        initialize_memory(0)
+        initialize_port_memory(0)
         # Set the data input value of the upper parent bug
         write_to_memory(0, "dataInUp", up)
         # Set the data input value of the lower parent bug
         write_to_memory(0, "dataInDown", down)
         write_to_memory(0, "controlIn", 1)  # Activate the parent bug
 
+        initialize_connection_memory(board_main.get("edges"))
+
         """Connect the parent bugs data ports to the children"""
-        initialize_child_memory(
+        initialize_child_port_memory(
             bug["bugs"])  # Initialize the memory for the child bugs to be able to write to them in the future
         # Get the id of the upper child bug
-        upper_data_to_node_id = get_next_bug(bug["edges"], "mainDataInUp", 0)
+        upper_data_to_node_id = get_next_bug(0, "mainDataInUp")
         # Get the id of the lower child bug
-        lower_data_to_node_id = get_next_bug(bug["edges"], "mainDataInDown", 0)
+        lower_data_to_node_id = get_next_bug(0, "mainDataInDown")
         # Get the port of the upper child bug TODO this could have multiple bugs connected to it
-        upper_data_to_port = get_next_port(bug["edges"], "mainDataInUp", 0)
+        upper_data_to_port = get_next_port(0, "mainDataInUp")
         # Get the port of the lower child bug TODO this could have multiple bugs connected to it
-        lower_data_to_port = get_next_port(bug["edges"], "dataInDown", 0)
+        lower_data_to_port = get_next_port(0, "dataInDown")
         # Write the data to the upper child bug
         write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
         # Write the data to the lower child bug
@@ -151,8 +185,7 @@ def eval_bug(bug, up, down) -> None:
         next_bug_id = set_control_value(bug, control_value)
 
         # Get the data port of the next bug where the data should be written to
-        next_data_port = get_next_port(
-            board_main["edges"], "dataOut", bug["id"])
+        next_data_port = get_next_port(bug.get("id"), "dataOut")
         # Write the data to the next bugs data port
         write_to_memory(next_bug_id, next_data_port, data_value)
 
@@ -174,4 +207,6 @@ def main(board, up, down):
 
 
 if __name__ == "__main__":
-    pass
+    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/incrementor.json", "r").read()
+    print(main(json.loads(example_file), 5, None))
+    print(memory_connections)
