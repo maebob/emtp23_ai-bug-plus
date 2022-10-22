@@ -182,12 +182,10 @@ def eval_bug(bug, up, down) -> None:
         # Write the result to the data port of the evaluated bug
         write_to_memory(bug["id"], "dataOut", data_value)
 
-        next_bug_id = set_control_value(bug, control_value)
-
-        # Get the data port of the next bug where the data should be written to
-        next_data_port = get_next_port(bug.get("id"), "dataOut")
-        # Write the data to the next bugs data port
-        write_to_memory(next_bug_id, next_data_port, data_value)
+        #Update all connected data in ports
+        data_ports_to_update = memory_connections.get(f"{bug.get('id')}_dataOut")
+        for data_port in data_ports_to_update:
+            write_to_memory(int(data_port.split("_")[0]), data_port.split("_")[1], data_value)
 
     elif (len(bug["bugs"]) != 0):
         """The bug is a parent node"""
@@ -208,5 +206,5 @@ def main(board, up, down):
 
 if __name__ == "__main__":
     example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/incrementor.json", "r").read()
-    print(main(json.loads(example_file), 5, None))
+    print(main(json.loads(example_file), 9, None))
     print(memory_connections)
