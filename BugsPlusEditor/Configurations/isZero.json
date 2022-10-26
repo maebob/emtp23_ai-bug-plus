@@ -1,0 +1,46 @@
+{
+    "bugs": [
+        { "id": 1}
+    ],
+    "edges": [
+        {
+            "fromNode": 0,
+            "toNode": 1,
+            "fromPort": "controlIn",
+            "toPort": "controlIn"
+        },
+        {
+            "fromNode": 1,
+            "toNode": 0,
+            "fromPort": "controlOutL",
+            "toPort": "controlOutR"
+        },
+        {
+            "fromNode": 1,
+            "toNode": 0,
+            "fromPort": "controlOutR",
+            "toPort": "controlOutL"
+        },
+        {
+            "fromNode": 0,
+            "toNode": 1,
+            "fromPort": "dataInUp",
+            "toPort": "dataInUp"
+        },
+        {
+            "fromNode": 0,
+            "toNode": 1,
+            "fromPort": "dataInDown",
+            "toPort": "dataInDown"
+        },
+        {
+            "fromNode": 1,
+            "toNode": 10,
+            "fromPort": "dataOut",
+            "toPort": "dataOut"
+        }
+    ],
+    "xValue": 0,
+    "yValue": 1,
+    "id": 0
+}
