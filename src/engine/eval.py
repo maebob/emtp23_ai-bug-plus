@@ -73,8 +73,8 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
         int -- The id of the next bug to evaluate
     """
     if (read_from_memory(bug_id, "controlOutL") == 1):
-        return memory_connections[f"{bug_id}_controlOutL"].split("_")[0]
-    return memory_connections[f"{bug_id}_controlOutR"].split("_")[0]
+        return int(memory_connections[f"{bug_id}_controlOutL"].split("_")[0])
+    return int(memory_connections[f"{bug_id}_controlOutR"].split("_")[0])
 
 def get_next_port(fromBug: int, fromPort: str) -> str:
     """Get the next port in the chain based on the fromPort and fromBug
@@ -197,6 +197,8 @@ def initialize_board_memory(board) -> int:
 
     initialize_connection_memory(board.get("edges"))
 
+    memory_bug_types[board.get("id")] = "nested"
+
     for bug in board.get("bugs"):
         initialize_bug_memory(bug)
     
@@ -267,36 +269,33 @@ def eval_bug(bug_id) -> None:
     set_control_value(bug_id, control_value)
     next_bug = get_next_bug_to_evaluate(bug_id)
 
-    #Check if the next bug is a nested bug and the port our bug connects to is a control out port if so wirte to the control port
-    if (memory_bug_types.get(next_bug) == "nested" and "controlOut" in memory_connections.get(f"{bug_id}_controlOutL") or "controlOut" in memory_connections.get(f"{bug_id}_controlOutR")):
-        control_left_value = read_from_memory(bug_id, "controlOutL")
-        control_right_value = read_from_memory(bug_id, "controlOutR")
-
-        control_left_connection = memory_connections.get(f"{bug_id}_controlOutL")
-        control_right_connection = memory_connections.get(f"{bug_id}_controlOutR")
-
-        memory_ports[control_left_connection] = control_left_value
-        memory_ports[control_right_connection] = control_right_value
-
-
     #Update data flow
     write_to_memory(bug_id, "dataOut", data_value)
     if (memory_connections.get(f"{bug_id}_dataOut") is not None):
         wirte_data_to_memory(memory_connections.get(f"{bug_id}_dataOut"), data_value)
     
     eval_bug(next_bug)
+
+    #Check if the next bug is a nested bug and the port our bug connects to is a control out port if so wirte to the control port
+    if (memory_bug_types.get(next_bug) == "nested" and memory_ports.get(f"{bug_id}_controlOutL") is not None and memory_ports.get(f"{bug_id}_controlOutR") is not None):
+        if ("controlOut" in memory_connections.get(f"{bug_id}_controlOutL") or "controlOut" in memory_connections.get(f"{bug_id}_controlOutR")):
+            control_left_value = read_from_memory(bug_id, "controlOutL")
+            control_right_value = read_from_memory(bug_id, "controlOutR")
+
+            control_left_connection = memory_connections.get(f"{bug_id}_controlOutL")
+            control_right_connection = memory_connections.get(f"{bug_id}_controlOutR")
+
+            memory_ports[control_left_connection] = control_left_value
+            memory_ports[control_right_connection] = control_right_value
     """Idea deactivate control port after evaluation if a control in port is active at arival we can terminate the evaluation"""
    
 def main(board):
     #global board_main
-    board_bug_id = board.get("id")
     
     first_bug_id = initialize_board_memory(board)
     eval_bug(first_bug_id)
 
-    #Set the control value of the nested bug
-    #TODO: This is a hack to get the control value of the nested bug this however does not use the connection is is therefore not correct
-    
+    return memory_ports
     
 
 
