@@ -64,6 +64,18 @@ def get_next_bug(fromBug: int, fromPort: str) -> int:
     return int(memory_connections[f"{fromBug}_{fromPort}"][0].split("_")[0])
 
 
+def get_next_bug_to_evaluate(bug_id: int) -> int:
+    """Get the next bug to evaluate based on the control port value
+
+    Arguments:
+        bug_id {int} -- The id of the bug to evaluate
+    Returns:
+        int -- The id of the next bug to evaluate
+    """
+    if (read_from_memory(bug_id, "controlOutL") == 1):
+        return memory_connections[f"{bug_id}_controlOutL"].split("_")[0]
+    return memory_connections[f"{bug_id}_controlOutR"].split("_")[0]
+
 def get_next_port(fromBug: int, fromPort: str) -> str:
     """Get the next port in the chain based on the fromPort and fromBug
 
@@ -94,6 +106,8 @@ def eval_plus_bug(up: int or None, down: int or None) -> int and int:
     elif (up is not None and down is None):
         return 1, 1
     elif (up is not None and down is not None):
+        if (up == 0 and down == 0):
+            return 0, 0
         return up + down, 1
     else:
         raise Exception("Something went wrong")
@@ -193,15 +207,13 @@ def initialize_board_memory(board) -> int:
     #write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
     # Write the data to the lower child bug
     if (memory_connections.get(f"{board.get('id')}_dataInDown") is not None):
-        wirte_data_to_memory(memory_connections.get(f"{board.get('id')}_dataIn"), board.get("xValue"))
+        wirte_data_to_memory(memory_connections.get(f"{board.get('id')}_dataInDown"), board.get("yValue"))
     
     return get_next_bug(board.get("id"), "controlIn")
 
 
 def evaluate_nested_bug(bug_id: int) -> None:
     #Check if we have a nested bug
-    #TODO Does not work for looped nested bugs yet
-    #TODO set the control value of the nested bug
 
     #Write data to the nested bug ports
     if (memory_ports.get(f"{bug_id}_dataInUp") is not None):
@@ -212,7 +224,7 @@ def evaluate_nested_bug(bug_id: int) -> None:
     if (memory_ports.get(f"{bug_id}_controlIn") == 0 or memory_ports.get(f"{bug_id}_controlIn") is None):
         write_to_memory(bug_id, "controlIn", 1)
         #Evaluate the nested bug
-        next_bug_id = get_next_bug(bug_id, "controlIn")
+        next_bug_id = get_next_bug_to_evaluate(bug_id)
         eval_bug(next_bug_id)
     
     #Set the control value of the nested bug
@@ -253,7 +265,19 @@ def eval_bug(bug_id) -> None:
 
     #Update control flow
     set_control_value(bug_id, control_value)
-    next_bug = get_next_bug(bug_id, control_value)
+    next_bug = get_next_bug_to_evaluate(bug_id)
+
+    #Check if the next bug is a nested bug and the port our bug connects to is a control out port if so wirte to the control port
+    if (memory_bug_types.get(next_bug) == "nested" and "controlOut" in memory_connections.get(f"{bug_id}_controlOutL") or "controlOut" in memory_connections.get(f"{bug_id}_controlOutR")):
+        control_left_value = read_from_memory(bug_id, "controlOutL")
+        control_right_value = read_from_memory(bug_id, "controlOutR")
+
+        control_left_connection = memory_connections.get(f"{bug_id}_controlOutL")
+        control_right_connection = memory_connections.get(f"{bug_id}_controlOutR")
+
+        memory_ports[control_left_connection] = control_left_value
+        memory_ports[control_right_connection] = control_right_value
+
 
     #Update data flow
     write_to_memory(bug_id, "dataOut", data_value)
@@ -271,18 +295,14 @@ def main(board):
     eval_bug(first_bug_id)
 
     #Set the control value of the nested bug
-    if (memory_ports.get(f"{board_bug_id}_dataOut") != 0):
-        write_to_memory(board_bug_id, "controlOutL", 0)
-        write_to_memory(board_bug_id, "controlOutR", 1)
-    else:
-        write_to_memory(board_bug_id, "controlOutL", 1)
-        write_to_memory(board_bug_id, "controlOutR", 0)
-    return read_from_memory(board_bug_id, "dataOut")
+    #TODO: This is a hack to get the control value of the nested bug this however does not use the connection is is therefore not correct
+    
+    
 
 
 if __name__ == "__main__":
-    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nested.json", "r").read()
-    print(main(json.loads(example_file)))
+    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isZero.json", "r").read()
+    main(json.loads(example_file))
     #print(memory_connections)
     print(memory_ports)
     #print(memory_bug_types)
