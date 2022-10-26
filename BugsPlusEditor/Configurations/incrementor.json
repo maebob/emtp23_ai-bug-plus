@@ -8,7 +8,7 @@
         {
             "fromNode": 0,
             "toNode": 7,
-            "fromPort": "mainControlIn",
+            "fromPort": "controlIn",
             "toPort": "controlIn"
         },
         {
@@ -27,24 +27,24 @@
             "fromNode": 9,
             "toNode": 0,
             "fromPort": "controlOutL",
-            "toPort": "mainControlOutL"
+            "toPort": "controlOutL"
         },
         {
             "fromNode": 9,
             "toNode": 0,
             "fromPort": "controlOutR",
-            "toPort": "mainControlOutR"
+            "toPort": "controlOutR"
         },
         {
             "fromNode": 9,
             "toNode": 0,
             "fromPort": "dataOut",
-            "toPort": "mainDataOut"
+            "toPort": "dataOut"
         },
         {
             "fromNode": 0,
             "toNode": 9,
-            "fromPort": "mainDataInUp",
+            "fromPort": "dataInUp",
             "toPort": "dataInUp"
         },
         {
@@ -61,5 +61,6 @@
         }
     ],
     "xValue": 5,
-    "yValue": 5
+    "yValue": 5,
+    "id": 0
 }

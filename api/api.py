@@ -28,5 +28,5 @@ async def create_board(board: Request):
     """
     board = await board.json()
     print(board)
-    result = main(board, board["xValue"], board["yValue"])
+    result = main(board)
     return result

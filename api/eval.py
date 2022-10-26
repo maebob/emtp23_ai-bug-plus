@@ -15,6 +15,7 @@ my_memory{
 
 memory_ports = {}
 memory_connections = {}
+memory_bug_types = {}
 
 BUGPORTS = ['dataInUp', 'controlIn', 'dataInDown',
              'controlOutL', 'controlOutR', 'dataOut']
@@ -108,6 +109,16 @@ def write_to_memory(bug_id: int, port: string, value: int) -> None:
     """
     memory_ports[f"{bug_id}_{port}"] = value
 
+def wirte_data_to_memory(ports: list, data_value: int) -> None:
+    """Write the data value to the data ports in memory
+
+    Arguments:
+        ports {list} -- The list of ports to write to
+        data_value {int} -- The value to write to the ports
+    """
+    for port in ports:
+        write_to_memory(port.split("_")[0], port.split("_")[1], data_value)
+
 
 def read_from_memory(bug_id: int, port: string) -> int:
     """Read a value from a port in memory
@@ -121,8 +132,8 @@ def read_from_memory(bug_id: int, port: string) -> int:
     return memory_ports[f"{bug_id}_{port}"]
 
 
-def set_control_value(bug: object, control_value: int) -> int:
-    """Set the value of the control flow in memory and return the next bug id to evaluate
+def set_control_value(bug_id: int, control_value: int) -> int:
+    """Set the value of the control flow in memory and return the next port to evaluate
 
     Arguments:
 
@@ -130,81 +141,148 @@ def set_control_value(bug: object, control_value: int) -> int:
     if control_value == 0:
         # bugs left control out port is active
         # Activate the left control out port
-        write_to_memory(bug["id"], "controlOutL", 1)
+        write_to_memory(bug_id, "controlOutL", 1)
         # Deactivate the right control out port
-        write_to_memory(bug["id"], "controlOutR", 0)
+        write_to_memory(bug_id, "controlOutR", 0)
         # Get the id of the next bug based on the left control out port
-        return get_next_bug(bug.get("id"), "controlOutL")
+        return get_next_bug(bug_id, "controlOutL")
     elif control_value == 1:
         # bugs right control out port is active
         # Deactivate the left control out port
-        write_to_memory(bug["id"], "controlOutL", 0)
+        write_to_memory(bug_id, "controlOutL", 0)
         # Activate the right control out port
-        write_to_memory(bug["id"], "controlOutR", 1)
+        write_to_memory(bug_id, "controlOutR", 1)
         # Get the id of the next bug based on the right control out port
-        return get_next_bug(bug.get("id"), "controlOutR")
+        return get_next_bug(bug_id, "controlOutR")
+
+def initialize_bug_memory(bug) -> None:
+    """Initialize a bug"""
+    if ("edges" in bug):
+        initialize_connection_memory(bug.get("edges"))
+        initialize_port_memory(bug.get("id"))
+        memory_bug_types[bug.get("id")] = "nested"
+        for bug in bug.get("bugs"):
+            initialize_bug_memory(bug)
+        return
+    initialize_port_memory(bug.get("id"))
 
 
-def eval_bug(bug, up, down) -> None:
-    if ("id" not in bug):
-        """Initialize memory for main bug"""
-        initialize_port_memory(0)
-        # Set the data input value of the upper parent bug
-        write_to_memory(0, "dataInUp", up)
-        # Set the data input value of the lower parent bug
-        write_to_memory(0, "dataInDown", down)
-        write_to_memory(0, "controlIn", 1)  # Activate the parent bug
 
-        initialize_connection_memory(board_main.get("edges"))
+def initialize_board_memory(board) -> int:
+    """Initialize the memory of the board
 
-        """Connect the parent bugs data ports to the children"""
-        initialize_child_port_memory(
-            bug["bugs"])  # Initialize the memory for the child bugs to be able to write to them in the future
-        # Get the id of the upper child bug
-        upper_data_to_node_id = get_next_bug(0, "mainDataInUp")
-        # Get the id of the lower child bug
-        lower_data_to_node_id = get_next_bug(0, "mainDataInDown")
-        # Get the port of the upper child bug TODO this could have multiple bugs connected to it
-        upper_data_to_port = get_next_port(0, "mainDataInUp")
-        # Get the port of the lower child bug TODO this could have multiple bugs connected to it
-        lower_data_to_port = get_next_port(0, "dataInDown")
-        # Write the data to the upper child bug
-        write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
-        # Write the data to the lower child bug
-        write_to_memory(lower_data_to_node_id, lower_data_to_port, down)
+    Arguments:
+        board {object} -- The board to initialize the memory for
+    """
+    initialize_port_memory(board.get("id"))
+    # Set the data input value of the upper parent bug
+    write_to_memory(board.get("id"), "dataInUp", board.get("xValue"))
+    # Set the data input value of the lower parent bug
+    write_to_memory(board.get("id"), "dataInDown", board.get("yValue"))
+    write_to_memory(board.get("id"), "controlIn", 1)  # Activate the parent bug
 
-    if ("bugs" not in bug):
-        """The bug is a leaf node -> Plus bug"""
+    initialize_connection_memory(board.get("edges"))
 
-        # Activate the bugs control port
-        write_to_memory(bug["id"], "controlIn", 1)
-        data_value, control_value = eval_plus_bug(up, down)  # Evaluate the bug
-        # Write the result to the data port of the evaluated bug
-        write_to_memory(bug["id"], "dataOut", data_value)
+    for bug in board.get("bugs"):
+        initialize_bug_memory(bug)
+    
+    #Set initial values to data ports
+    # Write the data to the upper child bug
+    if (memory_connections.get(f"{board.get('id')}_dataInUp") is not None):
+        wirte_data_to_memory(memory_connections.get(f"{board.get('id')}_dataInUp"), board.get("xValue"))
+    #write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
+    # Write the data to the lower child bug
+    if (memory_connections.get(f"{board.get('id')}_dataInDown") is not None):
+        wirte_data_to_memory(memory_connections.get(f"{board.get('id')}_dataIn"), board.get("xValue"))
+    
+    return get_next_bug(board.get("id"), "controlIn")
 
-        #Update all connected data in ports
-        data_ports_to_update = memory_connections.get(f"{bug.get('id')}_dataOut")
-        for data_port in data_ports_to_update:
-            write_to_memory(int(data_port.split("_")[0]), data_port.split("_")[1], data_value)
 
-    elif (len(bug["bugs"]) != 0):
-        """The bug is a parent node"""
-        for child in bug["bugs"]:
-            # Evaluate the child bugs
-            eval_bug(child, read_from_memory(
-                child["id"], "dataInUp"), read_from_memory(child["id"], "dataInDown"))
+def evaluate_nested_bug(bug_id: int) -> None:
+    #Check if we have a nested bug
+    #TODO Does not work for looped nested bugs yet
+    #TODO set the control value of the nested bug
+
+    #Write data to the nested bug ports
+    if (memory_ports.get(f"{bug_id}_dataInUp") is not None):
+        wirte_data_to_memory(memory_connections.get(f"{bug_id}_dataInUp"), read_from_memory(bug_id, "dataInUp"))
+    if (memory_ports.get(f"{bug_id}_dataInDown") is not None):
+        wirte_data_to_memory(memory_connections.get(f"{bug_id}_dataInDown"), read_from_memory(bug_id, "dataInDown"))
+
+    if (memory_ports.get(f"{bug_id}_controlIn") == 0 or memory_ports.get(f"{bug_id}_controlIn") is None):
+        write_to_memory(bug_id, "controlIn", 1)
+        #Evaluate the nested bug
+        next_bug_id = get_next_bug(bug_id, "controlIn")
+        eval_bug(next_bug_id)
+    
+    #Set the control value of the nested bug
+    if (memory_ports.get(f"{bug_id}_dataOut") != 0):
+        write_to_memory(bug_id, "controlOutL", 0)
+        write_to_memory(bug_id, "controlOutR", 1)
     else:
-        raise Exception("Something went wrong")
+        write_to_memory(bug_id, "controlOutL", 1)
+        write_to_memory(bug_id, "controlOutR", 0)
+
+    #Go to the next bug
+    if (memory_connections.get(f"{bug_id}_controlOutL") == 1):
+        next_bug_id = get_next_bug(bug_id, "controlOutL")
+        eval_bug(next_bug_id)
+    else:
+        next_bug_id = get_next_bug(bug_id, "controlOutR")
+        eval_bug(next_bug_id)
+    
+    #deactivate the control port of the nested bug
+    write_to_memory(bug_id, "controlIn", 0)
+
+    wirte_data_to_memory(memory_connections.get(f"{bug_id}_dataOut"), read_from_memory(bug_id, "dataOut"))
 
 
-def main(board, up, down):
-    global board_main
-    board_main = board
-    eval_bug(board, up, down)
-    return read_from_memory(0, "mainDataOut")
+
+def eval_bug(bug_id) -> None:
+    if (memory_connections.get(f"{bug_id}_controlOutL") is None and memory_connections.get(f"{bug_id}_controlOutR") is None):
+        #Check if one ControlOut port is connected to something if not terminate
+        return
+    
+    if (memory_bug_types.get(bug_id) == "nested"):
+        evaluate_nested_bug(bug_id)
+        return
+
+    
+    write_to_memory(bug_id, "controlIn", 1)
+    data_value, control_value = eval_plus_bug(memory_ports.get(f"{bug_id}_dataInUp"), memory_ports.get(f"{bug_id}_dataInDown"))  # Evaluate the bug
+
+    #Update control flow
+    set_control_value(bug_id, control_value)
+    next_bug = get_next_bug(bug_id, control_value)
+
+    #Update data flow
+    write_to_memory(bug_id, "dataOut", data_value)
+    if (memory_connections.get(f"{bug_id}_dataOut") is not None):
+        wirte_data_to_memory(memory_connections.get(f"{bug_id}_dataOut"), data_value)
+    
+    eval_bug(next_bug)
+    """Idea deactivate control port after evaluation if a control in port is active at arival we can terminate the evaluation"""
+   
+def main(board):
+    #global board_main
+    board_bug_id = board.get("id")
+    
+    first_bug_id = initialize_board_memory(board)
+    eval_bug(first_bug_id)
+
+    #Set the control value of the nested bug
+    if (memory_ports.get(f"{board_bug_id}_dataOut") != 0):
+        write_to_memory(board_bug_id, "controlOutL", 0)
+        write_to_memory(board_bug_id, "controlOutR", 1)
+    else:
+        write_to_memory(board_bug_id, "controlOutL", 1)
+        write_to_memory(board_bug_id, "controlOutR", 0)
+    return read_from_memory(board_bug_id, "dataOut")
 
 
 if __name__ == "__main__":
-    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/incrementor.json", "r").read()
-    print(main(json.loads(example_file), 9, None))
-    print(memory_connections)
+    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nested.json", "r").read()
+    print(main(json.loads(example_file)))
+    #print(memory_connections)
+    print(memory_ports)
+    #print(memory_bug_types)
