@@ -31,16 +31,6 @@ def initialize_port_memory(bug_id: int) -> None:
        memory_ports[f"{bug_id}_{port}"] = None
 
 
-def initialize_child_port_memory(bugs: list) -> None:
-    """Initialize all port values in memory to None for a given list of bugs
-    
-    Arguments:
-
-    """
-    for bug in bugs:
-        initialize_port_memory(bug["id"])
-
-
 def initialize_connection_memory(edges: list) -> None:
     """Initialize the connection memory
 
@@ -80,19 +70,8 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
         return int(memory_connections[f"{bug_id}_controlOutL"].split("_")[0])
     return int(memory_connections[f"{bug_id}_controlOutR"].split("_")[0])
 
-def get_next_port(fromBug: int, fromPort: str) -> str:
-    """Get the next port in the chain based on the fromPort and fromBug
 
-    Arguments:
-
-    """
-    if (memory_connections.get(f"{fromBug}_{fromPort}") is None):
-        #TODO check if this is needed as ports that are not connected should not be
-        return None
-    return memory_connections[f"{fromBug}_{fromPort}"][0].split("_")[1]
-
-
-def eval_plus_bug(up: int or None, down: int or None) -> int and int:
+def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
     """Evaluate the plus bug using the rules of bugsplus
 
     Arguments:
@@ -115,6 +94,9 @@ def eval_plus_bug(up: int or None, down: int or None) -> int and int:
         return up + down, 1
     else:
         raise Exception("Something went wrong")
+
+def evaluate_plus_bug(bug_id: int) -> int:
+    pass
 
 
 def write_to_memory(bug_id: int, port: string, value: int) -> None:
@@ -220,6 +202,8 @@ def initialize_board_memory(board) -> int:
     return get_next_bug(board.get("id"), "controlIn")
 
 
+
+
 def evaluate_nested_bug(bug_id: int) -> None:
     #Check if we have a nested bug
 
@@ -268,7 +252,7 @@ def eval_bug(bug_id) -> None:
 
     
     write_to_memory(bug_id, "controlIn", 1)
-    data_value, control_value = eval_plus_bug(memory_ports.get(f"{bug_id}_dataInUp"), memory_ports.get(f"{bug_id}_dataInDown"))  # Evaluate the bug
+    data_value, control_value = calculate_plus_bug(memory_ports.get(f"{bug_id}_dataInUp"), memory_ports.get(f"{bug_id}_dataInDown"))  # Evaluate the bug
 
     #Update control flow
     set_control_value(bug_id, control_value)
