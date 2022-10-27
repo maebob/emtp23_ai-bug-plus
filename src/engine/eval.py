@@ -1,17 +1,6 @@
-from multiprocessing import connection
-import string
 import json
+import random
 
-"""
-my_memory{
-    ports{
-        port: value
-    }
-    connections{
-        from_port: [to_ports]
-    }
-}
-"""
 
 memory_ports = {}
 memory_connections = {}
@@ -69,9 +58,12 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
         # This is a nested bug that has not been evaluated yet -> return the first bug in the nested bug
         return int(memory_connections[f"{bug_id}_controlIn"].split("_")[0])
 
-    if (read_from_memory(bug_id, "controlOutL") == 1):
-        return int(memory_connections[f"{bug_id}_controlOutL"].split("_")[0])
-    return int(memory_connections[f"{bug_id}_controlOutR"].split("_")[0])
+    if memory_ports.get(f"{bug_id}_controlOutL") == 1:
+        return int(memory_connections.get(f"{bug_id}_controlOutL").split("_")[0])
+    elif memory_ports.get(f"{bug_id}_controlOutR") == 1:
+        return int(memory_connections[f"{bug_id}_controlOutR"].split("_")[0])
+    else:
+        raise Exception("Something went wrong", memory_ports.get(f"{bug_id}_controlOutL"), memory_ports.get(f"{bug_id}_controlOutR"))
 
 
 def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
@@ -99,7 +91,7 @@ def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
         raise Exception("Something went wrong")
 
 
-def write_to_memory(bug_id: int, port: string, value: int) -> None:
+def write_to_memory(bug_id: int, port: str, value: int) -> None:
     """Write a value to a port in memory
 
     Arguments:
@@ -123,7 +115,7 @@ def wirte_data_to_memory(ports: list, data_value: int) -> None:
         write_to_memory(port.split("_")[0], port.split("_")[1], data_value)
 
 
-def read_from_memory(bug_id: int, port: string) -> int:
+def read_from_memory(bug_id: int, port: str) -> int:
     """Read a value from a port in memory
 
     Arguments:
@@ -313,7 +305,9 @@ def eval_bug(bug_id) -> None:
 
 def main(board):
     #global board_main
-
+    memory_connections.clear()
+    memory_ports.clear()
+    memory_bug_types.clear()
     first_bug_id = initialize_board_memory(board)
     eval_bug(first_bug_id)
 
@@ -328,7 +322,12 @@ if __name__ == "__main__":
     print(memory_ports)
     print(memory_ports.get("0_dataOut"))
     # print(memory_bug_types)"""
-    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isZero.json", "r").read()
+    DECREMENTOR_PATH = "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/decrementor.json"
+    example_file = open(DECREMENTOR_PATH, "r").read()
     example = json.loads(example_file)
-    print(example)
-    assert main(example).get("0_dataOut") == 11
+    for i in range(100):
+        random_number_1 = random.randint(-1000, 1000)
+        example["xValue"] = random_number_1
+        example["yValue"] = 4
+        print(main(example).get("0_dataOut") == random_number_1 - 1)
+        assert main(example).get("0_dataOut") == random_number_1 - 1
