@@ -1,0 +1,91 @@
+{
+    "bugs": [
+        { "id": 1, "type": "plus"},
+        { "id": 2, "type":"plus"},
+        { "id": 3, "type": "++"},
+        { "id": 4, "type": "--"}
+    ],
+    "edges": [
+        {
+            "fromNode": 0,
+            "toNode": 1,
+            "fromPort": "controlIn",
+            "toPort": "controlIn"
+        },
+        {
+            "fromNode": 1,
+            "toNode": 2,
+            "fromPort": "controlOutL",
+            "toPort": "controlIn"
+        },
+        {
+            "fromNode": 2,
+            "toNode": 3,
+            "fromPort": "controlOutL",
+            "toPort": "controlIn"
+        },
+        {
+            "fromNode": 2,
+            "toNode": 4,
+            "fromPort": "controlOutR",
+            "toPort": "controlIn"
+        },
+        {
+            "fromNode": 3,
+            "toNode": 0,
+            "fromPort": "controlOutL",
+            "toPort": "controlOutL"
+        },
+        {
+            "fromNode": 3,
+            "toNode": 0,
+            "fromPort": "controlOutR",
+            "toPort": "controlOutL"
+        },
+        {
+            "fromNode": 4,
+            "toNode": 0,
+            "fromPort": "controlOutL",
+            "toPort": "controlOutR"
+        },
+        {
+            "fromNode": 4,
+            "toNode": 0,
+            "fromPort": "controlOutR",
+            "toPort": "controlOutR"
+        },
+        {
+            "fromNode": 1,
+            "toNode": 2,
+            "fromPort": "dataOut",
+            "toPort": "dataInUp"
+        },
+        {
+            "fromNode": 2,
+            "toNode": 3,
+            "fromPort": "dataOut",
+            "toPort": "dataOutDown"
+        },
+        {
+            "fromNode": 4,
+            "toNode": 2,
+            "fromPort": "dataOut",
+            "toPort": "dataInDown"
+        },
+        {
+            "fromNode": 4,
+            "toNode": 3,
+            "fromPort": "dataOut",
+            "toPort": "dataInUp"
+        },
+        {
+            "fromNode": 3,
+            "toNode": 4,
+            "fromPort": "dataOut",
+            "toPort": "dataInUp"
+        }
+    ],
+    "xValue": 6,
+    "yValue": 5,
+    "id": 0
+}
