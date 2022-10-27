@@ -72,6 +72,10 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
     Returns:
         int -- The id of the next bug to evaluate
     """
+    if (memory_ports.get(f"{bug_id}_controlOutL") is None and memory_ports.get(f"{bug_id}_controlOutR") is None):
+        #This is a nested bug that has not been evaluated yet -> return the first bug in the nested bug
+        return int(memory_connections[f"{bug_id}_controlIn"].split("_")[0])
+
     if (read_from_memory(bug_id, "controlOutL") == 1):
         return int(memory_connections[f"{bug_id}_controlOutL"].split("_")[0])
     return int(memory_connections[f"{bug_id}_controlOutR"].split("_")[0])
@@ -178,6 +182,8 @@ def initialize_bug_memory(bug) -> None:
         for bug in bug.get("bugs"):
             initialize_bug_memory(bug)
         return
+    else:
+        memory_bug_types[bug.get("id")] = "plus"
     initialize_port_memory(bug.get("id"))
 
 
@@ -197,7 +203,7 @@ def initialize_board_memory(board) -> int:
 
     initialize_connection_memory(board.get("edges"))
 
-    memory_bug_types[board.get("id")] = "nested"
+    memory_bug_types[board.get("id")] = "root"
 
     for bug in board.get("bugs"):
         initialize_bug_memory(bug)
@@ -253,10 +259,9 @@ def evaluate_nested_bug(bug_id: int) -> None:
 
 
 def eval_bug(bug_id) -> None:
-    if (memory_connections.get(f"{bug_id}_controlOutL") is None and memory_connections.get(f"{bug_id}_controlOutR") is None):
-        #Check if one ControlOut port is connected to something if not terminate
+    if (memory_bug_types.get(bug_id) == "root"):
         return
-    
+
     if (memory_bug_types.get(bug_id) == "nested"):
         evaluate_nested_bug(bug_id)
         return
@@ -277,7 +282,7 @@ def eval_bug(bug_id) -> None:
     eval_bug(next_bug)
 
     #Check if the next bug is a nested bug and the port our bug connects to is a control out port if so wirte to the control port
-    if (memory_bug_types.get(next_bug) == "nested" and memory_ports.get(f"{bug_id}_controlOutL") is not None and memory_ports.get(f"{bug_id}_controlOutR") is not None):
+    if (memory_bug_types.get(next_bug) != "plus" and memory_ports.get(f"{bug_id}_controlOutL") is not None and memory_ports.get(f"{bug_id}_controlOutR") is not None):
         if ("controlOut" in memory_connections.get(f"{bug_id}_controlOutL") or "controlOut" in memory_connections.get(f"{bug_id}_controlOutR")):
             control_left_value = read_from_memory(bug_id, "controlOutL")
             control_right_value = read_from_memory(bug_id, "controlOutR")
@@ -300,8 +305,9 @@ def main(board):
 
 
 if __name__ == "__main__":
-    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isZero.json", "r").read()
+    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nestedIncrementor.json", "r").read()
     main(json.loads(example_file))
     #print(memory_connections)
     print(memory_ports)
+    print(memory_ports.get("0_dataOut"))
     #print(memory_bug_types)
