@@ -92,7 +92,7 @@ def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
     elif (up is not None and down is None):
         return 1, 1
     elif (up is not None and down is not None):
-        if (up == 0 and down == 0):
+        if (up + down == 0):
             return 0, 0
         return up + down, 1
     else:
@@ -161,7 +161,7 @@ def set_control_value(bug_id: int, control_value: int) -> int:
 
 def initialize_bug_memory(bug) -> None:
     """Initialize a bug"""
-    if ("edges" in bug):
+    if "edges" in bug:
         initialize_connection_memory(bug.get("edges"))
         initialize_port_memory(bug.get("id"))
         memory_bug_types[bug.get("id")] = "nested"
@@ -328,7 +328,7 @@ if __name__ == "__main__":
     print(memory_ports)
     print(memory_ports.get("0_dataOut"))
     # print(memory_bug_types)"""
-    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nestedIncrementor.json", "r").read()
+    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isZero.json", "r").read()
     example = json.loads(example_file)
     print(example)
     assert main(example).get("0_dataOut") == 11
