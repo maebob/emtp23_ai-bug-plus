@@ -117,6 +117,8 @@ def wirte_data_to_memory(ports: list, data_value: int) -> None:
         ports {list} -- The list of ports to write to
         data_value {int} -- The value to write to the ports
     """
+    if (ports is None):
+        return
     for port in ports:
         write_to_memory(port.split("_")[0], port.split("_")[1], data_value)
 
@@ -205,6 +207,21 @@ def initialize_board_memory(board) -> int:
     return get_next_bug(board.get("id"), "controlIn")
 
 
+def write_control_to_parent_bug(bug_id: int) -> None:
+    """Write the control value to the parent bug
+
+    Arguments:
+        bug_id {int} -- The id of the bug to write the control value to
+    """
+
+    if (memory_connections.get(f"{bug_id}_controlOutL") is not None):
+        memory_ports[memory_connections.get(
+            f"{bug_id}_controlOutL")] = memory_ports[f"{bug_id}_controlOutL"]
+    if (memory_connections.get(f"{bug_id}_controlOutR") is not None):
+        memory_ports[memory_connections.get(
+            f"{bug_id}_controlOutR")] = memory_ports[f"{bug_id}_controlOutR"]
+
+
 def evaluate_plus_bug(bug_id: int) -> int:
     """Evaluate a plus bug
 
@@ -230,13 +247,11 @@ def evaluate_plus_bug(bug_id: int) -> int:
             f"{bug_id}_dataOut"), data_value)
 
     # If the next bug is not a plus bug, set the control value
-    if (memory_bug_types.get(get_next_bug(bug_id, "controlOut")) != "plus"):
-        if (memory_connections.get(f"{bug_id}_controlOutL") is not None):
-            memory_ports[memory_connections.get(
-                f"{bug_id}_controlOutL")] = memory_ports[f"{bug_id}_controlOutL"]
-        if (memory_connections.get(f"{bug_id}_controlOutR") is not None):
-            memory_ports[memory_connections.get(
-                f"{bug_id}_controlOutR")] = memory_ports[f"{bug_id}_controlOutR"]
+    if (control_value == 0 and memory_bug_types.get(get_next_bug(bug_id, "controlOutL")) != "plus"):
+        write_control_to_parent_bug(bug_id)
+    elif (control_value == 1 and memory_bug_types.get(get_next_bug(bug_id, "controlOutR")) != "plus"):
+        write_control_to_parent_bug(bug_id)
+
     return get_next_bug_to_evaluate(bug_id)
 
 
@@ -285,6 +300,10 @@ def eval_bug(bug_id) -> None:
         return
     elif (memory_bug_types.get(bug_id) == "nested"):
         evaluate_nested_bug(bug_id)
+        if (memory_ports.get(f"{bug_id}_controlOutL") == 1 and memory_bug_types.get(get_next_bug(bug_id, "controlOutL")) != "plus"):
+            write_control_to_parent_bug(bug_id)
+        elif (memory_ports.get(f"{bug_id}_controlOutR") == 1 and memory_bug_types.get(get_next_bug(bug_id, "controlOutR")) != "plus"):
+            write_control_to_parent_bug(bug_id)
         return
     elif (memory_bug_types.get(bug_id) == "plus"):
         eval_bug(evaluate_plus_bug(bug_id))
@@ -302,10 +321,14 @@ def main(board):
 
 
 if __name__ == "__main__":
-    example_file = open(
-        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isZero.json", "r").read()
+    """example_file = open(
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nestedIncrementor.json", "r").read()
     main(json.loads(example_file))
     # print(memory_connections)
     print(memory_ports)
     print(memory_ports.get("0_dataOut"))
-    # print(memory_bug_types)
+    # print(memory_bug_types)"""
+    example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nestedIncrementor.json", "r").read()
+    example = json.loads(example_file)
+    print(example)
+    assert main(example).get("0_dataOut") == 11

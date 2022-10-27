@@ -44,4 +44,6 @@ def test_nested_incrementor():
     """Test the nested incrementor function."""
     example_file = open("/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nestedIncrementor.json", "r").read()
     example = json.loads(example_file)
-    assert eval.main(example).get("0_dataOut") == 2
+    example["xValue"] = 10
+    example["yValue"] = None
+    assert eval.main(example).get("0_dataOut") == 11
