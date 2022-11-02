@@ -1,5 +1,4 @@
 import json
-import random
 
 
 memory_ports = {}
@@ -315,19 +314,10 @@ def main(board):
 
 
 if __name__ == "__main__":
-    """example_file = open(
-        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/nestedIncrementor.json", "r").read()
+    example_file = open(
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/asignment.json", "r").read()
     main(json.loads(example_file))
     # print(memory_connections)
     print(memory_ports)
     print(memory_ports.get("0_dataOut"))
-    # print(memory_bug_types)"""
-    DECREMENTOR_PATH = "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/decrementor.json"
-    example_file = open(DECREMENTOR_PATH, "r").read()
-    example = json.loads(example_file)
-    for i in range(100):
-        random_number_1 = random.randint(-1000, 1000)
-        example["xValue"] = random_number_1
-        example["yValue"] = 4
-        print(main(example).get("0_dataOut") == random_number_1 - 1)
-        assert main(example).get("0_dataOut") == random_number_1 - 1
+    # print(memory_bug_types)

@@ -2,34 +2,33 @@ from enum import Enum
 from pydantic import BaseModel
 
 
-class Port(str, Enum):
-    ControlIn = "controlIn"
-    ControlOutLeft = "controlOutL"
-    ControlOutRight = "controlOutR"
-    DataInUP = "dataInUp"
-    DataInDown = "dataInDown"
-    DataOut = "dataOut"
-    ControlInInterface = "mainControlIn"
-    ControlOutInterfaceL = "mainControlOutL"
-    ControlOutInterfaceR = "mainControlOutR"
-    DataInUpInterface = "mainDataInUp"
-    DataInDownInterface = "mainDataInDown"
-    DataOutInterface = "mainDataOut"
+class PortType(str, Enum):
+    In = "In"
+    Out = "Out"
+    Up = "Up"
+    Down = "Down"
+    Left = "Left"
+    Right = "Right"
+
+class EdgeType(str, Enum):
+    Control = "Control"
+    Data = "Data"
 
 
-class Node(BaseModel):
-    id: int
+class PortAdress(BaseModel):
+    bugId: int
+    port: PortType
 
 
 class Edge(BaseModel):
-    fromNode: int
-    toNode: int
-    fromPort: Port
-    toPort: Port
+    From: PortAdress
+    to: PortAdress
+    Type: EdgeType
 
 
-class Board(BaseModel):
-    bugs: list[Node]
+class Bug(BaseModel):
+    id: int
+    bugs: list[Bug]
     edges: list[Edge]
     xValue: int
     yValue: int
