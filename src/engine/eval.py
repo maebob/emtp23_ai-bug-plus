@@ -58,11 +58,30 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
         return int(memory_connections[f"{bug_id}_controlIn"].split("_")[0])
 
     if memory_ports.get(f"{bug_id}_controlOutL") == 1:
-        return int(memory_connections.get(f"{bug_id}_controlOutL").split("_")[0])
+        # The left control out port is active
+        next_bug_id = int(memory_connections.get(f"{bug_id}_controlOutL").split("_")[0])
+        # If the next bug is a plus bug we can return the next bug
+        if memory_bug_types.get(next_bug_id) == "plus":
+            return next_bug_id
+        # If the next bug is nested and we are currently inside it (Conected to a control out port) jump to the next bug
+        if memory_bug_types.get(next_bug_id) == "nested" and "Out" in memory_connections.get(f"{bug_id}_controlOutL"):
+            return get_next_bug_to_evaluate(next_bug_id)
+        # If the next bug is nested and we are currently outside it (Conected to a control in port) jump to nested bug
+        return next_bug_id
     elif memory_ports.get(f"{bug_id}_controlOutR") == 1:
-        return int(memory_connections[f"{bug_id}_controlOutR"].split("_")[0])
+        # The right control out port is active
+        next_bug_id = int(memory_connections.get(f"{bug_id}_controlOutR").split("_")[0])
+        # If the next bug is a plus bug we can return the next bug
+        if memory_bug_types.get(next_bug_id) == "plus":
+            return next_bug_id
+        # If the next bug is nested and we are currently inside it (Conected to a control out port) jump to the next bug
+        if memory_bug_types.get(next_bug_id) == "nested" and "Out" in memory_connections.get(f"{bug_id}_controlOutR"):
+            return get_next_bug_to_evaluate(next_bug_id)
+        # If the next bug is nested and we are currently outside it (Conected to a control in port) jump to nested bug
+        return next_bug_id
     else:
-        raise Exception("Something went wrong", memory_ports.get(f"{bug_id}_controlOutL"), memory_ports.get(f"{bug_id}_controlOutR"))
+        raise Exception("Something went wrong", memory_ports.get(
+            f"{bug_id}_controlOutL"), memory_ports.get(f"{bug_id}_controlOutR"))
 
 
 def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
@@ -208,6 +227,9 @@ def write_control_to_parent_bug(bug_id: int) -> None:
     if (memory_connections.get(f"{bug_id}_controlOutL") is not None):
         memory_ports[memory_connections.get(
             f"{bug_id}_controlOutL")] = memory_ports[f"{bug_id}_controlOutL"]
+    if (memory_ports[f"{bug_id}_controlOutL"] == 1 and memory_connections.get(f"{bug_id}_controlOutR") is not None and memory_connections.get(f"{bug_id}_controlOutL") == memory_connections.get(f"{bug_id}_controlOutR")):
+        # If the left control out port is active and the left and right control out ports are connected to the same port dont write the value to the port again as otherwise the one will be overwritten
+        return
     if (memory_connections.get(f"{bug_id}_controlOutR") is not None):
         memory_ports[memory_connections.get(
             f"{bug_id}_controlOutR")] = memory_ports[f"{bug_id}_controlOutR"]
@@ -247,8 +269,6 @@ def evaluate_plus_bug(bug_id: int) -> int:
 
 
 def evaluate_nested_bug(bug_id: int) -> None:
-    # Check if we have a nested bug
-
     # Write data to the nested bug ports
     if (memory_ports.get(f"{bug_id}_dataInUp") is not None):
         wirte_data_to_memory(memory_connections.get(
@@ -258,10 +278,11 @@ def evaluate_nested_bug(bug_id: int) -> None:
             f"{bug_id}_dataInDown"), read_from_memory(bug_id, "dataInDown"))
 
     if (memory_ports.get(f"{bug_id}_controlIn") == 0 or memory_ports.get(f"{bug_id}_controlIn") is None):
-        write_to_memory(bug_id, "controlIn", 1)
-        # Evaluate the nested bug
-        next_bug_id = get_next_bug_to_evaluate(bug_id)
-        eval_bug(next_bug_id)
+        pass
+    write_to_memory(bug_id, "controlIn", 1)
+    # Evaluate the nested bug
+    next_bug_id = get_next_bug_to_evaluate(bug_id)
+    eval_bug(next_bug_id)
 
     # Set the control value of the nested bug
     if (memory_ports.get(f"{bug_id}_dataOut") != 0):
@@ -315,8 +336,11 @@ def main(board):
 
 if __name__ == "__main__":
     example_file = open(
-        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/asignment.json", "r").read()
-    main(json.loads(example_file))
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isPositive.json", "r").read()
+    example_board = json.loads(example_file)
+    example_board["xValue"] = -6
+    example_board["yValue"] = None
+    main(example_board)
     # print(memory_connections)
     print(memory_ports)
     print(memory_ports.get("0_dataOut"))
