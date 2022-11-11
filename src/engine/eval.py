@@ -1,12 +1,12 @@
 import json
-
+import sys
+# Needed otherwise module will not be found
+sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/')
+from src.api.boardTypes import EdgeType, PortType
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
-
-BUGPORTS = ['dataInUp', 'controlIn', 'dataInDown',
-            'controlOutL', 'controlOutR', 'dataOut']
 
 
 def initialize_port_memory(bug_id: int) -> None:
@@ -15,8 +15,8 @@ def initialize_port_memory(bug_id: int) -> None:
     Arguments:
         bug_id {int} -- the id of the bug to be initialized
     """
-    for port in BUGPORTS:
-        memory_ports[f"{bug_id}_{port}"] = None
+    for port in PortType:
+        memory_ports[f"{bug_id}_{port.value}"] = None
 
 
 def initialize_connection_memory(edges: list) -> None:
@@ -26,15 +26,18 @@ def initialize_connection_memory(edges: list) -> None:
 
     """
     for edge in edges:
-        if ("control" in edge["fromPort"].lower()):
-            memory_connections[f"{edge['fromNode']}_{edge['fromPort']}"] = (
-                f"{edge['toNode']}_{edge['toPort']}")
+        from_bugId = edge.get("from_").get("bugId")
+        from_port = edge.get("from_").get("port")
+        to_bugId = edge.get("to").get("bugId")
+        to_port = edge.get("to").get("port")
+        if (edge.get("type") == EdgeType.Control):
+            memory_connections[f"{from_bugId}_{from_port}"] = (
+                f"{to_bugId}_{to_port}")
             continue
-        if (memory_connections.get(f"{edge['fromNode']}_{edge['fromPort']}") is None):
-            memory_connections[f"{edge['fromNode']}_{edge['fromPort']}"] = list(
-            )
-        memory_connections[f"{edge['fromNode']}_{edge['fromPort']}"].append(
-            f"{edge['toNode']}_{edge['toPort']}")
+        if (memory_connections.get(f"{from_bugId}_{from_port}") is None):
+            memory_connections[f"{from_bugId}_{from_port}"] = list()
+        memory_connections[f"{from_bugId}_{from_port}"].append(
+            f"{to_bugId}_{to_port}")
 
 
 def get_next_bug(fromBug: int, fromPort: str) -> int:
@@ -53,35 +56,35 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
     Returns:
         int -- The id of the next bug to evaluate
     """
-    if (memory_ports.get(f"{bug_id}_controlOutL") is None and memory_ports.get(f"{bug_id}_controlOutR") is None):
+    if (memory_ports.get(f"{bug_id}_{PortType.Left.value}") is None and memory_ports.get(f"{bug_id}_{PortType.Right.value}") is None):
         # This is a nested bug that has not been evaluated yet -> return the first bug in the nested bug
-        return int(memory_connections[f"{bug_id}_controlIn"].split("_")[0])
+        return int(memory_connections[f"{bug_id}_{PortType.In.value}"].split("_")[0])
 
-    if memory_ports.get(f"{bug_id}_controlOutL") == 1:
+    if memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1:
         # The left control out port is active
-        next_bug_id = int(memory_connections.get(f"{bug_id}_controlOutL").split("_")[0])
+        next_bug_id = int(memory_connections.get(f"{bug_id}_{PortType.Left.value}").split("_")[0])
         # If the next bug is a plus bug we can return the next bug
         if memory_bug_types.get(next_bug_id) == "plus":
             return next_bug_id
         # If the next bug is nested and we are currently inside it (Conected to a control out port) jump to the next bug
-        if memory_bug_types.get(next_bug_id) == "nested" and "Out" in memory_connections.get(f"{bug_id}_controlOutL"):
+        if memory_bug_types.get(next_bug_id) == "nested" and "Out" in memory_connections.get(f"{bug_id}_{PortType.Left.value}"):
             return get_next_bug_to_evaluate(next_bug_id)
         # If the next bug is nested and we are currently outside it (Conected to a control in port) jump to nested bug
         return next_bug_id
-    elif memory_ports.get(f"{bug_id}_controlOutR") == 1:
+    elif memory_ports.get(f"{bug_id}_{PortType.Right.value}") == 1:
         # The right control out port is active
-        next_bug_id = int(memory_connections.get(f"{bug_id}_controlOutR").split("_")[0])
+        next_bug_id = int(memory_connections.get(f"{bug_id}_{PortType.Right.value}").split("_")[0])
         # If the next bug is a plus bug we can return the next bug
         if memory_bug_types.get(next_bug_id) == "plus":
             return next_bug_id
         # If the next bug is nested and we are currently inside it (Conected to a control out port) jump to the next bug
-        if memory_bug_types.get(next_bug_id) == "nested" and "Out" in memory_connections.get(f"{bug_id}_controlOutR"):
+        if memory_bug_types.get(next_bug_id) == "nested" and "Out" in memory_connections.get(f"{bug_id}_{PortType.Right.value}"):
             return get_next_bug_to_evaluate(next_bug_id)
         # If the next bug is nested and we are currently outside it (Conected to a control in port) jump to nested bug
         return next_bug_id
     else:
         raise Exception("Something went wrong", memory_ports.get(
-            f"{bug_id}_controlOutL"), memory_ports.get(f"{bug_id}_controlOutR"))
+            f"{bug_id}_{PortType.Left.value}"), memory_ports.get(f"{bug_id}_{PortType.Right.value}"))
 
 
 def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
@@ -154,24 +157,24 @@ def set_control_value(bug_id: int, control_value: int) -> int:
     if control_value == 0:
         # bugs left control out port is active
         # Activate the left control out port
-        write_to_memory(bug_id, "controlOutL", 1)
+        write_to_memory(bug_id, PortType.Left.value, 1)
         # Deactivate the right control out port
-        write_to_memory(bug_id, "controlOutR", 0)
+        write_to_memory(bug_id, PortType.Right.value, 0)
         # Get the id of the next bug based on the left control out port
-        return get_next_bug(bug_id, "controlOutL")
+        return get_next_bug(bug_id, PortType.Left.value)
     elif control_value == 1:
         # bugs right control out port is active
         # Deactivate the left control out port
-        write_to_memory(bug_id, "controlOutL", 0)
+        write_to_memory(bug_id, PortType.Left.value, 0)
         # Activate the right control out port
-        write_to_memory(bug_id, "controlOutR", 1)
+        write_to_memory(bug_id, PortType.Right.value, 1)
         # Get the id of the next bug based on the right control out port
-        return get_next_bug(bug_id, "controlOutR")
+        return get_next_bug(bug_id, PortType.Right.value)
 
 
 def initialize_bug_memory(bug) -> None:
     """Initialize a bug"""
-    if "edges" in bug:
+    if bug.get("type") != "plus":
         initialize_connection_memory(bug.get("edges"))
         initialize_port_memory(bug.get("id"))
         memory_bug_types[bug.get("id")] = "nested"
@@ -191,10 +194,10 @@ def initialize_board_memory(board) -> int:
     """
     initialize_port_memory(board.get("id"))
     # Set the data input value of the upper parent bug
-    write_to_memory(board.get("id"), "dataInUp", board.get("xValue"))
+    write_to_memory(board.get("id"), PortType.Up.value, board.get("xValue"))
     # Set the data input value of the lower parent bug
-    write_to_memory(board.get("id"), "dataInDown", board.get("yValue"))
-    write_to_memory(board.get("id"), "controlIn", 1)  # Activate the parent bug
+    write_to_memory(board.get("id"), PortType.Down.value, board.get("yValue"))
+    write_to_memory(board.get("id"), PortType.In.value, 1)  # Activate the parent bug
 
     initialize_connection_memory(board.get("edges"))
 
@@ -205,16 +208,16 @@ def initialize_board_memory(board) -> int:
 
     # Set initial values to data ports
     # Write the data to the upper child bug
-    if (memory_connections.get(f"{board.get('id')}_dataInUp") is not None):
+    if (memory_connections.get(f"{board.get('id')}_{PortType.Up.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
-            f"{board.get('id')}_dataInUp"), board.get("xValue"))
+            f"{board.get('id')}_{PortType.Up.value}"), board.get("xValue"))
     #write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
     # Write the data to the lower child bug
-    if (memory_connections.get(f"{board.get('id')}_dataInDown") is not None):
+    if (memory_connections.get(f"{board.get('id')}_{PortType.Down.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
-            f"{board.get('id')}_dataInDown"), board.get("yValue"))
+            f"{board.get('id')}_{PortType.Down.value}"), board.get("yValue"))
 
-    return get_next_bug(board.get("id"), "controlIn")
+    return get_next_bug(board.get("id"), PortType.In.value)
 
 
 def write_control_to_parent_bug(bug_id: int) -> None:
@@ -224,15 +227,15 @@ def write_control_to_parent_bug(bug_id: int) -> None:
         bug_id {int} -- The id of the bug to write the control value to
     """
 
-    if (memory_connections.get(f"{bug_id}_controlOutL") is not None):
+    if (memory_connections.get(f"{bug_id}_{PortType.Left.value}") is not None):
         memory_ports[memory_connections.get(
-            f"{bug_id}_controlOutL")] = memory_ports[f"{bug_id}_controlOutL"]
-    if (memory_ports[f"{bug_id}_controlOutL"] == 1 and memory_connections.get(f"{bug_id}_controlOutR") is not None and memory_connections.get(f"{bug_id}_controlOutL") == memory_connections.get(f"{bug_id}_controlOutR")):
+            f"{bug_id}_{PortType.Left.value}")] = memory_ports[f"{bug_id}_{PortType.Left.value}"]
+    if (memory_ports[f"{bug_id}_{PortType.Left.value}"] == 1 and memory_connections.get(f"{bug_id}_{PortType.Right.value}") is not None and memory_connections.get(f"{bug_id}_{PortType.Left.value}") == memory_connections.get(f"{bug_id}_{PortType.Right.value}")):
         # If the left control out port is active and the left and right control out ports are connected to the same port dont write the value to the port again as otherwise the one will be overwritten
         return
-    if (memory_connections.get(f"{bug_id}_controlOutR") is not None):
+    if (memory_connections.get(f"{bug_id}_{PortType.Right.value}") is not None):
         memory_ports[memory_connections.get(
-            f"{bug_id}_controlOutR")] = memory_ports[f"{bug_id}_controlOutR"]
+            f"{bug_id}_{PortType.Right.value}")] = memory_ports[f"{bug_id}_{PortType.Right.value}"]
 
 
 def evaluate_plus_bug(bug_id: int) -> int:
@@ -244,25 +247,25 @@ def evaluate_plus_bug(bug_id: int) -> int:
         int -- The id of the next bug to evaluate
     """
     # Activate bug
-    write_to_memory(bug_id, "controlIn", 1)
+    write_to_memory(bug_id, PortType.In.value, 1)
     # Evaluate the plus bug
-    up = read_from_memory(bug_id, "dataInUp")
-    down = read_from_memory(bug_id, "dataInDown")
+    up = read_from_memory(bug_id, PortType.Up.value)
+    down = read_from_memory(bug_id, PortType.Down.value)
     data_value, control_value = calculate_plus_bug(up, down)
 
     # Write the results to the port itself
-    write_to_memory(bug_id, "dataOut", data_value)
+    write_to_memory(bug_id, PortType.Out.value, data_value)
     set_control_value(bug_id, control_value)
 
     # Write the results to the connected ports
-    if (memory_connections.get(f"{bug_id}_dataOut") is not None):
+    if (memory_connections.get(f"{bug_id}_{PortType.Out.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
-            f"{bug_id}_dataOut"), data_value)
+            f"{bug_id}_{PortType.Out.value}"), data_value)
 
     # If the next bug is not a plus bug, set the control value
-    if (control_value == 0 and memory_bug_types.get(get_next_bug(bug_id, "controlOutL")) != "plus"):
+    if (control_value == 0 and memory_bug_types.get(get_next_bug(bug_id, PortType.Left.value)) != "plus"):
         write_control_to_parent_bug(bug_id)
-    elif (control_value == 1 and memory_bug_types.get(get_next_bug(bug_id, "controlOutR")) != "plus"):
+    elif (control_value == 1 and memory_bug_types.get(get_next_bug(bug_id, PortType.Right.value)) != "plus"):
         write_control_to_parent_bug(bug_id)
 
     return get_next_bug_to_evaluate(bug_id)
@@ -270,41 +273,41 @@ def evaluate_plus_bug(bug_id: int) -> int:
 
 def evaluate_nested_bug(bug_id: int) -> None:
     # Write data to the nested bug ports
-    if (memory_ports.get(f"{bug_id}_dataInUp") is not None):
+    if (memory_ports.get(f"{bug_id}_{PortType.Up.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
-            f"{bug_id}_dataInUp"), read_from_memory(bug_id, "dataInUp"))
-    if (memory_ports.get(f"{bug_id}_dataInDown") is not None):
+            f"{bug_id}_{PortType.Up.value}"), read_from_memory(bug_id, PortType.Up.value))
+    if (memory_ports.get(f"{bug_id}_{PortType.Down.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
-            f"{bug_id}_dataInDown"), read_from_memory(bug_id, "dataInDown"))
+            f"{bug_id}_{PortType.Down.value}"), read_from_memory(bug_id, PortType.Down.value))
 
-    if (memory_ports.get(f"{bug_id}_controlIn") == 0 or memory_ports.get(f"{bug_id}_controlIn") is None):
+    if (memory_ports.get(f"{bug_id}_{PortType.In.value}") == 0 or memory_ports.get(f"{bug_id}_{PortType.In.value}") is None):
         pass
-    write_to_memory(bug_id, "controlIn", 1)
+    write_to_memory(bug_id, PortType.In.value, 1)
     # Evaluate the nested bug
     next_bug_id = get_next_bug_to_evaluate(bug_id)
     eval_bug(next_bug_id)
 
     # Set the control value of the nested bug
-    if (memory_ports.get(f"{bug_id}_dataOut") != 0):
-        write_to_memory(bug_id, "controlOutL", 0)
-        write_to_memory(bug_id, "controlOutR", 1)
+    if (memory_ports.get(f"{bug_id}_{PortType.Out.value}") != 0):
+        write_to_memory(bug_id, PortType.Left.value, 0)
+        write_to_memory(bug_id, PortType.Right.value, 1)
     else:
-        write_to_memory(bug_id, "controlOutL", 1)
-        write_to_memory(bug_id, "controlOutR", 0)
+        write_to_memory(bug_id, PortType.Left.value, 1)
+        write_to_memory(bug_id, PortType.Right.value, 0)
 
     # Go to the next bug
-    if (memory_connections.get(f"{bug_id}_controlOutL") == 1):
-        next_bug_id = get_next_bug(bug_id, "controlOutL")
+    if (memory_connections.get(f"{bug_id}_{PortType.Left.value}") == 1):
+        next_bug_id = get_next_bug(bug_id, PortType.Left.value)
         eval_bug(next_bug_id)
     else:
-        next_bug_id = get_next_bug(bug_id, "controlOutR")
+        next_bug_id = get_next_bug(bug_id, PortType.Right.value)
         eval_bug(next_bug_id)
 
     # deactivate the control port of the nested bug
-    write_to_memory(bug_id, "controlIn", 0)
+    write_to_memory(bug_id, PortType.In.value, 0)
 
     wirte_data_to_memory(memory_connections.get(
-        f"{bug_id}_dataOut"), read_from_memory(bug_id, "dataOut"))
+        f"{bug_id}_{PortType.Out.value}"), read_from_memory(bug_id, PortType.Out.value))
 
 
 def eval_bug(bug_id) -> None:
@@ -312,9 +315,9 @@ def eval_bug(bug_id) -> None:
         return
     elif (memory_bug_types.get(bug_id) == "nested"):
         evaluate_nested_bug(bug_id)
-        if (memory_ports.get(f"{bug_id}_controlOutL") == 1 and memory_bug_types.get(get_next_bug(bug_id, "controlOutL")) != "plus"):
+        if (memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1 and memory_bug_types.get(get_next_bug(bug_id, PortType.Left.value)) != "plus"):
             write_control_to_parent_bug(bug_id)
-        elif (memory_ports.get(f"{bug_id}_controlOutR") == 1 and memory_bug_types.get(get_next_bug(bug_id, "controlOutR")) != "plus"):
+        elif (memory_ports.get(f"{bug_id}_{PortType.Right.value}") == 1 and memory_bug_types.get(get_next_bug(bug_id, PortType.Right.value)) != "plus"):
             write_control_to_parent_bug(bug_id)
         return
     elif (memory_bug_types.get(bug_id) == "plus"):
@@ -336,12 +339,12 @@ def main(board):
 
 if __name__ == "__main__":
     example_file = open(
-        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isPositive.json", "r").read()
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/incrementIterator.json", "r").read()
     example_board = json.loads(example_file)
     example_board["xValue"] = -6
     example_board["yValue"] = None
     main(example_board)
     # print(memory_connections)
     print(memory_ports)
-    print(memory_ports.get("0_dataOut"))
+    print(memory_ports.get("0_Out"))
     # print(memory_bug_types)

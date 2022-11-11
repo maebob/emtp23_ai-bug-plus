@@ -28,7 +28,7 @@ class Edge(BaseModel):
 
 class Bug(BaseModel):
     id: int
-    bugs: list[Bug]
+    bugs: list
     edges: list[Edge]
     xValue: int
     yValue: int
