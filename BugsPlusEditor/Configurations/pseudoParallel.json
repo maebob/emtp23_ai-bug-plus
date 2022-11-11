@@ -1,228 +1,381 @@
 {
     "bugs": [
-        { "id": 1, "type": "plus"},
-        { "id": 2, "type":"plus"},
+        { "id": 1, "bugs": [], "edges": [], "type": "plus" },
+        { "id": 2, "bugs": [], "edges": [], "type": "plus" },
         {
             "bugs": [
-                { "id": 20},
-                { "id": 21},
-                { "id": 22}
+                { "id": 31, "bugs": [], "edges": [], "type": "plus" },
+                { "id": 32, "bugs": [], "edges": [], "type": "plus" },
+                { "id": 33, "bugs": [], "edges": [], "type": "plus" }
             ],
             "edges": [
                 {
-                    "fromNode": 3,
-                    "toNode": 20,
-                    "fromPort": "controlIn",
-                    "toPort": "controlIn"
+                    "from_": {
+                        "bugId": 30,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 31,
+                        "port": "In"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 20,
-                    "toNode": 21,
-                    "fromPort": "controlOutL",
-                    "toPort": "controlIn"
+                    "from_": {
+                        "bugId": 31,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 32,
+                        "port": "In"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 21,
-                    "toNode": 22,
-                    "fromPort": "controlOutR",
-                    "toPort": "controlIn"
+                    "from_": {
+                        "bugId": 32,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 33,
+                        "port": "In"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 22,
-                    "toNode": 3,
-                    "fromPort": "controlOutL",
-                    "toPort": "controlOutL"
+                    "from_": {
+                        "bugId": 33,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 30,
+                        "port": "Left"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 22,
-                    "toNode": 3,
-                    "fromPort": "controlOutR",
-                    "toPort": "controlOutR"
+                    "from_": {
+                        "bugId": 33,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 30,
+                        "port": "Right"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 22,
-                    "toNode": 3,
-                    "fromPort": "dataOut",
-                    "toPort": "dataOut"
+                    "from_": {
+                        "bugId": 33,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 30,
+                        "port": "Out"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 3,
-                    "toNode": 22,
-                    "fromPort": "dataInUp",
-                    "toPort": "dataInDown"
+                    "from_": {
+                        "bugId": 30,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 33,
+                        "port": "Up"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 20,
-                    "toNode": 21,
-                    "fromPort": "dataOut",
-                    "toPort": "dataInUp"
+                    "from_": {
+                        "bugId": 31,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 32,
+                        "port": "Up"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 21,
-                    "toNode": 22,
-                    "fromPort": "dataOut",
-                    "toPort": "dataInUp"
+                    "from_": {
+                        "bugId": 32,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 33,
+                        "port": "Down"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 22,
-                    "toNode": 22,
-                    "fromPort": "dataOut",
-                    "toPort": "dataInDown"
+                    "from_": {
+                        "bugId": 33,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 33,
+                        "port": "Down"
+                    },
+                    "type": "Data"
                 }
             ],
-            "id": 3,
+            "id": 30,
             "type": "nested"
-        }     
-        ,
+        },
         {
             "bugs": [
-                { "id": 11},
-                { "id": 12}
+                { "id": 41, "bugs": [], "edges": [], "type": "plus" },
+                { "id": 42, "bugs": [], "edges": [], "type": "plus" },
+                { "id": 43, "bugs": [], "edges": [], "type": "plus" }
             ],
             "edges": [
                 {
-                    "fromNode": 4,
-                    "toNode": 11,
-                    "fromPort": "controlIn",
-                    "toPort": "controlIn"
+                    "from_": {
+                        "bugId": 40,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 41,
+                        "port": "In"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 11,
-                    "toNode": 11,
-                    "fromPort": "controlOutL",
-                    "toPort": "controlIn"
+                    "from_": {
+                        "bugId": 41,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 42,
+                        "port": "In"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 11,
-                    "toNode": 12,
-                    "fromPort": "controlOutR",
-                    "toPort": "controlIn"
+                    "from_": {
+                        "bugId": 42,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 43,
+                        "port": "In"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 12,
-                    "toNode": 4,
-                    "fromPort": "controlOutL",
-                    "toPort": "controlOutL"
+                    "from_": {
+                        "bugId": 43,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 40,
+                        "port": "Left"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 12,
-                    "toNode": 4,
-                    "fromPort": "controlOutR",
-                    "toPort": "controlOutR"
+                    "from_": {
+                        "bugId": 43,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 40,
+                        "port": "Right"
+                    },
+                    "type": "Control"
                 },
                 {
-                    "fromNode": 12,
-                    "toNode": 4,
-                    "fromPort": "dataOut",
-                    "toPort": "dataOut"
+                    "from_": {
+                        "bugId": 43,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 40,
+                        "port": "Out"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 4,
-                    "toNode": 12,
-                    "fromPort": "dataInUp",
-                    "toPort": "dataInUp"
+                    "from_": {
+                        "bugId": 40,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 43,
+                        "port": "Up"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 11,
-                    "toNode": 11,
-                    "fromPort": "dataOut",
-                    "toPort": "dataInDown"
+                    "from_": {
+                        "bugId": 41,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 42,
+                        "port": "Down"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 11,
-                    "toNode": 12,
-                    "fromPort": "dataOut",
-                    "toPort": "dataInDown"
+                    "from_": {
+                        "bugId": 42,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 43,
+                        "port": "Down"
+                    },
+                    "type": "Data"
                 },
                 {
-                    "fromNode": 12,
-                    "toNode": 12,
-                    "fromPort": "dataOut",
-                    "toPort": "dataInUp"
+                    "from_": {
+                        "bugId": 43,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 43,
+                        "port": "Down"
+                    },
+                    "type": "Data"
                 }
             ],
-            "id": 4,
+            "id": 40,
             "type": "nested"
-        }        
+        }
     ],
     "edges": [
         {
-            "fromNode": 0,
-            "toNode": 1,
-            "fromPort": "controlIn",
-            "toPort": "controlIn"
-        },
-        {
-            "fromNode": 1,
-            "toNode": 2,
-            "fromPort": "controlOutL",
-            "toPort": "controlIn"
-        },
-        {
-            "fromNode": 2,
-            "toNode": 3,
-            "fromPort": "controlOutL",
-            "toPort": "controlIn"
-        },
-        {
-            "fromNode": 2,
-            "toNode": 4,
-            "fromPort": "controlOutR",
-            "toPort": "controlIn"
-        },
-        {
-            "fromNode": 3,
-            "toNode": 0,
-            "fromPort": "controlOutL",
-            "toPort": "controlOutL"
-        },
-        {
-            "fromNode": 3,
-            "toNode": 0,
-            "fromPort": "controlOutR",
-            "toPort": "controlOutL"
-        },
-        {
-            "fromNode": 4,
-            "toNode": 0,
-            "fromPort": "controlOutL",
-            "toPort": "controlOutR"
-        },
-        {
-            "fromNode": 4,
-            "toNode": 0,
-            "fromPort": "controlOutR",
-            "toPort": "controlOutR"
-        },
-        {
-            "fromNode": 1,
-            "toNode": 2,
-            "fromPort": "dataOut",
-            "toPort": "dataInUp"
-        },
-        {
-            "fromNode": 2,
-            "toNode": 3,
-            "fromPort": "dataOut",
-            "toPort": "dataOutDown"
-        },
-        {
-            "fromNode": 4,
-            "toNode": 2,
-            "fromPort": "dataOut",
-            "toPort": "dataInDown"
-        },
-        {
-            "fromNode": 4,
-            "toNode": 3,
-            "fromPort": "dataOut",
-            "toPort": "dataInUp"
-        },
-        {
-            "fromNode": 3,
-            "toNode": 4,
-            "fromPort": "dataOut",
-            "toPort": "dataInUp"
+            "from_": {
+                "bugId": 0,
+                "port": "In"
+            },
+            "to": {
+                "bugId": 1,
+                "port": "In"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 1,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "In"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 2,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 30,
+                "port": "In"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 2,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 40,
+                "port": "In"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 30,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 30,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 40,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Right"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 40,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Right"
+            },
+            "type": "Control"
+        },{
+            "from_": {
+                "bugId": 1,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "Up"
+            },
+            "type": "Data"
+        },{
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 30,
+                "port": "Down"
+            },
+            "type": "Data"
+        },{
+            "from_": {
+                "bugId": 40,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "Down"
+            },
+            "type": "Data"
+        },{
+            "from_": {
+                "bugId": 40,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 30,
+                "port": "Up"
+            },
+            "type": "Data"
+        },{
+            "from_": {
+                "bugId": 30,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 40,
+                "port": "Up"
+            },
+            "type": "Data"
         }
     ],
     "xValue": 6,
