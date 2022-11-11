@@ -338,11 +338,11 @@
             "type": "Data"
         },{
             "from_": {
-                "bugId": 2,
+                "bugId": 30,
                 "port": "Out"
             },
             "to": {
-                "bugId": 30,
+                "bugId": 2,
                 "port": "Down"
             },
             "type": "Data"
