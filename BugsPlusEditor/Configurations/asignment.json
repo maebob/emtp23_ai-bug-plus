@@ -1,50 +1,85 @@
 {
     "bugs": [
-        { "id": 1},
-        { "id": 2}
+        { "id": 1, "bugs": [], "edges":[], "type": "plus"},
+        { "id": 2, "bugs": [], "edges":[], "type": "plus"}
     ],
     "edges": [
         {
-            "fromNode": 0,
-            "toNode": 1,
-            "fromPort": "controlIn",
-            "toPort": "controlIn"
+            "from_": {
+                "bugId": 0,
+                "port": "In"
+            },
+            "to": {
+                "bugId": 1,
+                "port": "In"
+            },
+            "type": "Control"
         },
         {
-            "fromNode": 1,
-            "toNode": 2,
-            "fromPort": "controlOutL",
-            "toPort": "controlIn"
+            "from_": {
+                "bugId": 1,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "In"
+            },
+            "type": "Control"
         },
         {
-            "fromNode": 2,
-            "toNode": 0,
-            "fromPort": "controlOutL",
-            "toPort": "controlOutL"
+            "from_": {
+                "bugId": 2,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "type": "Control"
         },
         {
-            "fromNode": 2,
-            "toNode": 0,
-            "fromPort": "controlOutR",
-            "toPort": "controlOutL"
+            "from_": {
+                "bugId": 2,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "type": "Control"
         },
         {
-            "fromNode": 0,
-            "toNode": 2,
-            "fromPort": "dataInUp",
-            "toPort": "dataInUp"
+            "from_": {
+                "bugId": 0,
+                "port": "Up"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "Up"
+            },
+            "type": "Data"
         },
         {
-            "fromNode": 1,
-            "toNode": 2,
-            "fromPort": "dataOut",
-            "toPort": "dataInDown"
+            "from_": {
+                "bugId": 1,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "Down"
+            },
+            "type": "Data"
         },
         {
-            "fromNode": 2,
-            "toNode": 0,
-            "fromPort": "dataOut",
-            "toPort": "dataOut"
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "type": "Data"
         }
     ],
     "xValue": 6,

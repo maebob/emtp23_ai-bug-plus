@@ -27,7 +27,7 @@ def test_incrementor():
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
         example["yValue"] = None
-        assert eval.main(example).get("0_dataOut") == random_number_1 + 1
+        assert eval.main(example).get("0_Out") == random_number_1 + 1
 
 
 def test_decrementor():
@@ -39,7 +39,7 @@ def test_decrementor():
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
         example["yValue"] = 4
-        assert eval.main(example).get("0_dataOut") == random_number_1 - 1
+        assert eval.main(example).get("0_Out") == random_number_1 - 1
 
 
 def test_is_zero():
@@ -53,11 +53,11 @@ def test_is_zero():
         example["yValue"] = random_number_2
         result = eval.main(example)
         if random_number_1 + random_number_2 == 0:
-            assert result.get("0_controlOutL") == 0
-            assert result.get("0_controlOutR") == 1
+            assert result.get("0_Left") == 0
+            assert result.get("0_Right") == 1
         else:
-            assert result.get("0_controlOutL") == 1
-            assert result.get("0_controlOutR") == 0
+            assert result.get("0_Left") == 1
+            assert result.get("0_Right") == 0
 
 
 def test_incrementor_iterator():
@@ -68,7 +68,7 @@ def test_incrementor_iterator():
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
         example["yValue"] = None
-        assert eval.main(example).get("0_dataOut") == random_number_1 + 1
+        assert eval.main(example).get("0_Out") == random_number_1 + 1
 
 
 def test_decrementor_iterator():
@@ -79,7 +79,7 @@ def test_decrementor_iterator():
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
         example["yValue"] = None
-        assert eval.main(example).get("0_dataOut") == random_number_1 - 1
+        assert eval.main(example).get("0_Out") == random_number_1 - 1
 
 
 def test_asignment():
@@ -91,9 +91,9 @@ def test_asignment():
         example["xValue"] = random_number_1
         example["yValue"] = None
         result = eval.main(example)
-        assert result.get("0_dataOut") == random_number_1
+        assert result.get("0_Out") == random_number_1
         print(random_number_1)
-        assert result.get("0_controlOutL") == 1
+        assert result.get("0_Left") == 1
 
 
 def test_nested_incrementor():
@@ -104,15 +104,15 @@ def test_nested_incrementor():
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
         example["yValue"] = None
-        assert eval.main(example).get("0_dataOut") == random_number_1 + 1
+        assert eval.main(example).get("0_Out") == random_number_1 + 1
 
 
 def test_pseudo_parallel():
     """Test the pseudo parallel function."""
     example_file = open(PSEUDO_PARALLEL, "r").read()
     example = json.loads(example_file)
-    assert eval.main(example).get("0_ControlOutL") == None
-    assert eval.main(example).get("0_controlOutR") == 1
+    assert eval.main(example).get("0_Left") == None
+    assert eval.main(example).get("0_Right") == 1
 
 
 def test_is_positive():
@@ -125,8 +125,8 @@ def test_is_positive():
         example["yValue"] = None
         result = eval.main(example)
         if random_number_1 > 0:
-            assert result.get("0_controlOutL") == 0
-            assert result.get("0_controlOutR") == 1
+            assert result.get("0_Left") == 0
+            assert result.get("0_Right") == 1
         else:
-            assert result.get("0_controlOutL") == 1
-            assert result.get("0_controlOutR") == 0
+            assert result.get("0_Left") == 1
+            assert result.get("0_Right") == 0
