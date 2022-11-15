@@ -3,9 +3,9 @@
     "bugs": [
         {
             "bugs": [
-                { "id": 2, "bugs": [], "edges": [], "type": "plus" },
-                { "id": 3, "bugs": [], "edges": [], "type": "plus" },
-                { "id": 4, "bugs": [], "edges": [], "type": "plus" }
+                { "id": 2, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 3, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 4, "bugs": [], "edges": [], "Type": "plus" }
             ],
             "edges": [
                 {
@@ -17,7 +17,7 @@
                         "bugId": 2,
                         "port": "In"
                     },
-                    "type": "Control"
+                    "Type": "Control"
                 },
                 {
                     "from_": {
@@ -28,7 +28,7 @@
                         "bugId": 3,
                         "port": "In"
                     },
-                    "type": "Control"
+                    "Type": "Control"
                 },
                 {
                     "from_": {
@@ -39,7 +39,7 @@
                         "bugId": 4,
                         "port": "In"
                     },
-                    "type": "Control"
+                    "Type": "Control"
                 },
                 {
                     "from_": {
@@ -50,7 +50,7 @@
                         "bugId": 1,
                         "port": "Left"
                     },
-                    "type": "Control"
+                    "Type": "Control"
                 },
                 {
                     "from_": {
@@ -61,7 +61,7 @@
                         "bugId": 1,
                         "port": "Right"
                     },
-                    "type": "Control"
+                    "Type": "Control"
                 },
                 {
                     "from_": {
@@ -72,7 +72,7 @@
                         "bugId": 1,
                         "port": "Out"
                     },
-                    "type": "Data"
+                    "Type": "Data"
                 },
                 {
                     "from_": {
@@ -83,7 +83,7 @@
                         "bugId": 4,
                         "port": "Up"
                     },
-                    "type": "Data"
+                    "Type": "Data"
                 },
                 {
                     "from_": {
@@ -94,7 +94,7 @@
                         "bugId": 3,
                         "port": "Up"
                     },
-                    "type": "Data"
+                    "Type": "Data"
                 },
                 {
                     "from_": {
@@ -105,10 +105,11 @@
                         "bugId": 4,
                         "port": "Down"
                     },
-                    "type": "Data"
+                    "Type": "Data"
                 }
             ],
-            "id": 1
+            "id": 1,
+            "Type": "nested"
         }
     ],
     "edges": [
@@ -121,7 +122,7 @@
                 "bugId": 1,
                 "port": "In"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -132,7 +133,7 @@
                 "bugId": 0,
                 "port": "Left"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -143,7 +144,7 @@
                 "bugId": 0,
                 "port": "Right"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -154,7 +155,7 @@
                 "bugId": 0,
                 "port": "Out"
             },
-            "type": "Data"
+            "Type": "Data"
         },
         {
             "from_": {
@@ -165,7 +166,7 @@
                 "bugId": 1,
                 "port": "Up"
             },
-            "type": "Data"
+            "Type": "Data"
         }
     ],
     "xValue": 10,

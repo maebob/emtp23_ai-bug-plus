@@ -1,8 +1,8 @@
 {  
     "bugs": [
-        { "id": 1, "bugs": [], "edges":[], "type": "plus"},
-        { "id": 2, "bugs": [], "edges":[], "type": "plus"},
-        { "id": 3, "bugs": [], "edges":[], "type": "plus"}
+        { "id": 1, "bugs": [], "edges":[], "Type": "plus"},
+        { "id": 2, "bugs": [], "edges":[], "Type": "plus"},
+        { "id": 3, "bugs": [], "edges":[], "Type": "plus"}
     ],
     "edges": [
         {
@@ -14,7 +14,7 @@
                 "bugId": 1,
                 "port": "In"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -25,7 +25,7 @@
                 "bugId": 2,
                 "port": "In"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -36,7 +36,7 @@
                 "bugId": 3,
                 "port": "In"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -47,7 +47,7 @@
                 "bugId": 0,
                 "port": "Left"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -58,7 +58,7 @@
                 "bugId": 0,
                 "port": "Right"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -69,7 +69,7 @@
                 "bugId": 0,
                 "port": "Out"
             },
-            "type": "Data"
+            "Type": "Data"
         },
         {
             "from_": {
@@ -80,7 +80,7 @@
                 "bugId": 3,
                 "port": "Up"
             },
-            "type": "Data"
+            "Type": "Data"
         },
         {
             "from_": {
@@ -91,7 +91,7 @@
                 "bugId": 2,
                 "port": "Down"
             },
-            "type": "Data"
+            "Type": "Data"
         },
         {
             "from_": {
@@ -102,7 +102,7 @@
                 "bugId": 3,
                 "port": "Down"
             },
-            "type": "Data"
+            "Type": "Data"
         }
     ],
     "xValue": 6,

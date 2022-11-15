@@ -442,8 +442,8 @@
         },
         {
             "bugs": [
-                { "id": 1111, "type": "plus"},
-                { "id": 1112, "type":"plus"},
+                { "id": 1111, "Type": "plus"},
+                { "id": 1112, "Type":"plus"},
                 {
                     "bugs": [
                         { "id": 11113},
@@ -513,7 +513,7 @@
                         }
                     ],
                     "id": 1113,
-                    "type": "nested"
+                    "Type": "nested"
                 }     
                 ,
                 {
@@ -584,7 +584,7 @@
                         }
                     ],
                     "id": 1114,
-                    "type": "nested"
+                    "Type": "nested"
                 }        
             ],
             "edges": [

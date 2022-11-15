@@ -1,6 +1,6 @@
 {
     "bugs": [
-        { "id": 1, "bugs": [], "edges":[], "type": "plus"}
+        { "id": 1, "bugs": [], "edges":[], "Type": "plus"}
     ],
     "edges": [
         {
@@ -12,7 +12,7 @@
                 "bugId": 1,
                 "port": "In"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -23,7 +23,7 @@
                 "bugId": 0,
                 "port": "Right"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -34,7 +34,7 @@
                 "bugId": 0,
                 "port": "Left"
             },
-            "type": "Control"
+            "Type": "Control"
         },
         {
             "from_": {
@@ -45,7 +45,7 @@
                 "bugId": 1,
                 "port": "Up"
             },
-            "type": "Data"
+            "Type": "Data"
         },
         {
             "from_": {
@@ -56,7 +56,7 @@
                 "bugId": 1,
                 "port": "Down"
             },
-            "type": "Data"
+            "Type": "Data"
         },
         {
             "from_": {
@@ -67,7 +67,7 @@
                 "bugId": 0,
                 "port": "Out"
             },
-            "type": "Data"
+            "Type": "Data"
         }
     ],
     "xValue": -6,
