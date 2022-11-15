@@ -2,7 +2,7 @@ import json
 import sys
 # Needed otherwise module will not be found
 sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/')
-from api.boardTypes import EdgeType, PortType
+from src.api.boardTypes import EdgeType, PortType
 
 memory_ports = {}
 memory_connections = {}
@@ -174,15 +174,15 @@ def set_control_value(bug_id: int, control_value: int) -> int:
 
 def initialize_bug_memory(bug) -> None:
     """Initialize a bug"""
+    # Set the bug type
+    memory_bug_types[bug.get("id")] = bug.get("Type")
     if bug.get("Type") != "plus":
         initialize_connection_memory(bug.get("edges"))
         initialize_port_memory(bug.get("id"))
-        memory_bug_types[bug.get("id")] = "nested"
         for bug in bug.get("bugs"):
             initialize_bug_memory(bug)
         return
-    else:
-        memory_bug_types[bug.get("id")] = "plus"
+    
     initialize_port_memory(bug.get("id"))
 
 
@@ -339,7 +339,7 @@ def main(board):
 
 if __name__ == "__main__":
     example_file = open(
-        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/pseudoParallel.json", "r").read()
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/incrementIterator.json", "r").read()
     example_board = json.loads(example_file)
     example_board["xValue"] = -6
     example_board["yValue"] = None
