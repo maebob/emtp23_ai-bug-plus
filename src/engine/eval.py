@@ -1,3 +1,4 @@
+import inspect
 import json
 import sys
 # Needed otherwise module will not be found
@@ -8,6 +9,17 @@ memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
 
+from itertools import count
+
+def stack_size2a(size=2):
+    """Get stack size for caller's frame.
+    """
+    frame = sys._getframe(size)
+
+    for size in count(size):
+        frame = frame.f_back
+        if not frame:
+            return size
 
 def initialize_port_memory(bug_id: int) -> None:
     """Initialize all port values in memory to None for a given bug id
@@ -281,6 +293,7 @@ def evaluate_plus_bug(bug_id: int) -> int:
 
 
 def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
+    print(stack_size2a(), bug_id, parent_bug_id)
     # Write data to the nested bug ports
     if (memory_ports.get(f"{bug_id}_{PortType.Up.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
@@ -303,19 +316,6 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
         else:
             raise Exception("Unknown bug type")
 
-    """
-    # TODO Check if this is needed I think it is not
-    # Set the control value of the nested bug
-    if (memory_ports.get(f"{bug_id}_{PortType.Out.value}") != 0):
-        write_to_memory(bug_id, PortType.Left.value, 0)
-        write_to_memory(bug_id, PortType.Right.value, 1)
-    else:
-        write_to_memory(bug_id, PortType.Left.value, 1)
-        write_to_memory(bug_id, PortType.Right.value, 0)
-    """
-
-    # deactivate the control port of the nested bug
-    #write_to_memory(bug_id, PortType.In.value, 0)
 
     wirte_data_to_memory(memory_connections.get(
         f"{bug_id}_{PortType.Out.value}"), read_from_memory(bug_id, PortType.Out.value))
@@ -331,9 +331,10 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
     if parent_bug_id == next_bug_id or memory_bug_types.get(next_bug_id) == "root":
         # if we sep out of a nested bug or if we are at the root bug we need to set the control value
         write_control_to_parent_bug(bug_id)
+        write_to_memory(bug_id, PortType.Left.value, None)
+        write_to_memory(bug_id, PortType.Right.value, None)
         return next_bug_id
 
-    
     # Reset the control ports of the nested bug
     write_to_memory(bug_id, PortType.Left.value, None)
     write_to_memory(bug_id, PortType.Right.value, None)
@@ -349,21 +350,7 @@ def eval_bug(bug_id: int) -> None:
             bug_id = evaluate_nested_bug(bug_id)
         else:
             raise Exception("Unknown bug type")
-
-    """
-
-    elif (memory_bug_types.get(bug_id) != "plus"):
-        evaluate_nested_bug(bug_id)
-        if (memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1 and memory_bug_types.get(get_next_bug(bug_id, PortType.Left.value)) != "plus"):
-            write_control_to_parent_bug(bug_id)
-        elif (memory_ports.get(f"{bug_id}_{PortType.Right.value}") == 1 and memory_bug_types.get(get_next_bug(bug_id, PortType.Right.value)) != "plus"):
-            write_control_to_parent_bug(bug_id)
-        return
-    elif (memory_bug_types.get(bug_id) == "plus"):
-        eval_bug(evaluate_plus_bug(bug_id))
-    """
-
-    """Idea deactivate control port after evaluation if a control in port is active at arival we can terminate the evaluation"""
+        print(stack_size2a())
 
 
 def main(board):
@@ -382,7 +369,7 @@ if __name__ == "__main__":
     example_file = open(
         "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/isPositive.json", "r").read()
     example_board = json.loads(example_file)
-    example_board["xValue"] = -2
+    example_board["xValue"] = 0
     example_board["yValue"] = None
     main(example_board)
     # print(memory_connections)

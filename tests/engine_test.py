@@ -128,14 +128,14 @@ def test_is_positive():
     assert result.get("0_Right") == None
 
     # Test other numbers
-    for i in range(10000):
-        random_number_1 = random.randint(-1000, 1000)
+    for i in range(1000):
+        random_number_1 = random.randint(-100, 100)
         example["xValue"] = random_number_1
         example["yValue"] = None
         result = eval.main(example)
         if random_number_1 > 0:
-            assert result.get("0_Left") == 0
+            assert result.get("0_Left") == None
             assert result.get("0_Right") == 1
         else:
             assert result.get("0_Left") == 1
-            assert result.get("0_Right") == 0
+            assert result.get("0_Right") == None

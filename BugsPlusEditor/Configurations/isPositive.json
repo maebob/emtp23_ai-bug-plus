@@ -476,7 +476,7 @@
                         }
                     ],
                     "id": 11876399,
-                    "Type": "nested"
+                    "Type": "incrementor"
                 },
                 {
                     "bugs": [
@@ -612,7 +612,7 @@
                         }
                     ],
                     "id": 96683899,
-                    "Type": "nested"
+                    "Type": "decrementor"
                 }
             ],
             "edges": [
