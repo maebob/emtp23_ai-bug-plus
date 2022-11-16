@@ -111,14 +111,23 @@ def test_pseudo_parallel():
     """Test the pseudo parallel function."""
     example_file = open(PSEUDO_PARALLEL, "r").read()
     example = json.loads(example_file)
-    assert eval.main(example).get("0_Left") == None
-    assert eval.main(example).get("0_Right") == 1
+    assert eval.main(example).get("0_Left") == 1
+    assert eval.main(example).get("0_Right") == None
 
 
 def test_is_positive():
     """Test the is_positive function."""
     example_file = open(IS_POSITIVE_PATH, "r").read()
     example = json.loads(example_file)
+
+    # Test zero
+    example["xValue"] = 0
+    example["yValue"] = None
+    result = eval.main(example)
+    assert result.get("0_Left") == 1
+    assert result.get("0_Right") == None
+
+    # Test other numbers
     for i in range(10000):
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
