@@ -20,6 +20,8 @@ IS_POSITIVE_PATH = "BugsPlusEditor/Configurations/isPositive.json"
 CHANGE_SIGN_PATH = "BugsPlusEditor/Configurations/changeSign.json"
 MINUS_PATH = "BugsPlusEditor/Configurations/minus.json"
 EQUAL_PATH = "BugsPlusEditor/Configurations/equalOperation.json"
+IS_LARGER_Path = "BugsPlusEditor/Configurations/isLarger.json"
+MULTIPLY_PATH = "BugsPlusEditor/Configurations/multiply.json"
 
 
 def test_incrementor():
@@ -58,9 +60,11 @@ def test_is_zero():
         if random_number_1 + random_number_2 == 0:
             assert result.get("0_Left") == 0
             assert result.get("0_Right") == 1
+            assert result.get("0_Out") == 0
         else:
             assert result.get("0_Left") == 1
             assert result.get("0_Right") == 0
+    
 
 
 def test_incrementor_iterator():
@@ -95,7 +99,6 @@ def test_asignment():
         example["yValue"] = None
         result = eval.main(example)
         assert result.get("0_Out") == random_number_1
-        print(random_number_1)
         assert result.get("0_Left") == 1
 
 
@@ -186,3 +189,37 @@ def test_equal_operation():
         else:
             assert result.get("0_Left") == 1
             assert result.get("0_Right") == None
+
+
+def test_is_larger():
+    """Test isLarger operation
+    Note: If they are equal, it will return false
+    """
+    example_file = open(IS_LARGER_Path, "r").read()
+    example = json.loads(example_file)
+
+    for i in range(100):
+        random_number_1 = random.randint(-20, 20)
+        random_number_2 = random.randint(-20, 20)
+        example["xValue"] = random_number_1
+        example["yValue"] = random_number_2
+        result = eval.main(example)
+        if random_number_1 > random_number_2:
+            assert result.get("0_Left") == None
+            assert result.get("0_Right") == 1
+        else:
+            assert result.get("0_Left") == 1
+            assert result.get("0_Right") == None
+
+def test_multiply():
+    """Test multiply operation"""
+    example_file = open(MULTIPLY_PATH, "r").read()
+    example = json.loads(example_file)
+
+    for i in range(100):
+        random_number_1 = random.randint(-20, 20)
+        random_number_2 = random.randint(-20, 20)
+        example["xValue"] = random_number_1
+        example["yValue"] = random_number_2
+        result = eval.main(example)
+        assert result.get("0_Out") == random_number_1 * random_number_2
