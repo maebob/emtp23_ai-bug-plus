@@ -162,7 +162,7 @@ def wirte_data_to_memory(ports: list, data_value: int) -> None:
         ports {list} -- The list of ports to write to
         data_value {int} -- The value to write to the ports
     """
-    if (ports is None):
+    if ports is None:
         return
     for port in ports:
         write_to_memory(port.split("_")[0], port.split("_")[1], data_value)
@@ -267,7 +267,7 @@ def write_control_to_parent_bug(bug_id: int) -> None:
         bug_id {int} -- The id of the bug to write the control value to
     """
 
-    if (memory_connections.get(f"{bug_id}_{PortType.Left.value}") is not None):
+    if memory_connections.get(f"{bug_id}_{PortType.Left.value}") is not None:
         memory_ports[memory_connections.get(
             f"{bug_id}_{PortType.Left.value}")] = memory_ports[f"{bug_id}_{PortType.Left.value}"]
     if (memory_ports[f"{bug_id}_{PortType.Left.value}"] == 1 and memory_connections.get(f"{bug_id}_{PortType.Right.value}") is not None and memory_connections.get(f"{bug_id}_{PortType.Left.value}") == memory_connections.get(f"{bug_id}_{PortType.Right.value}")):
@@ -299,7 +299,7 @@ def evaluate_plus_bug(bug_id: int) -> int:
     set_control_value(bug_id, control_value)
 
     # Write the results to the connected ports
-    if (memory_connections.get(f"{bug_id}_{PortType.Out.value}") is not None):
+    if memory_connections.get(f"{bug_id}_{PortType.Out.value}") is not None:
         wirte_data_to_memory(memory_connections.get(
             f"{bug_id}_{PortType.Out.value}"), data_value)
 
@@ -407,10 +407,10 @@ def main(board):
 if __name__ == "__main__":
     # TODO pseudo parallel only works on first itreation
     example_file = open(
-        "BugsPlusEditor/Configurations/compareOperation.json", "r").read()
+        "BugsPlusEditor/Configurations/multiply.json", "r").read()
     example_board = json.loads(example_file)
-    example_board["xValue"] = 4
-    example_board["yValue"] = 4
+    example_board["xValue"] = 1
+    example_board["yValue"] = 8
     main(example_board)
     # print(memory_connections)
     #print(memory_ports)

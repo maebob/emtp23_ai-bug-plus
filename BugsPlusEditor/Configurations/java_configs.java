@@ -393,8 +393,6 @@ public class BugplusBasicArithmetic {
 
         BugplusProgramImplementation multiplyProgram = multiplySpec.addImplementation();
 
-
-
         multiplyProgram.addBug("+", "0_001");
         multiplyProgram.addBug("+", "0_002");
         multiplyProgram.addBug("+", "0_003");
@@ -404,17 +402,17 @@ public class BugplusBasicArithmetic {
         multiplyProgram.addBug("+", "+_001");
         multiplyProgram.addBug("+++", "+++_001");
 
+
         multiplyProgram.addControlFlow("0_001", 0, "0_002");
         multiplyProgram.addControlFlow("0_002", 0, "0_003");
         multiplyProgram.addControlFlow("0_003", 0, "==_001");
-
-        
         multiplyProgram.addControlFlow("==_001", 1, ":=_001");
         multiplyProgram.addControlFlow("==_001", 0, "==_002");
         multiplyProgram.addControlFlow("==_002", 1, ":=_001");
         multiplyProgram.addControlFlow("==_002", 0, "+_001");
         multiplyProgram.addControlFlow("+_001", 1, "+++_001");       
         multiplyProgram.addControlFlow("+++_001", 0, "==_001");
+
 
         multiplyProgram.addDataFlow("0_001", "==_001", 1);
         multiplyProgram.addDataFlow("0_002", ":=_001", 0);
@@ -429,11 +427,11 @@ public class BugplusBasicArithmetic {
         multiplyProgram.connectControlInInterface("0_001");
         multiplyProgram.connectControlOutInterface(":=_001", 0, 0);
 
+
         multiplyProgram.connectDataInInterface("==_001", 0, 0);
         multiplyProgram.connectDataInInterface("==_002", 0, 1);
         multiplyProgram.connectDataInInterface("+_001", 0, 1);
         multiplyProgram.connectDataOutInterface(":=_001");
-
 
 
         //Application of the isZero-operation which is available in the library
