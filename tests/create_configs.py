@@ -14,9 +14,10 @@ NESTED_INCREMENTOR_PATH = "BugsPlusEditor/Configurations/nestedIncrementor.json"
 PSEUDO_PARALLEL = "BugsPlusEditor/Configurations/pseudoParallel.json"
 IS_POSITIVE_PATH = "BugsPlusEditor/Configurations/isPositive.json"
 CHANGE_SIGN_PATH = "BugsPlusEditor/Configurations/changeSign.json"
+MINUS_PATH = "BugsPlusEditor/Configurations/minus.json"
 
 # Translate file
-TRANSLATION_PATH = "BugsPlusEditor/Configurations/minus_pre.json"
+TRANSLATION_PATH = "BugsPlusEditor/Configurations/compareOperationPre.json"
 
 
 TRANSLATION_DICT = {
@@ -29,7 +30,8 @@ TRANSLATION_DICT = {
     "nestedIncrementor": NESTED_INCREMENTOR_PATH,
     "pseudoParallel": PSEUDO_PARALLEL,
     "isPositive": IS_POSITIVE_PATH,
-    "changeSign": CHANGE_SIGN_PATH
+    "changeSign": CHANGE_SIGN_PATH,
+    "minus": MINUS_PATH
 }
 
 
@@ -113,7 +115,7 @@ def main():
     pre_translation = json.loads(pre_translation_file)
     translated = translate(pre_translation)
     # Save the translated file
-    with open("BugsPlusEditor/Configurations/minus.json", "w") as f:
+    with open("BugsPlusEditor/Configurations/compareOperation.json", "w") as f:
         json.dump(translated, f, indent=4)
 
 

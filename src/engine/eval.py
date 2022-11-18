@@ -361,7 +361,7 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
         print_memory_of_bug(next_bug_id)
     print_memory_of_bug(8)
     """
-    print("Current bug id", bug_id)
+    #print("Current bug id", bug_id)
     
 
     if parent_bug_id == next_bug_id or memory_bug_types.get(next_bug_id) == "root":
@@ -407,14 +407,14 @@ def main(board):
 if __name__ == "__main__":
     # TODO pseudo parallel only works on first itreation
     example_file = open(
-        "BugsPlusEditor/Configurations/minus.json", "r").read()
+        "BugsPlusEditor/Configurations/compareOperation.json", "r").read()
     example_board = json.loads(example_file)
-    example_board["xValue"] = -6
-    example_board["yValue"] = 2
+    example_board["xValue"] = 4
+    example_board["yValue"] = 4
     main(example_board)
     # print(memory_connections)
-    print(memory_ports)
-    print(memory_ports.get("0_Out"))
+    #print(memory_ports)
+    print("Data out:", memory_ports.get("0_Out"), "Control Left:", memory_ports.get("0_Left"), "Control Right:", memory_ports.get("0_Right"))
     #print(memory_bug_types)
 
 # TODO check the incrementer iterator there seems to be a problem

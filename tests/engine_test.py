@@ -19,6 +19,7 @@ PSEUDO_PARALLEL = "BugsPlusEditor/Configurations/pseudoParallel.json"
 IS_POSITIVE_PATH = "BugsPlusEditor/Configurations/isPositive.json"
 CHANGE_SIGN_PATH = "BugsPlusEditor/Configurations/changeSign.json"
 MINUS_PATH = "BugsPlusEditor/Configurations/minus.json"
+EQUAL_PATH = "BugsPlusEditor/Configurations/equalOperation.json"
 
 
 def test_incrementor():
@@ -166,3 +167,22 @@ def test_minus():
         example["yValue"] = random_number_2
         result = eval.main(example)
         assert result.get("0_Out") == random_number_1 - random_number_2
+
+
+def test_equal_operation():
+    """Test equal operation"""
+    example_file = open(EQUAL_PATH, "r").read()
+    example = json.loads(example_file)
+
+    for i in range(100):
+        random_number_1 = random.randint(-20, 20)
+        random_number_2 = random.randint(-20, 20)
+        example["xValue"] = random_number_1
+        example["yValue"] = random_number_2
+        result = eval.main(example)
+        if random_number_1 == random_number_2:
+            assert result.get("0_Left") == None
+            assert result.get("0_Right") == 1
+        else:
+            assert result.get("0_Left") == 1
+            assert result.get("0_Right") == None
