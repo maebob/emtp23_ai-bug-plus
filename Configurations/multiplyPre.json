@@ -98,6 +98,17 @@
                 "port": "Right"
             },
             "to": {
+                "bugId": 13,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 13,
+                "port": "Left"
+            },
+            "to": {
                 "bugId": 9,
                 "port": "In"
             },
