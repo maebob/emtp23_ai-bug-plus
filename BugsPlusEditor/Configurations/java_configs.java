@@ -125,13 +125,13 @@ public class BugplusBasicArithmetic {
         BugplusProgramImplementation iteratorProgram = iteratorSpec.addImplementation();
 
         iteratorProgram.addBug("+", "0_001");
-
         iteratorProgram.addBug("+", "1_001");
-        iteratorProgram.addDataFlow("0_001", "1_001", 0);
-
         iteratorProgram.addBug("+", "+_001");
+
+        iteratorProgram.addDataFlow("0_001", "1_001", 0);
         iteratorProgram.addDataFlow("1_001","+_001", 0);
         iteratorProgram.addDataFlow("+_001","+_001", 1);
+
         iteratorProgram.addControlFlow("1_001",1,"+_001");
 
         iteratorProgram.connectControlInInterface("1_001");
@@ -255,19 +255,6 @@ public class BugplusBasicArithmetic {
         isPositiveProgram.addDataFlow("0_001", ":=_004", 0);
         isPositiveProgram.addDataFlow("1_001", ":=_005", 0);
 
-        isPositiveProgram.addBug("+", "0_001"); 1
-        isPositiveProgram.addBug("+", "1_001"); 2
-        isPositiveProgram.addBug("==0", "==0_001"); 3
-        isPositiveProgram.addBug(":=", ":=_001"); 4
-        isPositiveProgram.addBug(":=", ":=_002"); 5
-        isPositiveProgram.addBug(":=", ":=_003"); 6
-        isPositiveProgram.addBug(":=", ":=_004"); 7
-        isPositiveProgram.addBug(":=", ":=_005"); 8
-        isPositiveProgram.addBug("--", "--_001"); 9
-        isPositiveProgram.addBug("++", "++_001"); 10
-        isPositiveProgram.addBug("||", "||_001"); 11411
-
-
         isPositiveProgram.connectControlInInterface("1_001");
 
         isPositiveProgram.connectControlOutInterface(":=_001", 0, 0);
@@ -318,21 +305,21 @@ public class BugplusBasicArithmetic {
         changeSignProgram.addControlFlow("+++_001", 0, "++_001");
         changeSignProgram.addControlFlow("---_001", 0, "--_001");
 
+
         changeSignProgram.addDataFlow("0_001", ":=_004", 0);
         changeSignProgram.addDataFlow(":=_004", "+++_001", 0);
         changeSignProgram.addDataFlow(":=_004", "---_001", 0);
-
         changeSignProgram.addDataFlow(":=_002", "++_001", 0);
         changeSignProgram.addDataFlow("++_001", "++_001", 0);
-
         changeSignProgram.addDataFlow(":=_003", "--_001", 0);
         changeSignProgram.addDataFlow("--_001", "--_001", 0);
 
-
         changeSignProgram.connectControlInInterface("==0_001");
+
         changeSignProgram.connectControlOutInterface(":=_001", 0, 0);
         changeSignProgram.connectControlOutInterface("++_001", 0, 0);
         changeSignProgram.connectControlOutInterface("--_001", 0, 0);
+
 
         changeSignProgram.connectDataInInterface("==0_001", 0, 0);
         changeSignProgram.connectDataInInterface("?+_001", 0, 0);
