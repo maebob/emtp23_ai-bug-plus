@@ -125,13 +125,13 @@ public class BugplusBasicArithmetic {
         BugplusProgramImplementation iteratorProgram = iteratorSpec.addImplementation();
 
         iteratorProgram.addBug("+", "0_001");
-
         iteratorProgram.addBug("+", "1_001");
-        iteratorProgram.addDataFlow("0_001", "1_001", 0);
-
         iteratorProgram.addBug("+", "+_001");
+
+        iteratorProgram.addDataFlow("0_001", "1_001", 0);
         iteratorProgram.addDataFlow("1_001","+_001", 0);
         iteratorProgram.addDataFlow("+_001","+_001", 1);
+
         iteratorProgram.addControlFlow("1_001",1,"+_001");
 
         iteratorProgram.connectControlInInterface("1_001");
@@ -255,19 +255,6 @@ public class BugplusBasicArithmetic {
         isPositiveProgram.addDataFlow("0_001", ":=_004", 0);
         isPositiveProgram.addDataFlow("1_001", ":=_005", 0);
 
-        isPositiveProgram.addBug("+", "0_001"); 1
-        isPositiveProgram.addBug("+", "1_001"); 2
-        isPositiveProgram.addBug("==0", "==0_001"); 3
-        isPositiveProgram.addBug(":=", ":=_001"); 4
-        isPositiveProgram.addBug(":=", ":=_002"); 5
-        isPositiveProgram.addBug(":=", ":=_003"); 6
-        isPositiveProgram.addBug(":=", ":=_004"); 7
-        isPositiveProgram.addBug(":=", ":=_005"); 8
-        isPositiveProgram.addBug("--", "--_001"); 9
-        isPositiveProgram.addBug("++", "++_001"); 10
-        isPositiveProgram.addBug("||", "||_001"); 11411
-
-
         isPositiveProgram.connectControlInInterface("1_001");
 
         isPositiveProgram.connectControlOutInterface(":=_001", 0, 0);
@@ -318,21 +305,21 @@ public class BugplusBasicArithmetic {
         changeSignProgram.addControlFlow("+++_001", 0, "++_001");
         changeSignProgram.addControlFlow("---_001", 0, "--_001");
 
+
         changeSignProgram.addDataFlow("0_001", ":=_004", 0);
         changeSignProgram.addDataFlow(":=_004", "+++_001", 0);
         changeSignProgram.addDataFlow(":=_004", "---_001", 0);
-
         changeSignProgram.addDataFlow(":=_002", "++_001", 0);
         changeSignProgram.addDataFlow("++_001", "++_001", 0);
-
         changeSignProgram.addDataFlow(":=_003", "--_001", 0);
         changeSignProgram.addDataFlow("--_001", "--_001", 0);
 
-
         changeSignProgram.connectControlInInterface("==0_001");
+
         changeSignProgram.connectControlOutInterface(":=_001", 0, 0);
         changeSignProgram.connectControlOutInterface("++_001", 0, 0);
         changeSignProgram.connectControlOutInterface("--_001", 0, 0);
+
 
         changeSignProgram.connectDataInInterface("==0_001", 0, 0);
         changeSignProgram.connectDataInInterface("?+_001", 0, 0);
@@ -377,18 +364,17 @@ public class BugplusBasicArithmetic {
 
         compareProgram.addBug("+", "0_001");
         compareProgram.addBug("+", "1_001");
-        compareProgram.addDataFlow("0_001", "1_001", 0);
-        compareProgram.addControlFlow("1_001", 1, "-_001");
-
         compareProgram.addBug("-", "-_001");
-        compareProgram.addControlFlow("-_001", 0, ":=_001");
         compareProgram.addBug(":=", ":=_001");
-        compareProgram.addControlFlow("-_001", 1, ":=_002");
         compareProgram.addBug(":=", ":=_002");
+
+        compareProgram.addControlFlow("1_001", 1, "-_001");
+        compareProgram.addControlFlow("-_001", 0, ":=_001");
+        compareProgram.addControlFlow("-_001", 1, ":=_002");        
 
         compareProgram.addDataFlow("1_001", ":=_001", 0);
         compareProgram.addDataFlow("0_001", ":=_002", 0);
-
+        compareProgram.addDataFlow("0_001", "1_001", 0);
 
         compareProgram.connectControlInInterface("1_001");
         compareProgram.connectControlOutInterface(":=_002", 0, 0);
@@ -407,33 +393,32 @@ public class BugplusBasicArithmetic {
 
         BugplusProgramImplementation multiplyProgram = multiplySpec.addImplementation();
 
-
-
         multiplyProgram.addBug("+", "0_001");
         multiplyProgram.addBug("+", "0_002");
         multiplyProgram.addBug("+", "0_003");
+        multiplyProgram.addBug("==", "==_001");
+        multiplyProgram.addBug(":=", ":=_001");
+        multiplyProgram.addBug("==", "==_002");
+        multiplyProgram.addBug("+", "+_001");
+        multiplyProgram.addBug("+++", "+++_001");
+
+
         multiplyProgram.addControlFlow("0_001", 0, "0_002");
         multiplyProgram.addControlFlow("0_002", 0, "0_003");
         multiplyProgram.addControlFlow("0_003", 0, "==_001");
-
-        multiplyProgram.addBug("==", "==_001");
         multiplyProgram.addControlFlow("==_001", 1, ":=_001");
-        multiplyProgram.addBug(":=", ":=_001");
         multiplyProgram.addControlFlow("==_001", 0, "==_002");
-        multiplyProgram.addBug("==", "==_002");
         multiplyProgram.addControlFlow("==_002", 1, ":=_001");
         multiplyProgram.addControlFlow("==_002", 0, "+_001");
-        multiplyProgram.addBug("+", "+_001");
-        multiplyProgram.addControlFlow("+_001", 1, "+++_001");
-        multiplyProgram.addBug("+++", "+++_001");
+        multiplyProgram.addControlFlow("+_001", 1, "+++_001");       
         multiplyProgram.addControlFlow("+++_001", 0, "==_001");
+
 
         multiplyProgram.addDataFlow("0_001", "==_001", 1);
         multiplyProgram.addDataFlow("0_002", ":=_001", 0);
         multiplyProgram.addDataFlow("0_003", "==_002", 1);
         multiplyProgram.addDataFlow("0_002", "+_001", 1);
         multiplyProgram.addDataFlow("0_001", "+++_001", 0);
-
         multiplyProgram.addDataFlow("+_001", ":=_001", 0);
         multiplyProgram.addDataFlow("+_001", "+_001", 1);
         multiplyProgram.addDataFlow("+++_001", "==_001", 1);
@@ -442,11 +427,11 @@ public class BugplusBasicArithmetic {
         multiplyProgram.connectControlInInterface("0_001");
         multiplyProgram.connectControlOutInterface(":=_001", 0, 0);
 
+
         multiplyProgram.connectDataInInterface("==_001", 0, 0);
         multiplyProgram.connectDataInInterface("==_002", 0, 1);
         multiplyProgram.connectDataInInterface("+_001", 0, 1);
         multiplyProgram.connectDataOutInterface(":=_001");
-
 
 
         //Application of the isZero-operation which is available in the library

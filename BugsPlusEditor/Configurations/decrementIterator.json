@@ -2,7 +2,8 @@
     "bugs": [
         { "id": 1, "bugs": [], "edges":[], "Type": "plus"},
         { "id": 2, "bugs": [], "edges":[], "Type": "plus"},
-        { "id": 3, "bugs": [], "edges":[], "Type": "plus"}
+        { "id": 3, "bugs": [], "edges":[], "Type": "plus"},
+        { "id": 4, "bugs": [], "edges":[], "Type": "plus"}
     ],
     "edges": [
         {
@@ -41,6 +42,17 @@
         {
             "from_": {
                 "bugId": 3,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 4,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 4,
                 "port": "Left"
             },
             "to": {
@@ -51,18 +63,18 @@
         },
         {
             "from_": {
-                "bugId": 3,
+                "bugId": 4,
                 "port": "Right"
             },
             "to": {
                 "bugId": 0,
-                "port": "Right"
+                "port": "Left"
             },
             "Type": "Control"
         },
         {
             "from_": {
-                "bugId": 3,
+                "bugId": 4,
                 "port": "Out"
             },
             "to": {
@@ -77,8 +89,8 @@
                 "port": "Up"
             },
             "to": {
-                "bugId": 3,
-                "port": "Up"
+                "bugId": 4,
+                "port": "Down"
             },
             "Type": "Data"
         },
@@ -100,6 +112,17 @@
             },
             "to": {
                 "bugId": 3,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 3,
                 "port": "Down"
             },
             "Type": "Data"
@@ -110,7 +133,18 @@
                 "port": "Out"
             },
             "to": {
-                "bugId": 3,
+                "bugId": 4,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 4,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 4,
                 "port": "Down"
             },
             "Type": "Data"
