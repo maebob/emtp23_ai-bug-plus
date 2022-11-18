@@ -2,23 +2,23 @@ import json
 import random
 
 # Non-Nested
-INCREMENTOR_PATH = "BugsPlusEditor/Configurations/incrementor.json"
-DECREMENTOR_PATH = "BugsPlusEditor/Configurations/decrementor.json"
-IS_ZERO_PATH = "BugsPlusEditor/Configurations/isZero.json"
-INCREMENTOR_ITERATOR_PATH = "BugsPlusEditor/Configurations/incrementIterator.json"
-DECREMENTOR_ITERATOR_PATH = "BugsPlusEditor/Configurations/decrementIterator.json"
-ASIGNMENT = "BugsPlusEditor/Configurations/asignment.json"
+INCREMENTOR_PATH = "Configurations/incrementor.json"
+DECREMENTOR_PATH = "Configurations/decrementor.json"
+IS_ZERO_PATH = "Configurations/isZero.json"
+INCREMENTOR_ITERATOR_PATH = "Configurations/incrementIterator.json"
+DECREMENTOR_ITERATOR_PATH = "Configurations/decrementIterator.json"
+ASIGNMENT = "Configurations/asignment.json"
 
 # Nested
-NESTED_INCREMENTOR_PATH = "BugsPlusEditor/Configurations/nestedIncrementor.json"
-PSEUDO_PARALLEL = "BugsPlusEditor/Configurations/pseudoParallel.json"
-IS_POSITIVE_PATH = "BugsPlusEditor/Configurations/isPositive.json"
-CHANGE_SIGN_PATH = "BugsPlusEditor/Configurations/changeSign.json"
-MINUS_PATH = "BugsPlusEditor/Configurations/minus.json"
-EQUAL_PATH = "BugsPlusEditor/Configurations/equalOperation.json"
+NESTED_INCREMENTOR_PATH = "Configurations/nestedIncrementor.json"
+PSEUDO_PARALLEL = "Configurations/pseudoParallel.json"
+IS_POSITIVE_PATH = "Configurations/isPositive.json"
+CHANGE_SIGN_PATH = "Configurations/changeSign.json"
+MINUS_PATH = "Configurations/minus.json"
+EQUAL_PATH = "Configurations/equalOperation.json"
 
 # Translate file
-TRANSLATION_PATH = "BugsPlusEditor/Configurations/multiplyPre.json"
+TRANSLATION_PATH = "Configurations/multiplyPre.json"
 
 
 TRANSLATION_DICT = {
@@ -117,7 +117,7 @@ def main():
     pre_translation = json.loads(pre_translation_file)
     translated = translate(pre_translation)
     # Save the translated file
-    with open("BugsPlusEditor/Configurations/multiply.json", "w") as f:
+    with open("Configurations/multiply.json", "w") as f:
         json.dump(translated, f, indent=4)
 
 

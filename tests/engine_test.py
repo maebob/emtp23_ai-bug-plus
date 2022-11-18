@@ -6,22 +6,22 @@ import sys
 sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/')
 from src.engine import eval
 # Non-Nested
-INCREMENTOR_PATH = "BugsPlusEditor/Configurations/incrementor.json"
-DECREMENTOR_PATH = "BugsPlusEditor/Configurations/decrementor.json"
-IS_ZERO_PATH = "BugsPlusEditor/Configurations/isZero.json"
-INCREMENTOR_ITERATOR_PATH = "BugsPlusEditor/Configurations/incrementIterator.json"
-DECREMENTOR_ITERATOR_PATH = "BugsPlusEditor/Configurations/decrementIterator.json"
-ASIGNMENT = "BugsPlusEditor/Configurations/asignment.json"
+INCREMENTOR_PATH = "Configurations/incrementor.json"
+DECREMENTOR_PATH = "Configurations/decrementor.json"
+IS_ZERO_PATH = "Configurations/isZero.json"
+INCREMENTOR_ITERATOR_PATH = "Configurations/incrementIterator.json"
+DECREMENTOR_ITERATOR_PATH = "Configurations/decrementIterator.json"
+ASIGNMENT = "Configurations/asignment.json"
 
 # Nested
-NESTED_INCREMENTOR_PATH = "BugsPlusEditor/Configurations/nestedIncrementor.json"
-PSEUDO_PARALLEL = "BugsPlusEditor/Configurations/pseudoParallel.json"
-IS_POSITIVE_PATH = "BugsPlusEditor/Configurations/isPositive.json"
-CHANGE_SIGN_PATH = "BugsPlusEditor/Configurations/changeSign.json"
-MINUS_PATH = "BugsPlusEditor/Configurations/minus.json"
-EQUAL_PATH = "BugsPlusEditor/Configurations/equalOperation.json"
-IS_LARGER_Path = "BugsPlusEditor/Configurations/isLarger.json"
-MULTIPLY_PATH = "BugsPlusEditor/Configurations/multiply.json"
+NESTED_INCREMENTOR_PATH = "Configurations/nestedIncrementor.json"
+PSEUDO_PARALLEL = "Configurations/pseudoParallel.json"
+IS_POSITIVE_PATH = "Configurations/isPositive.json"
+CHANGE_SIGN_PATH = "Configurations/changeSign.json"
+MINUS_PATH = "Configurations/minus.json"
+EQUAL_PATH = "Configurations/equalOperation.json"
+IS_LARGER_Path = "Configurations/isLarger.json"
+MULTIPLY_PATH = "Configurations/multiply.json"
 
 
 def test_incrementor():
@@ -37,7 +37,7 @@ def test_incrementor():
 
 def test_decrementor():
     """Test the decrementor function."""
-    DECREMENTOR_PATH = "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/BugsPlusEditor/Configurations/decrementor.json"
+    DECREMENTOR_PATH = "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/Configurations/decrementor.json"
     example_file = open(DECREMENTOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
