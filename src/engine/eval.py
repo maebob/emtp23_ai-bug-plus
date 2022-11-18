@@ -409,8 +409,8 @@ if __name__ == "__main__":
     example_file = open(
         "BugsPlusEditor/Configurations/multiply.json", "r").read()
     example_board = json.loads(example_file)
-    example_board["xValue"] = 1
-    example_board["yValue"] = 8
+    example_board["xValue"] = -19
+    example_board["yValue"] = 1
     main(example_board)
     # print(memory_connections)
     #print(memory_ports)
