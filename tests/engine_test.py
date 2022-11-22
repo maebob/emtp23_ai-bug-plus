@@ -1,10 +1,7 @@
 import json
 import random
 import sys
-
-# Needed otherwise module will not be found
-sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/')
-from src.engine import eval
+from engine import eval
 # Non-Nested
 INCREMENTOR_PATH = "Configurations/incrementor.json"
 DECREMENTOR_PATH = "Configurations/decrementor.json"

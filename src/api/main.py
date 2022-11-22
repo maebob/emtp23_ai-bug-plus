@@ -26,9 +26,8 @@ async def create_board(board: Bug):
     """
 
     """
-    print(main(board.dict()))
-
-    return main(board.dict())
-    board = await board.json()
-    result = main(board)
+    try:
+        result = main(board.dict())
+    except Exception as e:
+        return {"error": str(e)}
     return result

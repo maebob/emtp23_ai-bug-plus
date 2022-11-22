@@ -1,9 +1,7 @@
 import inspect
 import json
 import sys
-# Needed otherwise module will not be found
-sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/')
-from src.api.boardTypes import EdgeType, PortType
+from api.boardTypes import EdgeType, PortType
 
 memory_ports = {}
 memory_connections = {}
