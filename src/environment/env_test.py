@@ -4,13 +4,18 @@ env = environment.BugPlus()
 
 env.reset()
 
+reward = 0
+
 for i in range (10):
     action = env.action_space.sample()
     print(action)
-    env.step(action)
+    step_reward, observation_space, ep_return, done, list = env.step(action)
+    reward += step_reward
 
 print("Control Flow Matrix after step:")
 print(env.observation_space[0])
 
-print("Data Flow Matrix after step:")
+print("\nData Flow Matrix after step:")
 print(env.observation_space[1])
+
+print(" \nReward: " + str(reward))

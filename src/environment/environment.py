@@ -1,5 +1,9 @@
 from gym import Env, spaces
 import numpy as np
+import sys
+sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/')
+from src.translation.matrix_to_json import main as matrix_to_json
+from src.engine.eval import main as eval_engine
 
 class BugPlus(Env):
     def __init__(self):
@@ -60,5 +64,19 @@ class BugPlus(Env):
     def checkBugValidity(self):
         '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
         # TODO: Tranlate matrix representation to JSON representation, use eval function of engine to check validity
+        print("Control Flow Matrix: \n", self.observation_space[0])
+        print("Data Flow Matrix: \n", self.observation_space[1])
+        # Translate the matrix representation to a JSON representation
+        matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=2, data_down=3)
+        
+        # Check if the bug is valid
+
+        # Run the bug through the engine
+        try:
+            result = eval_engine(matrix_as_json)
+        except:
+            return False
+        if result.get("0_Out") == 3:
+            return True
 
         return False
