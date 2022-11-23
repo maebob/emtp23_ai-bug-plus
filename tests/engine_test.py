@@ -41,7 +41,6 @@ def test_incrementor():
 
 def test_decrementor():
     """Test the decrementor function."""
-    DECREMENTOR_PATH = "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/Configurations/decrementor.json"
     example_file = open(DECREMENTOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
