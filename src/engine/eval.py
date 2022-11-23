@@ -1,15 +1,13 @@
+from itertools import count
 import inspect
 import json
 import sys
-# Needed otherwise module will not be found
-sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/')
 from src.api.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
 
-from itertools import count
 
 def stack_size2a(size=2):
     """
@@ -23,6 +21,7 @@ def stack_size2a(size=2):
         if not frame:
             return size
 
+
 def print_memory():
     """Print the memory"""
     print("Ports")
@@ -32,7 +31,8 @@ def print_memory():
     print("Bug Types")
     print(json.dumps(memory_bug_types, indent=4))
 
-def print_memory_of_bug(bug_id: int)-> None:
+
+def print_memory_of_bug(bug_id: int) -> None:
     """
     Print the memory of a bug
 
@@ -40,9 +40,12 @@ def print_memory_of_bug(bug_id: int)-> None:
         bug_id {int} -- The id of the bug to print the memory of
     """
     print(f"Ports of bug {bug_id}")
-    print(json.dumps({k: v for k, v in memory_ports.items() if k.startswith(f"{bug_id}_")}, indent=4))
+    print(json.dumps({k: v for k, v in memory_ports.items()
+          if k.startswith(f"{bug_id}_")}, indent=4))
     print(f"Connections of bug {bug_id}")
-    print(json.dumps({k: v for k, v in memory_connections.items() if k.startswith(f"{bug_id}_")}, indent=4))
+    print(json.dumps({k: v for k, v in memory_connections.items()
+          if k.startswith(f"{bug_id}_")}, indent=4))
+
 
 def initialize_port_memory(bug_id: int) -> None:
     """
@@ -69,14 +72,16 @@ def initialize_connection_memory(edges: Edge) -> None:
             from_bugId = edge.get("from_").get("bugId")
             from_port = edge.get("from_").get("port")
         except AttributeError:
-            raise AttributeError("The edge does not have a from_ attribute please check the config schema")
+            raise AttributeError(
+                "The edge does not have a from_ attribute please check the config schema")
 
         # Get the Info where the edge is going to
         try:
             to_bugId = edge.get("to").get("bugId")
             to_port = edge.get("to").get("port")
         except AttributeError:
-            raise AttributeError("The edge does not have a to attribute please check the config schema")
+            raise AttributeError(
+                "The edge does not have a to attribute please check the config schema")
 
         # Write the connection to memory and check for the type of the edge as control edges are a string and data edges are a list
         if edge.get("Type") == EdgeType.Control.value:
@@ -123,7 +128,8 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
 
     if memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1:
         # The left control out port is active
-        next_bug_id = int(memory_connections.get(f"{bug_id}_{PortType.Left.value}").split("_")[0])
+        next_bug_id = int(memory_connections.get(
+            f"{bug_id}_{PortType.Left.value}").split("_")[0])
         # If the next bug is a plus bug we can return the next bug
         if memory_bug_types.get(next_bug_id) == "plus":
             return next_bug_id
@@ -134,7 +140,8 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
         return next_bug_id
     elif memory_ports.get(f"{bug_id}_{PortType.Right.value}") == 1:
         # The right control out port is active
-        next_bug_id = int(memory_connections.get(f"{bug_id}_{PortType.Right.value}").split("_")[0])
+        next_bug_id = int(memory_connections.get(
+            f"{bug_id}_{PortType.Right.value}").split("_")[0])
         # If the next bug is a plus bug we can return the next bug
         if memory_bug_types.get(next_bug_id) == "plus":
             return next_bug_id
@@ -170,7 +177,8 @@ def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
             return 0, 0
         return up + down, 1
     else:
-        raise Exception(f"Something went wrong while evaluating the plus bug whith the following values up:{up} and down:{down}")
+        raise Exception(
+            f"Something went wrong while evaluating the plus bug whith the following values up:{up} and down:{down}")
 
 
 def write_to_memory(bug_id: int, port: str, value: int) -> None:
@@ -251,7 +259,7 @@ def initialize_bug_memory(bug: Bug) -> None:
         for bug in bug.get("bugs"):
             initialize_bug_memory(bug)
         return
-    
+
     initialize_port_memory(bug.get("id"))
 
 
@@ -268,7 +276,8 @@ def initialize_board_memory(board: Bug) -> int:
     write_to_memory(board.get("id"), PortType.Up.value, board.get("xValue"))
     # Set the data input value of the lower parent bug
     write_to_memory(board.get("id"), PortType.Down.value, board.get("yValue"))
-    write_to_memory(board.get("id"), PortType.In.value, 1)  # Activate the parent bug
+    write_to_memory(board.get("id"), PortType.In.value,
+                    1)  # Activate the parent bug
 
     initialize_connection_memory(board.get("edges"))
 
@@ -283,7 +292,8 @@ def initialize_board_memory(board: Bug) -> int:
         if not isinstance(value, list):
             continue
         for data_port in value:
-            write_to_memory(data_port.split("_")[0], data_port.split("_")[1], 0)
+            write_to_memory(data_port.split(
+                "_")[0], data_port.split("_")[1], 0)
 
     # Set initial values to data ports
     # Write the data to the upper child bug
@@ -351,7 +361,7 @@ def evaluate_plus_bug(bug_id: int) -> int:
     return get_next_bug_to_evaluate(bug_id)
 
 
-def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
+def evaluate_nested_bug(bug_id: int, parent_bug_id: int = None) -> None:
     """Evaluate a nested bug
     Arguments:
         bug_id {int} -- The id of the bug to evaluate
@@ -380,7 +390,6 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
         else:
             raise Exception("Unknown bug type")
 
-
     wirte_data_to_memory(memory_connections.get(
         f"{bug_id}_{PortType.Out.value}"), read_from_memory(bug_id, PortType.Out.value))
 
@@ -390,8 +399,9 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id:int = None) -> None:
     elif (memory_ports.get(f"{bug_id}_{PortType.Right.value}") == 1):
         next_bug_id = get_next_bug(bug_id, PortType.Right.value)
     else:
-        raise Exception(f"Control port not set => Bug ({bug_id}) is not connected to the next bug")
-    
+        raise Exception(
+            f"Control port not set => Bug ({bug_id}) is not connected to the next bug")
+
     if next_bug_id == None:
         # Print the memory of the current bug
         print_memory_of_bug(bug_id)
@@ -417,7 +427,8 @@ def eval_bug(bug_id: int) -> None:
         bug_id {int} -- The id of the bug to evaluate
     """
     if bug_id is None:
-        raise Exception("No bug selected therefore no evaluation possible -> Problem in configuration")
+        raise Exception(
+            "No bug selected therefore no evaluation possible -> Problem in configuration")
 
     while memory_bug_types.get(bug_id) != "root":
         if memory_bug_types.get(bug_id) == "plus":
@@ -428,7 +439,7 @@ def eval_bug(bug_id: int) -> None:
             raise Exception("Unknown bug type")
 
 
-def main(board: Bug)-> dict:
+def main(board: Bug) -> dict:
     """The main function of the program
     Arguments:
         board {Bug} -- The root bug with all the nested bugs
@@ -460,6 +471,6 @@ if __name__ == "__main__":
     main(example_board)
     # print(memory_connections)
     print(memory_ports)
-    print("Data out:", memory_ports.get("0_Out"), "Control Left:", memory_ports.get("0_Left"), "Control Right:", memory_ports.get("0_Right"))
-    #print(memory_bug_types)
-
+    print("Data out:", memory_ports.get("0_Out"), "Control Left:", memory_ports.get(
+        "0_Left"), "Control Right:", memory_ports.get("0_Right"))
+    # print(memory_bug_types)
