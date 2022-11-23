@@ -1,0 +1,1551 @@
+{
+    "bugs": [
+        { "id": 1, "bugs": [], "edges": [], "Type": "plus" },
+        { "id": 2, "bugs": [], "edges": [], "Type": "plus" },
+        {
+            "bugs": [
+                { "id": 9076368, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 5047042,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 9076368,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 9076368,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 5047042,
+                        "port": "Right"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 9076368,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 5047042,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 5047042,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 9076368,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 5047042,
+                        "port": "Down"
+                    },
+                    "to": {
+                        "bugId": 9076368,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 9076368,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 5047042,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 5047042,
+            "Type": "isZero"
+        },
+        {
+            "bugs": [
+                { "id": 7247306, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 4935262, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 2357024,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 7247306,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 7247306,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 4935262,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 4935262,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 2357024,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 4935262,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 2357024,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 2357024,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 4935262,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 7247306,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 4935262,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 4935262,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 2357024,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 2357024,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 25035229, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 28466758, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 24564225,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 25035229,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 25035229,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 28466758,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 28466758,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 24564225,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 28466758,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 24564225,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 24564225,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 28466758,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 25035229,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 28466758,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 28466758,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 24564225,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 24564225,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 37228041, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 22407172, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 1530774,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 37228041,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 37228041,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 22407172,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 22407172,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 1530774,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 22407172,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 1530774,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 1530774,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 22407172,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 37228041,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 22407172,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 22407172,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 1530774,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 1530774,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 45218097, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 72729708, "bugs": [], "edges": [], "Type": "plus" },
+                {
+                    "bugs": [
+                        {
+                            "id": 81177302,
+                            "bugs": [],
+                            "edges": [],
+                            "Type": "plus"
+                        },
+                        {
+                            "id": 13810057,
+                            "bugs": [],
+                            "edges": [],
+                            "Type": "plus"
+                        },
+                        {
+                            "id": 7803842,
+                            "bugs": [],
+                            "edges": [],
+                            "Type": "plus"
+                        }
+                    ],
+                    "edges": [
+                        {
+                            "from_": {
+                                "bugId": 11876399,
+                                "port": "In"
+                            },
+                            "to": {
+                                "bugId": 81177302,
+                                "port": "In"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 81177302,
+                                "port": "Left"
+                            },
+                            "to": {
+                                "bugId": 13810057,
+                                "port": "In"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 13810057,
+                                "port": "Right"
+                            },
+                            "to": {
+                                "bugId": 7803842,
+                                "port": "In"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 7803842,
+                                "port": "Left"
+                            },
+                            "to": {
+                                "bugId": 11876399,
+                                "port": "Left"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 7803842,
+                                "port": "Right"
+                            },
+                            "to": {
+                                "bugId": 11876399,
+                                "port": "Right"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 7803842,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 11876399,
+                                "port": "Out"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 11876399,
+                                "port": "Up"
+                            },
+                            "to": {
+                                "bugId": 7803842,
+                                "port": "Up"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 81177302,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 13810057,
+                                "port": "Up"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 13810057,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 7803842,
+                                "port": "Down"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 7803842,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 7803842,
+                                "port": "Down"
+                            },
+                            "Type": "Data"
+                        }
+                    ],
+                    "id": 11876399,
+                    "Type": "incrementor"
+                },
+                {
+                    "bugs": [
+                        {
+                            "id": 44882121,
+                            "bugs": [],
+                            "edges": [],
+                            "Type": "plus"
+                        },
+                        {
+                            "id": 88112395,
+                            "bugs": [],
+                            "edges": [],
+                            "Type": "plus"
+                        },
+                        {
+                            "id": 14618586,
+                            "bugs": [],
+                            "edges": [],
+                            "Type": "plus"
+                        }
+                    ],
+                    "edges": [
+                        {
+                            "from_": {
+                                "bugId": 96683899,
+                                "port": "In"
+                            },
+                            "to": {
+                                "bugId": 44882121,
+                                "port": "In"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 44882121,
+                                "port": "Left"
+                            },
+                            "to": {
+                                "bugId": 88112395,
+                                "port": "In"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 88112395,
+                                "port": "Right"
+                            },
+                            "to": {
+                                "bugId": 14618586,
+                                "port": "In"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 14618586,
+                                "port": "Left"
+                            },
+                            "to": {
+                                "bugId": 96683899,
+                                "port": "Left"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 14618586,
+                                "port": "Right"
+                            },
+                            "to": {
+                                "bugId": 96683899,
+                                "port": "Right"
+                            },
+                            "Type": "Control"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 14618586,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 96683899,
+                                "port": "Out"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 96683899,
+                                "port": "Up"
+                            },
+                            "to": {
+                                "bugId": 14618586,
+                                "port": "Up"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 44882121,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 88112395,
+                                "port": "Down"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 88112395,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 14618586,
+                                "port": "Down"
+                            },
+                            "Type": "Data"
+                        },
+                        {
+                            "from_": {
+                                "bugId": 14618586,
+                                "port": "Out"
+                            },
+                            "to": {
+                                "bugId": 14618586,
+                                "port": "Down"
+                            },
+                            "Type": "Data"
+                        }
+                    ],
+                    "id": 96683899,
+                    "Type": "decrementor"
+                }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 64090030,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 45218097,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 45218097,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 72729708,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 72729708,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 11876399,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 72729708,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 96683899,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 11876399,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 64090030,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 11876399,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 64090030,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 96683899,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 64090030,
+                        "port": "Right"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 96683899,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 64090030,
+                        "port": "Right"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 45218097,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 72729708,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 11876399,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 72729708,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 96683899,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 72729708,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 96683899,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 11876399,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 11876399,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 96683899,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 64090030,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 18245286, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 30387015, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 76178642, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 45909554,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 18245286,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 18245286,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 30387015,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 30387015,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 76178642,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 76178642,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 45909554,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 76178642,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 45909554,
+                        "port": "Right"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 76178642,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 45909554,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 45909554,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 76178642,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 18245286,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 30387015,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 30387015,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 76178642,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 76178642,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 76178642,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 45909554,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 61845498, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 77299087, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 40217275,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 61845498,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 61845498,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 77299087,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 77299087,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 40217275,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 77299087,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 40217275,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 40217275,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 77299087,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 61845498,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 77299087,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 77299087,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 40217275,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 40217275,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 3690171, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 45997460, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 24231822, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 87580451,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 3690171,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 3690171,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 45997460,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 45997460,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 24231822,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 24231822,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 87580451,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 24231822,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 87580451,
+                        "port": "Right"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 24231822,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 87580451,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 87580451,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 24231822,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 3690171,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 45997460,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 45997460,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 24231822,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 24231822,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 24231822,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 87580451,
+            "Type": "nested"
+        },
+        {
+            "bugs": [
+                { "id": 61112689, "bugs": [], "edges": [], "Type": "plus" },
+                { "id": 12942799, "bugs": [], "edges": [], "Type": "plus" }
+            ],
+            "edges": [
+                {
+                    "from_": {
+                        "bugId": 84190051,
+                        "port": "In"
+                    },
+                    "to": {
+                        "bugId": 61112689,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 61112689,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 12942799,
+                        "port": "In"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 12942799,
+                        "port": "Left"
+                    },
+                    "to": {
+                        "bugId": 84190051,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 12942799,
+                        "port": "Right"
+                    },
+                    "to": {
+                        "bugId": 84190051,
+                        "port": "Left"
+                    },
+                    "Type": "Control"
+                },
+                {
+                    "from_": {
+                        "bugId": 84190051,
+                        "port": "Up"
+                    },
+                    "to": {
+                        "bugId": 12942799,
+                        "port": "Up"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 61112689,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 12942799,
+                        "port": "Down"
+                    },
+                    "Type": "Data"
+                },
+                {
+                    "from_": {
+                        "bugId": 12942799,
+                        "port": "Out"
+                    },
+                    "to": {
+                        "bugId": 84190051,
+                        "port": "Out"
+                    },
+                    "Type": "Data"
+                }
+            ],
+            "id": 84190051,
+            "Type": "nested"
+        }
+    ],
+    "edges": [
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "In"
+            },
+            "to": {
+                "bugId": 1,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 1,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 64090030,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 87580451,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 87580451,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 64090030,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 87580451,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 84190051,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 84190051,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Right"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 5047042,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 5047042,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 2357024,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 2357024,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 5047042,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 24564225,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 24564225,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 1530774,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 1530774,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 64090030,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 64090030,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 45909554,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 45909554,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 64090030,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 45909554,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 40217275,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 45909554,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 40217275,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 40217275,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "Up"
+            },
+            "to": {
+                "bugId": 5047042,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 1,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 2357024,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "Up"
+            },
+            "to": {
+                "bugId": 24564225,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "Up"
+            },
+            "to": {
+                "bugId": 1530774,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 45909554,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 45909554,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 1,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 40217275,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 40217275,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 87580451,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 87580451,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 1530774,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 87580451,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 87580451,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 1530774,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 24564225,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 45909554,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 84190051,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2357024,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 84190051,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2357024,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "Type": "Data"
+        }
+    ],
+    "xValue": 0,
+    "yValue": 5,
+    "id": 0
+}

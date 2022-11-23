@@ -1,5 +1,9 @@
+from __future__ import annotations
+
+from typing import Optional
 from enum import Enum
 from pydantic import BaseModel
+
 
 
 class PortType(str, Enum):
@@ -21,7 +25,7 @@ class PortAdress(BaseModel):
 
 
 class Edge(BaseModel):
-    From: PortAdress
+    from_: PortAdress
     to: PortAdress
     Type: EdgeType
 
@@ -30,5 +34,7 @@ class Bug(BaseModel):
     id: int
     bugs: list[Bug]
     edges: list[Edge]
-    xValue: int
-    yValue: int
+    Type: str
+    xValue: Optional[int] = None
+    yValue: Optional[int] = None
+
