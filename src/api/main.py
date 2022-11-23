@@ -4,8 +4,8 @@ from subprocess import check_output
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from boardTypes import Board
-from eval import main
+from api.boardTypes import Bug
+from engine.eval import main
 
 
 app = FastAPI()
@@ -21,12 +21,13 @@ app.add_middleware(
 )
 
 
-@app.post("/board/")
-async def create_board(board: Request):
+@app.post("/board")
+async def create_board(board: Bug):
     """
 
     """
-    board = await board.json()
-    print(board)
-    result = main(board)
+    try:
+        result = main(board.dict())
+    except Exception as e:
+        return {"error": str(e)}
     return result
