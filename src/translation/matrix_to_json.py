@@ -106,7 +106,8 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
     bugs = [math.ceil(bug / 2) for bug in bugs]
     bugs = list(set(bugs))
     # delete the 0th bug
-    bugs.remove(0)
+    if 0 in bugs:
+        bugs.remove(0)
     json_bugs = [{"id": bug, "bugs": [], "edges": [], "Type": "plus"} for bug in bugs]
         
 
