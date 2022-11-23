@@ -96,6 +96,8 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
     Arguments:
         control_matrix {np.Array} -- The control matrix to translate
         data_matrix {np.Array} -- The data matrix to translate
+        data_up {int} -- The number of data bugs on the up side
+        data_down {int} -- The number of data bugs on the down side
     Returns:
         dict -- The json
     """
