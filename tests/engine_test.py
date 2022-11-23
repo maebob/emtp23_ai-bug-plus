@@ -32,7 +32,14 @@ def test_incrementor():
         random_number_1 = random.randint(-1000, 1000)
         example["xValue"] = random_number_1
         example["yValue"] = None
-        assert eval.main(example).get("0_Out") == random_number_1 + 1
+        result = eval.main(example)
+        assert result.get("0_Out") == random_number_1 + 1
+        if result.get("0_Out") == 0:
+            assert result.get("0_Left") == 1
+            assert result.get("0_Right") == 0
+        else:
+            assert result.get("0_Left") == 0
+            assert result.get("0_Right") == 1
 
 
 def test_decrementor():
