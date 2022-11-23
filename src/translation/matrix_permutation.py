@@ -84,26 +84,20 @@ def create_all_permutations(matrix):
     return permutations
 
 
-def main():
-    matrix = np.array([np.zeros((5, 7), dtype=int), np.zeros((7, 5), dtype=int)], dtype=object)
+def main(matrix: np.array) -> list[np.array, np.array]:
     matrix[0][0][5] = matrix[0][1][6] = matrix[0][2][0] = matrix[0][3][1] = matrix[0][4][4] = 1
     matrix[1][0][4] = matrix[1][3][2] = matrix[1][5][3] = matrix[1][6][0] = 1
     print("All permutations are:\n")
-    all_permutations = create_all_permutations(matrix)
-    #print(all_permutations)
-    for permutation in all_permutations:
-        matrix_in_json = matrix_to_json(control_matrix=permutation[0], data_matrix=permutation[1], data_up=2, data_down=3)
-
-        result = eval(matrix_in_json)
-        assert result.get("0_Out") == 3
-        print("This permutation is correct")
-
-
-
-
+    return create_all_permutations(matrix)
+    
 
 
 if __name__ == '__main__':
-    main()
+    all_permutations = main(np.array([np.zeros((5, 7), dtype=int), np.zeros((7, 5), dtype=int)], dtype=object))
+    for permutation in all_permutations:
+        matrix_in_json = matrix_to_json(control_matrix=permutation[0], data_matrix=permutation[1], data_up=2, data_down=3)
+        result = eval(matrix_in_json)
+        assert result.get("0_Out") == 3
+        print("This permutation is correct")
 
 
