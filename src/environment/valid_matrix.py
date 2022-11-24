@@ -9,10 +9,13 @@ def is_valid_matrix(matrix) -> bool:
     Otherwise, return True.
     """
     non_zero = (np.argwhere(matrix)) # numpy.ndarray
+
     for non_zero_position in non_zero:
+
         
         if non_zero_position in forbidden_positions(matrix):
-            #TODO: Find out what goes wrong here; [0 5] is supoosedly in forbidden positions, but it is not
+            #np.all(np.equal(non_zero_position == forbidden_positions(matrix), axis=1))
+            #TODO: Find out what goes wrong here; [0 5] is supoosedly in forbidden positions, but it is not; numpp all, any, equal
             return False
         else:
             return True
@@ -57,8 +60,8 @@ def main():
     testmatrix = np.zeros((5, 7), dtype=int)
     testmatrix [0][5]=testmatrix [1][6] =testmatrix [2][0] =testmatrix [3][1] =testmatrix [4][4]  = 1 # control flow matrix of incrementer
     print(testmatrix)
-    print("check forbidden positions: \n", check_forbidden_positions(matrix=testmatrix))
-    print("***********************************")
+    #print("check forbidden positions: \n", check_forbidden_positions(matrix=testmatrix))
+    #print("***********************************")
     print("is valid matrix: \n", is_valid_matrix(matrix=testmatrix))
 
 
