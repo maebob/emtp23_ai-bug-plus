@@ -8,24 +8,16 @@ def is_valid_matrix(matrix) -> bool:
     Then, check if the non-zero elements are in positions that are allowed.
     Otherwise, return True.
     """
-    non_zero = (np.argwhere(matrix)) # numpy.ndarray
+    non_zero_positions = (np.argwhere(matrix)) # numpy.ndarray
 
-    for non_zero_position in non_zero:
+    forbid_pos = forbidden_positions(matrix)
 
-        
-        if non_zero_position in forbidden_positions(matrix):
-            #np.all(np.equal(non_zero_position == forbidden_positions(matrix), axis=1))
-            #TODO: Find out what goes wrong here; [0 5] is supoosedly in forbidden positions, but it is not; numpp all, any, equal
+    for non_zero_position in non_zero_positions:
+        #check if non_zero_position is in forbid_pos
+        if np.any(np.all(non_zero_position == forbid_pos, axis=1)):
             return False
-        else:
-            return True
-
-
-
-        return non_zero_position
         
-
-    
+    return True
 
     
 
@@ -47,7 +39,6 @@ def forbidden_positions(matrix) -> np.ndarray: # returns all forbidden positions
 This loops through all forbidden positions
 """
 def check_forbidden_positions(matrix) -> bool: # checks if any edges are in forbidden positions (hardcoded)
-    number_rows, number_columns = matrix.shape
     for i in forbidden_positions(matrix):
         if matrix[i[0]][i[1]] != 0:
             return False
@@ -60,8 +51,8 @@ def main():
     testmatrix = np.zeros((5, 7), dtype=int)
     testmatrix [0][5]=testmatrix [1][6] =testmatrix [2][0] =testmatrix [3][1] =testmatrix [4][4]  = 1 # control flow matrix of incrementer
     print(testmatrix)
-    #print("check forbidden positions: \n", check_forbidden_positions(matrix=testmatrix))
-    #print("***********************************")
+    print("check forbidden positions: \n", check_forbidden_positions(matrix=testmatrix))
+    print("***********************************")
     print("is valid matrix: \n", is_valid_matrix(matrix=testmatrix))
 
 
