@@ -49,9 +49,9 @@ def forbidden_positions_flat(array, no_bugs) -> list: # or should we do a list?
     Controlflow matrix: rows from 0 to n+1, columns from 0 to 2n
     Dataflow matrix: rows from 0 to 2n, columns from 0 to n+1
 
-    # TODO: First, the function checks how many bugs are used by the number of positions.
+    # First, the function checks how many bugs are used by the number of positions.
     #TODO: shape of matrix= (n+2)*(2n+1) = 2n^2+5n+2
-    # TODO: add mitternachtsformel
+
     Then, the forbidden positions for the control flow matrix are calculated. These are:
     forb. pos for row 0 an 1: (n*2+1)*row+1
     forb. pos. for 1 < row < n+2: (n*2+1)*row +(row-1)*2 and (n*2+1)*row +(row-1)*2+1
@@ -60,7 +60,10 @@ def forbidden_positions_flat(array, no_bugs) -> list: # or should we do a list?
 
     The index of forbidden positions of the input array are saved in the list forbidden_index and returned.
     """
-    #no_bugs = int((array.size-NO_EXTRAS)/2/())
+    # 
+    no_fields = int((array.size-NO_EXTRAS)/2/()) # number of fields in each matrix
+    #using the "Mitternachtsformel" to solve for the number of bugs:
+    #no_bugs = (-5 + (25-8*no_bugs))/4 # TODO: Mitternatchtsformel
 
     forbidden_index = []
 
