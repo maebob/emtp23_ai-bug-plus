@@ -51,6 +51,7 @@ def forbidden_positions_flat(array, no_bugs) -> list: # or should we do a list?
 
     # TODO: First, the function checks how many bugs are used by the number of positions.
     #TODO: shape of matrix= (n+2)*(2n+1) = 2n^2+5n+2
+    # TODO: add mitternachtsformel
     Then, the forbidden positions for the control flow matrix are calculated. These are:
     forb. pos for row 0 an 1: (n*2+1)*row+1
     forb. pos. for 1 < row < n+2: (n*2+1)*row +(row-1)*2 and (n*2+1)*row +(row-1)*2+1
