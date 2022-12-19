@@ -1,7 +1,6 @@
 """
 This file takes a given valid matrix and deletes n random edges from it.
 """
-import random
 import numpy as np
 from copy import deepcopy
 

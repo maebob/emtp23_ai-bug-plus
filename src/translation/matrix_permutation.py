@@ -1,103 +1,51 @@
+from sympy.utilities.iterables import multiset_permutations
+
 import numpy as np
 from copy import deepcopy
-from matrix_to_json import main as matrix_to_json
-from src.engine.eval import main as eval
 
 
-def create_all_permutations(matrix):
-    permutations = []
-    control_flow = matrix[0]
-    data_flow = matrix[1]
+def permutations(matrix):
+    all_permutations = []
 
-    '''
-        1, 2, 3
-    '''
+    nr_columns_control_flow = matrix[0][0].size
+    nr_rows_control_flow = (nr_columns_control_flow + 3) // 2
 
-    permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
+    list_rows_cf = np.arange(2, nr_rows_control_flow, dtype=int)
 
-    '''
-        1, 3, 2 
-    '''
-    control_flow[[3, 4]] = control_flow[[4, 3]]
-    control_flow[:, [3, 5]] = control_flow[:, [5, 3]]
-    control_flow[:, [4, 6]] = control_flow[:, [6, 4]]
+    for perm in multiset_permutations(list_rows_cf):
+        copy_matrix = matrix
+        control_flow = matrix[0]
+        data_flow = matrix[1]
+        swapped = True
+        # kind of bubblesort
+        while swapped:
+            swapped = False
+            for i in range(len(perm)-1):
+                if perm[i] > perm[i+1]:
+                    perm[i], perm[i+1] = perm[i+1], perm[i]
+                    swapped = True
 
-    data_flow[:, [3, 4]] = data_flow[:, [4, 3]]
-    data_flow[[3, 5]] = data_flow[[5, 3]]
-    data_flow[[4, 6]] = data_flow[[6, 4]]
+                    bugSwapped1 = list_rows_cf[i] - 1
+                    bugSwapped2 = list_rows_cf[i+1] - 1
 
-    permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
+                    control_flow[[bugSwapped1 + 1, bugSwapped2 + 1]] = control_flow[[bugSwapped2 + 1, bugSwapped1 + 1]]
+                    control_flow[:, [2*bugSwapped1-1, 2*bugSwapped2-1]] = control_flow[:, [2*bugSwapped2-1, 2*bugSwapped1-1]]
+                    control_flow[:, [2*bugSwapped1, 2*bugSwapped2]] = control_flow[:, [2*bugSwapped2, 2*bugSwapped1]]
 
-    '''
-        2, 3, 1
-    '''
-    control_flow[[2, 4]] = control_flow[[4, 2]]
-    control_flow[:, [1, 5]] = control_flow[:, [5, 1]]
-    control_flow[:, [2, 6]] = control_flow[:, [6, 2]]
+                    data_flow[:, [bugSwapped1+1, bugSwapped2+1]] = data_flow[:, [bugSwapped2+1, bugSwapped1+1]]
+                    data_flow[[2*bugSwapped1-1, 2*bugSwapped2-1]] = data_flow[[2*bugSwapped2-1, 2*bugSwapped1-1]]
+                    data_flow[[2 * bugSwapped1, 2 * bugSwapped2]] = data_flow[[2 * bugSwapped2, 2 * bugSwapped1]]
+        all_permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
 
-    data_flow[:, [2, 4]] = data_flow[:, [4, 2]]
-    data_flow[[1, 5]] = data_flow[[5, 1]]
-    data_flow[[2, 6]] = data_flow[[6, 2]]
-
-    permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
-
-    '''
-        2, 1, 3
-    '''
-    control_flow[[3, 4]] = control_flow[[4, 3]]
-    control_flow[:, [3, 5]] = control_flow[:, [5, 3]]
-    control_flow[:, [4, 6]] = control_flow[:, [6, 4]]
-
-    data_flow[:, [3, 4]] = data_flow[:, [4, 3]]
-    data_flow[[3, 5]] = data_flow[[5, 3]]
-    data_flow[[4, 6]] = data_flow[[6, 4]]
-
-    permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
-
-    '''
-        3, 1, 2
-    '''
-    control_flow[[2, 4]] = control_flow[[4, 2]]
-    control_flow[:, [1, 5]] = control_flow[:, [5, 1]]
-    control_flow[:, [2, 6]] = control_flow[:, [6, 2]]
-
-    data_flow[:, [2, 4]] = data_flow[:, [4, 2]]
-    data_flow[[1, 5]] = data_flow[[5, 1]]
-    data_flow[[2, 6]] = data_flow[[6, 2]]
-
-    permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
-
-    '''
-        3, 2, 1
-    '''
-    control_flow[[3, 4]] = control_flow[[4, 3]]
-    control_flow[:, [3, 5]] = control_flow[:, [5, 3]]
-    control_flow[:, [4, 6]] = control_flow[:, [6, 4]]
-
-    data_flow[:, [3, 4]] = data_flow[:, [4, 3]]
-    data_flow[[3, 5]] = data_flow[[5, 3]]
-    data_flow[[4, 6]] = data_flow[[6, 4]]
-
-    permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
-
-    print("In the list:")
-    return permutations
+    return all_permutations
 
 
-def main(matrix: np.array) -> list[np.array, np.array]:
+def main():
+    matrix = np.array([np.zeros((5, 7), dtype=int), np.zeros((7, 5), dtype=int)], dtype=object)
     matrix[0][0][5] = matrix[0][1][6] = matrix[0][2][0] = matrix[0][3][1] = matrix[0][4][4] = 1
     matrix[1][0][4] = matrix[1][3][2] = matrix[1][5][3] = matrix[1][6][0] = 1
-    print("All permutations are:\n")
-    return create_all_permutations(matrix)
-    
+
+    print(permutations(matrix))
 
 
-if __name__ == '__main__':
-    all_permutations = main(np.array([np.zeros((5, 7), dtype=int), np.zeros((7, 5), dtype=int)], dtype=object))
-    for permutation in all_permutations:
-        matrix_in_json = matrix_to_json(control_matrix=permutation[0], data_matrix=permutation[1], data_up=2, data_down=3)
-        result = eval(matrix_in_json)
-        assert result.get("0_Out") == 3
-        print("This permutation is correct")
-
-
+main()
