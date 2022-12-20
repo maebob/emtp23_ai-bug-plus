@@ -6,12 +6,19 @@ import tensorflow as tf
 with open('data.pkl', 'rb') as f:
     data = pickle.load(f)
 
-# Convert the data to a NumPy array
+# Convert the data to a NumPy array 
 data = np.array(data)
+
+# every row is a config
+# every column is a value
+# the last column is the output
+# the first 3 columns are the input
+
 
 # Split the data into input and output
 x_train = data[:, :-1]
 y_train = data[:, -1]
+print(x_train.shape)
 
 
 # Build the model
