@@ -23,9 +23,6 @@ def delete_edges_in_matrix(matrix: np.array, n: int, edges_to_delete: np.array) 
         position_to_delte = positions[edges_to_delete[i]]
         # delete the edge
         matrix[position_to_delte[0], position_to_delte[1]] = 0
-        # Save the deleted position
-        deleted_position = position_to_delte
-        print(f"Deleted edge {i + 1}: {deleted_position}")
     return matrix
 
 
