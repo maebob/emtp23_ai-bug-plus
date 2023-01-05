@@ -3,6 +3,8 @@ import environment
 env = environment.BugPlus()
 
 env.reset()
+env.initializeInputValues(2, 3)
+env.initializeExpectedOutput(3)
 
 reward = 0
 
