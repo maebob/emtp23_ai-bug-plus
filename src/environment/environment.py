@@ -7,22 +7,37 @@ from src.engine.eval import main as eval_engine
 
 class BugPlus(Env):
     def __init__(self):
+        '''Initialize the environment.'''
         super(BugPlus, self).__init__()
 
         # Number of possible bugs
         self.no_bugs = 3
 
+        # Obersvation and action space of the environment
         self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ])
         self.action_space = spaces.Discrete((((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2),)
 
+        # Flag to indicate if the episode is done
         self.done = False
 
+        # Episode return
+        self.ep_return = 0
+
+        # Input and expected output of the bug
+        self.input_up = None
+        self.input_down = None
+        self.expected_output = None
+
     def reset(self):
+        '''Reset the environment to its original state.'''
         self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ])
         self.done = False
         self.ep_return = 0
 
     def step(self, action):
+        '''Perform an action on the environment and reward/punish said action.
+        Each action corresponds to a specific edge between two bugs being added to either
+        the control flow matrix or the data flow matrix.'''
         # Decide wether the new edge is added to the control flow or data flow matrix
         flow_matrix = 0 if action < (self.observation_space[0][0].size * self.observation_space[1][0].size) else 1
         
@@ -55,28 +70,34 @@ class BugPlus(Env):
 
         return reward, self.observation_space, self.ep_return, self.done, {}
 
-    # Create predefined environment state
-    def updateBugs(self, bugs):
-        '''Set the starting state of the environment in order to have control over the
-         complexity of the problem class.'''
-        self.observation_space = bugs
-
     def checkBugValidity(self):
         '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
-        # TODO: Tranlate matrix representation to JSON representation, use eval function of engine to check validity
-        print("Control Flow Matrix: \n", self.observation_space[0])
-        print("Data Flow Matrix: \n", self.observation_space[1])
         # Translate the matrix representation to a JSON representation
-        matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=2, data_down=3)
+        matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
-        # Check if the bug is valid
+        # TODO:Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
 
-        # Run the bug through the engine
+        # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
         except:
             return False
-        if result.get("0_Out") == 3:
+        if result.get("0_Out") == self.expected_output:
             return True
-
         return False
+
+    def initializeStartingBoardSetup(self, bugs):
+        '''Set the starting state of the environment in order to have control over the
+         complexity of the problem class.'''
+        self.observation_space = bugs
+
+    def initializeInputValues(self, up, down):
+        '''Set the input values the bug bpard is supposed to process in order to have control over the
+         complexity of the problem class.'''
+        self.input_Up = up
+        self.input_Down = down
+
+    def initializeExpectedOutput(self, expected_out):
+        '''Set the expected output of the bug board in order to check wether the created board
+        evaluates correctly.'''
+        self.expected_output = expected_out
