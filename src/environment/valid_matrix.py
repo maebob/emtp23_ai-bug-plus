@@ -1,9 +1,9 @@
 import numpy as np
 
-# number of positions in the arrow before the controlflow matrix;
-# 3 extra values at beginnig of vector: up, down and out
-
-NO_EXTRAS = 2 #start counting at 0
+# positions in the arrow before the controlflow matrix
+NO_EXTRAS_BEGINNING = 2 # positions 0, 1, 2 are reserved for up, down, out
+# positions in the arrow after the dataflow matrix
+NO_EXTRAS_END = 1 # last position is reserved for solution of the removed edge
 
 def is_valid_matrix(array) -> bool:
     """
@@ -47,19 +47,19 @@ def forbidden_positions(array) -> np.ndarray:
     The index of forbidden positions of the input array are saved in the list forbidden_index and returned.
     """
     # 
-    no_fields = int((array.size-NO_EXTRAS)/2) # number of fields in each matrix
+    no_fields = int((array.size-NO_EXTRAS_BEGINNING-NO_EXTRAS_END)/2) # number of fields in each matrix
     no_bugs = int((-5 + (25-8*(2-no_fields))**(0.5))/4) # number of bugs used 
 
     forbidden_list = []
 
 
     # forbidden positions in control flow matrix:
-    for i in range(NO_EXTRAS, NO_EXTRAS+2): # row 0 and 1 in original controlflow matrix
-        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS)+1+NO_EXTRAS)
+    for i in range(NO_EXTRAS_BEGINNING, NO_EXTRAS_BEGINNING+2): # row 0 and 1 in original controlflow matrix
+        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS_BEGINNING)+1+NO_EXTRAS_BEGINNING)
     
-    for i in range(NO_EXTRAS+2, no_bugs+NO_EXTRAS+2): # rows 2 to (n+1) in original controlflow matrix
-        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS)+((i-NO_EXTRAS)-1)*2+NO_EXTRAS)
-        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS)+((i-NO_EXTRAS)-1)*2+NO_EXTRAS+1)
+    for i in range(NO_EXTRAS_BEGINNING+2, no_bugs+NO_EXTRAS_BEGINNING+2): # rows 2 to (n+1) in original controlflow matrix
+        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS_BEGINNING)+((i-NO_EXTRAS_BEGINNING)-1)*2+NO_EXTRAS_BEGINNING)
+        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS_BEGINNING)+((i-NO_EXTRAS_BEGINNING)-1)*2+NO_EXTRAS_BEGINNING+1)
     forbidden_index = np.asarray(forbidden_list)
     return forbidden_index
 
