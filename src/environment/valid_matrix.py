@@ -1,17 +1,25 @@
 import numpy as np
-
+# For matrices with input and output values as well as the position of the removed edge
+"""
 # positions in the arrow before the controlflow matrix
 NO_EXTRAS_BEGINNING = 2 # positions 0, 1, 2 are reserved for up, down, out
 # positions in the arrow after the dataflow matrix
 NO_EXTRAS_END = 1 # last position is reserved for solution of the removed edge
+"""
+# For matrices consiting of dataflow and controlflow matrix without any additional information, set the following:
+NO_EXTRAS_BEGINNING = -1 # to account for the fact that the first position is 0 and not 1
+NO_EXTRAS_END = 0
 
-def is_valid_matrix(array) -> bool:
+# For input arrays delete the "translation" into array and change input of definition to 'matrix'
+
+def is_valid_matrix(matrix) -> bool:
     """
     First, find position of all non-zero elements in the matrix.
     Then, check if the non-zero elements are in positions that are not allowed.
     If so, return False, meaning the matrix is not valid.
     Otherwise, return True.
     """
+    array = matrix.flatten()
     non_zero_positions = np.argwhere(array).flatten() # numpy.ndarray
     forbid_pos = forbidden_positions(array) # numpy.ndarray
 
@@ -22,7 +30,7 @@ def is_valid_matrix(array) -> bool:
     return True
 
 
-def forbidden_positions(array) -> np.ndarray:
+def forbidden_positions(matrix) -> np.ndarray:
     """
     Takes in an array consiting of the input pair and output, the controlflow matrix flattened,
     followed by the flattened dataflow matrix and (for now) the number of bugs
@@ -46,7 +54,7 @@ def forbidden_positions(array) -> np.ndarray:
 
     The index of forbidden positions of the input array are saved in the list forbidden_index and returned.
     """
-    # 
+    array = matrix.flatten()
     no_fields = int((array.size-NO_EXTRAS_BEGINNING-NO_EXTRAS_END)/2) # number of fields in each matrix
     no_bugs = int((-5 + (25-8*(2-no_fields))**(0.5))/4) # number of bugs used 
 
@@ -69,20 +77,34 @@ def forbidden_positions(array) -> np.ndarray:
 
 
 
-#"""
+"""
 # Testing
 def main():
-    #generate empty matrix of shape (5,7)
-    validmatrix = np.zeros((5, 7), dtype=int)
-    validmatrix[0][5] = validmatrix[1][6] = validmatrix[2][0] = validmatrix[3][1] = validmatrix[4][4]  = 1 # control flow matrix of incrementer
-    validarray = np.concatenate((np.array([1, 2, 3]), validmatrix.flatten(), validmatrix.flatten()), axis=0)
-    print("valid matrix is valid matrix: {}".format(is_valid_matrix(validarray)))
-    print(forbidden_positions(validarray))
-    print("expected output: [3, 10, 18, 19, 27, 28, 36, 37]")
-    invalidmatrix = validmatrix
-    invalidmatrix[0][0] = 1
-    invalidarray = np.concatenate((np.array([1, 2, 3]), invalidmatrix.flatten(), validmatrix.flatten()), axis=0)
-    print("invalid matrix is valid matrix: {}".format(is_valid_matrix(invalidarray)))
+    controlflow = np.zeros((5, 7), dtype=int)
+    controlflow[0][5] = controlflow[1][6] = controlflow[2][0] = controlflow[3][1] = controlflow[4][4]  = 1
+
+    dataflow = np.zeros((7,5), dtype= int)
+    dataflow[0][4] = dataflow[3][2] = dataflow[5][3] = dataflow[6][0] = 1
+
+    validmatrix = np.concatenate((controlflow.flatten(), dataflow.flatten()), axis=0)
+    # use for tests with array as input
+    # validarray = np.concatenate((np.array([1, 2, 3]), validmatrix.flatten(), validmatrix.flatten()), axis=0)
+    print("valid matrix is valid matrix: {}".format(is_valid_matrix(validmatrix)))
+    print(forbidden_positions(validmatrix))
+    print("expected output: [0, 7, 15, 16, 24, 25, 33, 34]")
+    #print(forbidden_positions(validarray))
+    # expected output for array when first 3 postions are reserved for up, down, out
+    # print("expected output: [3, 10, 18, 19, 27, 28, 36, 37]")
+
+
+    invalidcontrolflow = controlflow.copy()
+    invalidcontrolflow[0][0] =invalidcontrolflow[1][6] = invalidcontrolflow[2][0] = invalidcontrolflow[3][1] = invalidcontrolflow[4][4]  = 1
+    invalidmatrix = np.concatenate((invalidcontrolflow.flatten(), dataflow.flatten()), axis=0)
+    print("invalid matrix is valid matrix: {}".format(is_valid_matrix(invalidmatrix)))
+
+    # use for tests with array as input
+    #invalidarray = np.concatenate((np.array([1, 2, 3]), invalidmatrix.flatten(), validmatrix.flatten()), axis=0)
+    #print("invalid matrix is valid matrix: {}".format(is_valid_matrix(invalidarray)))
 
 
 
