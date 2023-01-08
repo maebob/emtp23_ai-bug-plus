@@ -128,14 +128,14 @@ class BugPlus(Env):
         vector = np.delete(vector, [0, 1, 2])
 
         # Split the vector into the control and data flow matrix
-        control_matrix = vector[:(vector.size/2)].reshape(2 + self.no_bugs, 1 + 2 * self.no_bugs)
-        data_matrix = vector[(vector.size/2):].reshape(1 + 2 * self.no_bugs, 2 + self.no_bugs)
+        control_matrix = vector[:(int)(vector.size/2)].reshape(2 + self.no_bugs, 1 + 2 * self.no_bugs)
+        data_matrix = vector[(int)(vector.size/2):].reshape(1 + 2 * self.no_bugs, 2 + self.no_bugs)
 
         self.observation_space = np.array([control_matrix, data_matrix])
 
-    def setInputAndOutputValues(self, vector):
+    def setInputAndOutputValuesFromVector(self, vector):
         '''Set the input and output values of the environment.'''
-        
+
         self.input_up = vector[0]
         self.input_down = vector[1]
         self.expected_output = vector[2]
