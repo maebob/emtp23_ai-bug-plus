@@ -59,26 +59,31 @@ def validate_config(up_port: int, down_port: int, result: int, control_matrix: l
     json = matrix_to_json(control_matrix=fixed_control_matrix,
                           data_matrix=fixed_data_matrix, data_up=up_port, data_down=down_port)
 
-    print(fixed_control_matrix)
-
-    # Save the json to a file
-    with open('test.json', 'w') as f:
-        f.write(str(json))
+    print(f"Starting validation: {json}")
 
     # Evaluate the json
     eval_result = eval_main(json)
-    print(eval_result)
+    if eval_result.get("0_Out") != result:
+        raise Exception(
+            f'Validation failed: {up_port} {down_port} {result} {control_matrix} {data_matrix} {fix_bit}')
 
 
 def run_validation(files: list):
 
     for file in files:
         file = read_file(file)
-        for element in file:
+        length = len(file)
+        for index, element in enumerate(file):
             up_port, down_port, result, control_matrix, data_matrix, fix_bit = split_data_element(
                 element, 35)
+            # change the fix bit to the correct index -3 for up, down, result 
+            fix_bit = int(fix_bit) - 3
+
             validate_config(up_port, down_port, result, control_matrix,
                             data_matrix, fix_bit)
+            
+            if index % 100 == 0:
+                print(f'Finished {index}/{length}')
 
 
 if __name__ == '__main__':

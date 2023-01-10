@@ -57,6 +57,7 @@ def delete_positions_bitvector(bitvector: np.array, positions: np.array) -> np.a
         bitvector = np.append(bitvector, position)
         
         return_vectors = np.append(return_vectors, bitvector)
+        
         # repair original bitvector
         original_bitvector[position] = 1
     return return_vectors
@@ -135,7 +136,7 @@ def main():
     ])
     matries = [control_matrix, data_matrix]
     all_permutations = mp.permutations(matrix=matries)
-
+    #all_permutations = matries
 
     print("Generating data set...")
     total_permutations = len(all_permutations) 
@@ -162,7 +163,7 @@ def main():
     
     print("Saving data set...")
     # shuffle the data set
-    np.random.shuffle(data_set)
+    # TODO: np.random.shuffle(data_set)
 
     print("{} rows in data set.".format(data_set.shape[0]))
 
