@@ -1,7 +1,7 @@
 from itertools import count
 import json
 import sys
-from src.api.boardTypes import EdgeType, PortType, Bug, Edge
+from api.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
