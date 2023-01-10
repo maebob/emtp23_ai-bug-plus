@@ -55,7 +55,10 @@ def delete_positions_bitvector(bitvector: np.array, positions: np.array) -> np.a
         bitvector = delete_position_bitvector(original_bitvector, position)
         # append the position to the bitvector to know which position was deleted
         bitvector = np.append(bitvector, position)
+        
         return_vectors = np.append(return_vectors, bitvector)
+        # repair original bitvector
+        original_bitvector[position] = 1
     return return_vectors
 
 def create_bitvector_with_deleted_positions(up: int, down: int, out: int, control_matrix: np.array, data_matrix: np.array) -> np.array:
@@ -99,9 +102,16 @@ def create_data_for_config(min: int, max: int, control_matrix: np.array, data_ma
             # create the output value
             out = calculation(up, down)
             # create the bitvector
-            bitvector = create_bitvector_with_deleted_positions(up, down, out, control_matrix, data_matrix)
+            bitvectors = create_bitvector_with_deleted_positions(up, down, out, control_matrix, data_matrix)
+
+            if np.count_nonzero(bitvectors) / 10 + 10 != np.count_nonzero(control_matrix) + np.count_nonzero(data_matrix):
+                print("Skipping permutation because it does not contain the same number of 1s as the original matrices.") 
+                print("Bitvector: ", np.count_nonzero(bitvectors)/10)
+                print("Original: ", np.count_nonzero(control_matrix) + np.count_nonzero(data_matrix))
+
+
             # append the bitvector to the data set
-            data_set = np.append(data_set, bitvector)
+            data_set = np.append(data_set, bitvectors)
     return data_set
 
 def main():
@@ -135,6 +145,15 @@ def main():
     for index, permutation in enumerate(all_permutations):
         permutation_control_matrix = permutation[0]
         permutation_data_matrix = permutation[1]
+
+        # calculate the number of 1s in the control matrix
+        control_matrix_ones = np.count_nonzero(permutation_control_matrix)
+        # calculate the number of 1s in the data matrix
+        data_matrix_ones = np.count_nonzero(permutation_data_matrix)
+
+        if control_matrix_ones + data_matrix_ones != np.count_nonzero(control_matrix) + np.count_nonzero(data_matrix):
+            print("Skipping permutation because it does not contain the same number of 1s as the original matrices.")
+
         data_set = np.append(data_set, create_data_for_config(0, 20, permutation_control_matrix, permutation_data_matrix, lambda x, y: x + 1))
         print(f"Generated {((index / total_permutations)) * 100}% of data set.")
     # reshape the data set to save a bitvector per row
@@ -150,6 +169,9 @@ def main():
     # split the data set into a training and a test set
     training_set = data_set[:int(data_set.shape[0] * 0.8)]
     test_set = data_set[int(data_set.shape[0] * 0.8):]
+
+    # save the data set to csv and format floats to 0.0
+    np.savetxt("data_set.csv", data_set, delimiter=",", fmt='%i')
 
     # save the training set
     with open('training_set.pkl', 'wb') as file:
