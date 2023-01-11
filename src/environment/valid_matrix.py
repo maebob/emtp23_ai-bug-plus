@@ -1,4 +1,11 @@
 import numpy as np
+import sys
+#TODO (for you guys): change path
+sys.path.append('/Users/mayte/documents/github/bugplusengine')
+from src.utils.matrix import number_bugs
+
+
+
 # For matrices with input and output values as well as the position of the removed edge
 """
 # positions in the arrow before the controlflow matrix
@@ -7,6 +14,7 @@ NO_EXTRAS_BEGINNING = 2 # positions 0, 1, 2 are reserved for up, down, out
 NO_EXTRAS_END = 1 # last position is reserved for solution of the removed edge
 """
 # For matrices consiting of dataflow and controlflow matrix without any additional information, set the following:
+# TODO: change to imported values from utils (?)
 NO_EXTRAS_BEGINNING = -1 # to account for the fact that the first position is 0 and not 1
 NO_EXTRAS_END = 0
 
@@ -29,48 +37,76 @@ def is_valid_matrix(matrix) -> bool:
             return False      
     return True
 
-
 def forbidden_positions(matrix) -> np.ndarray:
+    n = number_bugs(matrix)
+    forbidden_list = []
+
+  
+    # forbidden positions in control flow matrix:
+        # n = number of bugs
+        # each row has 2n+1 positions
+        # a row starts with position p = row*(2n+1)+1
+    for row in range(2): # row 0 and 1 in original controlflow matrix
+        forbidden_list.append((2*n+1) * row)
+
+    for row in range(2, n + 2): # all rows >= 2 in original controlflow matrix
+        forbidden_list.append((n*2+1)*row + (row-2)*2+1)
+        forbidden_list.append((n*2+1)*row + (row-2)*2+2)
+ 
+    forbidden_index = np.asarray(forbidden_list)
+    return forbidden_index
+"""
+def main():
+    controlflow = np.zeros((7, 9), dtype=int)
+    print(forbidden_positions(controlflow))
+
+if __name__ == "__main__":
+    main()
+"""
+
     """
-    Takes in an array consiting of the input pair and output, the controlflow matrix flattened,
-    followed by the flattened dataflow matrix and (for now) the number of bugs
-    Positions are derived from the rows and columns of the matrices in relation to the number of bugs.
-    n = number of bugs
-    Controlflow matrix: rows from 0 to n+1, columns from 0 to 2n
-    Dataflow matrix: rows from 0 to 2n, columns from 0 to n+1
+def forbidden_positions(matrix) -> np.ndarray:
+    #TODO: use util function to get number of bugs and kick out what is not needed
 
-    First, the function checks how many bugs are used by the number of positions.
-    shape of matrix= (n+2)*(2n+1) = 2n^2+5n+2
-    using the "Mitternachtsformel" to solve for the number of bugs:
-    no_fields = (n+2)*(2n+1) = 2n**2+5n+2
-    <=> 0 = 2n**2+5n+(2-no_fields)
+    # Takes in an array consiting of the input pair and output, the controlflow matrix flattened,
+    # followed by the flattened dataflow matrix
+    # Positions are derived from the rows and columns of the matrices in relation to the number of bugs.
+    # n = number of bugs
+    # Controlflow matrix: rows from 0 to n+1, columns from 0 to 2n
+    # Dataflow matrix: rows from 0 to 2n, columns from 0 to n+1
 
-    Then, the forbidden positions for the control flow matrix are calculated, i.e. no control flow connection of a bug to itself.
-    These are:
-    forb. pos for row 0 an 1: (n*2+1)*row+1
-    forb. pos. for 1 < row < n+2: (n*2+1)*row +(row-1)*2 and (n*2+1)*row +(row-1)*2+1
+    # First, the function checks how many bugs are used by the number of positions.
+    # shape of matrix= (n+2)*(2n+1) = 2n^2+5n+2
+    # using the "Mitternachtsformel" to solve for the number of bugs:
+    # no_fields = (n+2)*(2n+1) = 2n**2+5n+2
+    # <=> 0 = 2n**2+5n+(2-no_fields)
 
-    Forbidden positions for dataflow matrix are the same as for the transposed control flow matrix.
+    # Then, the forbidden positions for the control flow matrix are calculated, i.e. no control flow connection of a bug to itself.
+    # These are:
+    # forb. pos for row 0 an 1: (n*2+1)*row+1
+    # forb. pos. for 1 < row < n+2: (n*2+1)*row +(row-1)*2 and (n*2+1)*row +(row-1)*2+1
 
-    The index of forbidden positions of the input array are saved in the list forbidden_index and returned.
-    """
+    # Forbidden positions for dataflow matrix are the same as for the transposed control flow matrix.
+
+    # The index of forbidden positions of the input array are saved in the list forbidden_index and returned.
+    
     array = matrix.flatten()
     no_fields = int((array.size - NO_EXTRAS_BEGINNING - NO_EXTRAS_END)/2) # number of fields in each matrix
-    no_bugs = int((-5 + (25-8*(2 - no_fields))**(0.5))/4) # number of bugs used 
+    no_bugs = int((-5 + (25 - 8 *(2 - no_fields))**(0.5))/4) # number of bugs used 
 
     forbidden_list = []
 
 
     # forbidden positions in control flow matrix:
-    for i in range(NO_EXTRAS_BEGINNING, NO_EXTRAS_BEGINNING+2): # row 0 and 1 in original controlflow matrix
-        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS_BEGINNING)+1+NO_EXTRAS_BEGINNING)
+    for i in range(NO_EXTRAS_BEGINNING, NO_EXTRAS_BEGINNING + 2): # row 0 and 1 in original controlflow matrix
+        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING) + 1 + NO_EXTRAS_BEGINNING)
     
-    for i in range(NO_EXTRAS_BEGINNING+2, no_bugs+NO_EXTRAS_BEGINNING+2): # rows 2 to (n+1) in original controlflow matrix
-        forbidden_list.append((no_bugs*2+1)*(i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING)-1)*2 + NO_EXTRAS_BEGINNING)
-        forbidden_list.append((no_bugs*2+1)*(i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING)-1)*2 + NO_EXTRAS_BEGINNING+1)
+    for i in range(NO_EXTRAS_BEGINNING + 2, no_bugs + NO_EXTRAS_BEGINNING + 2): # rows 2 to (n+1) in original controlflow matrix
+        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING) - 1) * 2 + NO_EXTRAS_BEGINNING)
+        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING)-1) * 2 + NO_EXTRAS_BEGINNING + 1)
     forbidden_index = np.asarray(forbidden_list)
     return forbidden_index
-
+    """
 
 
 
@@ -115,4 +151,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-#"""
+"""
