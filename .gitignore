@@ -127,3 +127,21 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+aarontest/bin/activate.fish
+aarontest/bin/Activate.ps1
+aarontest/bin/convert-caffe2-to-onnx
+aarontest/bin/f2py3
+aarontest/bin/google-oauthlib-tool
+aarontest/bin/import_pb_to_tensorboard
+aarontest/bin/ipython
+aarontest/bin/activate
+aarontest/bin/activate.csh
+aarontest/bin/autopep8
+aarontest/bin/f2py
+*.xml
+*.10
+aarontest/bin/isympy
+aarontest/bin/jupyter
+aarontest/bin/jupyter-kernel
+src/environment/.DS_Store
+aarontest/bin/ipython3
