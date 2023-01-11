@@ -145,3 +145,6 @@ aarontest/bin/jupyter
 aarontest/bin/jupyter-kernel
 src/environment/.DS_Store
 aarontest/bin/ipython3
+.DS_Store
+config.json
+.DS_Store
