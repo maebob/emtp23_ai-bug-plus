@@ -55,14 +55,14 @@ def forbidden_positions(matrix) -> np.ndarray:
  
     forbidden_index = np.asarray(forbidden_list)
     return forbidden_index
-
+"""
 def main():
     controlflow = np.zeros((7, 9), dtype=int)
     print(forbidden_positions(controlflow))
 
 if __name__ == "__main__":
     main()
-
+"""
 
     """
 def forbidden_positions(matrix) -> np.ndarray:
