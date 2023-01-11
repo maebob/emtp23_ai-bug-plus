@@ -81,8 +81,8 @@ def forbidden_positions(matrix) -> np.ndarray:
     # The index of forbidden positions of the input array are saved in the list forbidden_index and returned.
     
     array = matrix.flatten()
-    no_fields = int((array.size-NO_EXTRAS_BEGINNING-NO_EXTRAS_END)/2) # number of fields in each matrix
-    no_bugs = int((-5 + (25-8*(2-no_fields))**(0.5))/4) # number of bugs used 
+    no_fields = int((array.size - NO_EXTRAS_BEGINNING - NO_EXTRAS_END)/2) # number of fields in each matrix
+    no_bugs = int((-5 + (25 - 8 *(2 - no_fields))**(0.5))/4) # number of bugs used 
 
     forbidden_list = []
 
@@ -91,9 +91,9 @@ def forbidden_positions(matrix) -> np.ndarray:
     for i in range(NO_EXTRAS_BEGINNING, NO_EXTRAS_BEGINNING + 2): # row 0 and 1 in original controlflow matrix
         forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING) + 1 + NO_EXTRAS_BEGINNING)
     
-    for i in range(NO_EXTRAS_BEGINNING+2, no_bugs+NO_EXTRAS_BEGINNING+2): # rows 2 to (n+1) in original controlflow matrix
-        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS_BEGINNING)+((i-NO_EXTRAS_BEGINNING)-1)*2+NO_EXTRAS_BEGINNING)
-        forbidden_list.append((no_bugs*2+1)*(i-NO_EXTRAS_BEGINNING)+((i-NO_EXTRAS_BEGINNING)-1)*2+NO_EXTRAS_BEGINNING+1)
+    for i in range(NO_EXTRAS_BEGINNING + 2, no_bugs + NO_EXTRAS_BEGINNING + 2): # rows 2 to (n+1) in original controlflow matrix
+        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING) - 1) * 2 + NO_EXTRAS_BEGINNING)
+        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING)-1) * 2 + NO_EXTRAS_BEGINNING + 1)
     forbidden_index = np.asarray(forbidden_list)
     return forbidden_index
     """
