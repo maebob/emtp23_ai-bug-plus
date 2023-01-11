@@ -1,6 +1,9 @@
 import numpy as np
+import sys
+#TODO (for you guys): change path
+sys.path.append('/Users/mayte/documents/github/bugplusengine')
+from src.utils.matrix import number_bugs
 
-from src.utils.matrix import number_of_bugs
 
 
 # For matrices with input and output values as well as the position of the removed edge
@@ -35,23 +38,30 @@ def is_valid_matrix(matrix) -> bool:
     return True
 
 def forbidden_positions(matrix) -> np.ndarray:
-    n = number_of_bugs(matrix)
+    n = number_bugs(matrix)
     forbidden_list = []
 
-
+  
     # forbidden positions in control flow matrix:
         # n = number of bugs
         # each row has 2n+1 positions
         # a row starts with position p = row*(2n+1)+1
-    for i in range(2): # row 0 and 1 in original controlflow matrix
-        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING) + 1 + NO_EXTRAS_BEGINNING)
-    
-    for i in range(NO_EXTRAS_BEGINNING + 2, no_bugs + NO_EXTRAS_BEGINNING + 2): # rows 2 to (n+1) in original controlflow matrix
-        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING) - 1) * 2 + NO_EXTRAS_BEGINNING)
-        forbidden_list.append((no_bugs * 2 + 1) * (i - NO_EXTRAS_BEGINNING)+((i - NO_EXTRAS_BEGINNING)-1) * 2 + NO_EXTRAS_BEGINNING + 1)
+    for row in range(2): # row 0 and 1 in original controlflow matrix
+        forbidden_list.append((2*n+1) * row)
+
+    for row in range(2, n + 2): # all rows >= 2 in original controlflow matrix
+        forbidden_list.append((n*2+1)*row + (row-2)*2+1)
+        forbidden_list.append((n*2+1)*row + (row-2)*2+2)
+ 
     forbidden_index = np.asarray(forbidden_list)
     return forbidden_index
 
+def main():
+    controlflow = np.zeros((7, 9), dtype=int)
+    print(forbidden_positions(controlflow))
+
+if __name__ == "__main__":
+    main()
 
 
     """
