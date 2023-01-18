@@ -41,8 +41,8 @@ def output_after_n_bugs(n) -> list:
         for element in output: # add all (new) elements from output to input
             if element not in input:
                 input.append(element)
-        nice_output = mathematical_output(output)
-        write_to_file(nice_output, f'output{i+1}.csv')
+    #nice_output = mathematical_output(output)
+    #write_to_file(nice_output, f'output{i+1}.csv')
     #return mathematical_output(output)
     return output
 
@@ -140,20 +140,9 @@ def mathemize(output)-> list:
 
 
 def main():
-    output_after_n_bugs(10)
+    output_after_n_bugs(4)
 
 
-    
-
-
-
-
-
-
-
-
-
- 
 
 if __name__ == "__main__":
     main()
