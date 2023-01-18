@@ -42,7 +42,7 @@ def output_after_n_bugs(n) -> list:
             if element not in input:
                 input.append(element)
         nice_output = mathematical_output(output)
-        write_to_file(nice_output, f'output{i}.csv')
+        write_to_file(nice_output, f'output{i+1}.csv')
     #return mathematical_output(output)
     return output
 
