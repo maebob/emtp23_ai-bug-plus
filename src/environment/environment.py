@@ -14,7 +14,7 @@ class BugPlus(Env):
         self.no_bugs = 3
 
         # Obersvation and action space of the environment
-        self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ])
+        self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ], dtype=object)
         self.action_space = spaces.Discrete((((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2),)
 
         # Flag to indicate if the episode is done
@@ -30,7 +30,7 @@ class BugPlus(Env):
 
     def reset(self):
         '''Reset the environment to its original state.'''
-        self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ])
+        self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ], dtype=object)
         self.done = False
         self.ep_return = 0
 
@@ -131,7 +131,7 @@ class BugPlus(Env):
         control_matrix = vector[:(int)(vector.size/2)].reshape(2 + self.no_bugs, 1 + 2 * self.no_bugs)
         data_matrix = vector[(int)(vector.size/2):].reshape(1 + 2 * self.no_bugs, 2 + self.no_bugs)
 
-        self.observation_space = np.array([control_matrix, data_matrix])
+        self.observation_space = np.array([control_matrix, data_matrix], dtype=object)
 
     def setInputAndOutputValuesFromVector(self, vector):
         '''Set the input and output values of the environment.'''
