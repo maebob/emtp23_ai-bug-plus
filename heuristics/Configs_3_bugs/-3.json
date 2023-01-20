@@ -1,0 +1,183 @@
+{
+    "Type": "root",
+    "parent": null,
+    "id": 0,
+    "xpos": 0,
+    "ypos": 0,
+    "bugs": [
+        {
+            "Type": "plus",
+            "parent": null,
+            "id": 2,
+            "xpos": 510.015625,
+            "ypos": 210.87109375,
+            "bugs": [],
+            "edges": []
+        },
+        {
+            "Type": "plus",
+            "parent": null,
+            "id": 5,
+            "xpos": 236.015625,
+            "ypos": 529.87109375,
+            "bugs": [],
+            "edges": []
+        },
+        {
+            "Type": "plus",
+            "parent": null,
+            "id": 7,
+            "xpos": 496.015625,
+            "ypos": 397.87109375,
+            "bugs": [],
+            "edges": []
+        }
+    ],
+    "edges": [
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "In"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 5,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 5,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Right"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 5,
+                "port": "Down"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 5,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 7,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 7,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 7,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 5,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 7,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 5,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 7,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 5,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 7,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "Up"
+            },
+            "to": {
+                "bugId": 2,
+                "port": "Down"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 7,
+                "port": "Down"
+            },
+            "Type": "Data"
+        }
+    ],
+    "xValue": 3,
+    "yValue": 5
+}
