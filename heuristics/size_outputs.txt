@@ -1,0 +1,8 @@
+roughly, based on int addition (and not the abstract variables)
+1 :  6
+2 :  29
+3 :  145
+4 :  777
+5 :  3554
+6 :  9697
+7 :  21953
