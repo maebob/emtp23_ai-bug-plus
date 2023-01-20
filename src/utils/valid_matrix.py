@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-#TODO (for you guys): change path
+#TODO: change path
 sys.path.append('/Users/mayte/github/bugplusengine')
 from src.utils.matrix import number_bugs
 
