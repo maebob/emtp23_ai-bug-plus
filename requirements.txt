@@ -25,3 +25,5 @@ urllib3==1.26.12
 uvicorn==0.18.3
 gym
 pandas
+torch
+matplotlib
