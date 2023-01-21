@@ -23,19 +23,17 @@ def number_bugs(matrix_or_array) -> int:
 
 
 
-"""
+
 # Change if needed:
 # Define how many positions are taken up in the matrix/array for the learner
 # at the beginning and end.
-# In order to count the number of positions in the matrix correctly, we need to count from 1 and not from zero.
-# Therefore, use for EXTRAS_START the number of positions minus 1. 
 
 EXTRAS_START = 3
 EXTRAS_END = 1
 
-def array_to_matrix(array) -> np.array:
+def array_to_matrices(array) -> tuple:
     
-    #reshape the array into controlflow and dataflow matrices.
+    #reshape the array into controlflow and dataflow matrices in the shape as needed for the environment
     #n = number of bugs, #X = number of X
     #dataflow: 
     #    [Wdh LA: (m x n)-matrix mit m Zeilen und n Spalten]
@@ -62,9 +60,9 @@ def array_to_matrix(array) -> np.array:
     dataflow = array[EXTRAS_START +(no_bugs + 2) * (2 * no_bugs + 1) : EXTRAS_START + 2 * ((no_bugs + 2) * (2 * no_bugs + 1))].reshape(2 * no_bugs + 1, no_bugs + 2)
     learner_input = array[0:EXTRAS_START]
     missing_positions = array[-EXTRAS_END:]
-    matrix = [controlflow, dataflow]
-    return matrix
-"""
+    tuple = np.array([controlflow, dataflow], dtype=object)
+    return tuple
+
 """
 def main():
     test_array_with_extras = np.array(
@@ -86,39 +84,12 @@ def main():
 
     12])
 
-    test_array = np.array([0, 1, 0, 0, 1, 0, 1, 
-    0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 
-    0, 1, 0, 0, 0, 0, 1])
-    test_matrix = np.reshape(test_array, (5, 7))
+    array_to_tuple = array_to_matrices(test_array_with_extras)
+    print(array_to_tuple)
 
-
-
-
-    array_to_matrix(test_array_with_extras)
 
 
 
 if __name__ == "__main__":
     main()
-
-
- """
-
-"""
-# Taken from env.observation_space
-
- array([array([[0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0]]), array([[0, 0, 0, 0, 0],
-                                              [0, 0, 0, 0, 0],
-                                              [0, 0, 0, 0, 0],
-                                              [0, 0, 0, 0, 0],
-                                              [0, 0, 0, 0, 0],
-                                              [0, 0, 0, 0, 0],
-                                              [0, 0, 0, 0, 0]])],
-      dtype=object)
 """
