@@ -1,7 +1,9 @@
 from gym import Env, spaces
 import numpy as np
 import sys
-sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/')
+sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
 
