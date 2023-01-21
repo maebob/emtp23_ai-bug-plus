@@ -1,7 +1,9 @@
 import numpy as np
 import sys
 #TODO: change path
-sys.path.append('/Users/mayte/github/bugplusengine')
+sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.utils.matrix import number_bugs
 
 
