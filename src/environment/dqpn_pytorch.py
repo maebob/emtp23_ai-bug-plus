@@ -28,6 +28,7 @@ df = pd.read_csv("configs.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
 vector = np.array(df.iloc[np.random.randint(0, len(df))])
+print('line 31, vector:\n', vector)
 
 # Initialize the environment with the vector
 env = environment.BugPlus()
@@ -103,9 +104,9 @@ n_actions = env.action_space.n
 
 # workaround for 'reset'
 
-state_tuple = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
-state = np.concatenate((state_tuple[0].flatten(),state_tuple[1].flatten()), axis=0) # flattened matrices concatenated into one array
-n_observations = state.size
+observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
+n_observations = state.size # number of possible states #1180591620717411303424 (eine Trilliarde....)
 
 
 
@@ -131,6 +132,7 @@ def select_action(state):
             # t.max(1) will return largest column value of each row.
             # second column on max result is index of where max element was
             # found, so we pick action with the larger expected reward.
+            #TODO: fix problem: TypeError: linear(): argument 'input' (position 1) must be Tensor, not NoneType
             return policy_net(state).max(1)[1].view(1, 1)
     else:
         return torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
@@ -218,22 +220,30 @@ else:
     num_episodes = 10
 
 for i_episode in range(num_episodes):
-    # reset environment TO INITIAL STATE #TODO: check if this is correct
-    state_tuple = env.observation_space
-    state = np.concatenate((state_tuple[0].flatten(),state_tuple[1].flatten()), axis=0) # flattened matrices concatenated into one array
+    print("Episode: ", i_episode)
+    # reset environment TO INITIAL STATE
+    # TODO: check if this is correct, see line 98
+    observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+    state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
     n_observations = state.size
 
-    #flatten state to 1D array
-    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(1)
+    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
+
 
     for t in count():
+        print("t: ", t)
         action = select_action(state)
+        print("action: ", action)
         reward, observation, ep_return, done, _ = env.step(action.item())
+        print("reward: ", reward)
+        observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
-        if not done:
+        if done:
             next_state = None
+            print("line 242 done")
         else:
-            next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(1)
+            next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
+            print("line 245: next_state: ", next_state)
 
         # Store the transition in memory
         memory.push(state, action, next_state, reward)
