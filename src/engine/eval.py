@@ -3,7 +3,10 @@ import json
 import sys
 import signal
 
-from boardTypes import EdgeType, PortType, Bug, Edge
+sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
