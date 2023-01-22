@@ -1,7 +1,9 @@
 from gym import Env, spaces
 import numpy as np
 import sys
-sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/')
+sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
 
@@ -33,6 +35,8 @@ class BugPlus(Env):
         self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ], dtype=object)
         self.done = False
         self.ep_return = 0
+
+        return self.observation_space
 
     def step(self, action):
         '''Perform an action on the environment and reward/punish said action.
