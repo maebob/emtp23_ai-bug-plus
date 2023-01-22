@@ -36,6 +36,8 @@ class BugPlus(Env):
         self.done = False
         self.ep_return = 0
 
+        return self.observation_space
+
     def step(self, action):
         '''Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
