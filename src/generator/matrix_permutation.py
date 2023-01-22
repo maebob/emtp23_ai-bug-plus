@@ -4,7 +4,13 @@ import numpy as np
 from copy import deepcopy
 
 
-def permutations(matrix):
+def permutations(matrix: np.array):
+    """
+    This function creates all permutations of the given matries.
+    Arguments:
+        matrix: The matrices to create the permutations from.
+    Returns:
+        A list of all permutations of the given matrices."""
     all_permutations = []
 
     nr_columns_control_flow = matrix[0][0].size
@@ -35,10 +41,12 @@ def permutations(matrix):
                     data_flow[:, [bugSwapped1+1, bugSwapped2+1]] = data_flow[:, [bugSwapped2+1, bugSwapped1+1]]
                     data_flow[[2*bugSwapped1-1, 2*bugSwapped2-1]] = data_flow[[2*bugSwapped2-1, 2*bugSwapped1-1]]
                     data_flow[[2 * bugSwapped1, 2 * bugSwapped2]] = data_flow[[2 * bugSwapped2, 2 * bugSwapped1]]
-        all_permutations.append([deepcopy(control_flow), deepcopy(data_flow)])
+        # create an array that contains the control flow and the data flow
+        temp = [deepcopy(control_flow), deepcopy(data_flow)]
+        # add temp as a nested array to all_permutations
+        all_permutations.append(temp)
 
     return all_permutations
-
 
 def main():
     matrix = np.array([np.zeros((5, 7), dtype=int), np.zeros((7, 5), dtype=int)], dtype=object)
@@ -47,5 +55,5 @@ def main():
 
     print(permutations(matrix))
 
-
-main()
+if __name__ == '__main__': 
+    main()
