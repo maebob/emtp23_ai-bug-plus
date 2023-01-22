@@ -21,6 +21,8 @@ sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
 
 from src.environment import environment
 
+from src.utils.matrix import number_bugs, array_to_matrices
+
 # Create data frame out of configs.csv
 df = pd.read_csv("configs.csv", sep=";")
 
@@ -93,14 +95,19 @@ LR = 1e-4
 
 # Get number of actions from gym action space
 n_actions = env.action_space.n
-print(n_actions)
-state = env.reset()
-observation_space = env.observation_space
-print(observation_space)
-"""
-# Get the number of state observations
-state = env.reset()
-n_observations = len(state)
+# TODO: find out if what we want to do when resetting:
+    # by environment: reset everything to zero
+    # as I understand it: give it initial state (for us: the matrices with one missing edge)
+    # QUESTION: should we set it to the SAME initial state every time? or should we set it to a random initial state?
+# TODO: write function for the state? also used further down, l 215 (for i_episode in range(num_episodes):)
+
+# workaround for 'reset'
+
+state_tuple = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+state = np.concatenate((state_tuple[0].flatten(),state_tuple[1].flatten()), axis=0) # flattened matrices concatenated into one array
+n_observations = state.size
+
+
 
 policy_net = DQN(n_observations, n_actions).to(device)
 target_net = DQN(n_observations, n_actions).to(device)
@@ -205,27 +212,28 @@ def optimize_model():
 
 
 if torch.cuda.is_available():
-    num_episodes = 600
+    #num_episodes = 600
+    num_episodes = 10
 else:
-    num_episodes = 50
+    num_episodes = 10
 
 for i_episode in range(num_episodes):
-    # Initialize the environment and get it's state
-    if gym.__version__[:4] == '0.26':
-        state, _ = env.reset()
-    elif gym.__version__[:4] == '0.25':
-        state, _ = env.reset(return_info=True)
-    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
+    # reset environment TO INITIAL STATE #TODO: check if this is correct
+    state_tuple = env.observation_space
+    state = np.concatenate((state_tuple[0].flatten(),state_tuple[1].flatten()), axis=0) # flattened matrices concatenated into one array
+    n_observations = state.size
+
+    #flatten state to 1D array
+    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(1)
+
     for t in count():
         action = select_action(state)
-        observation, reward, terminated, truncated, _ = env.step(action.item())
-        reward = torch.tensor([reward], device=device)
-        done = terminated or truncated
+        reward, observation, ep_return, done, _ = env.step(action.item())
 
-        if terminated:
+        if not done:
             next_state = None
         else:
-            next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
+            next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(1)
 
         # Store the transition in memory
         memory.push(state, action, next_state, reward)
@@ -253,4 +261,3 @@ print('Complete')
 plot_durations(show_result=True)
 plt.ioff()
 plt.show()
-"""
