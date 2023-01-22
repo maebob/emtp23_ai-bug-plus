@@ -122,6 +122,8 @@ steps_done = 0
 
 
 def select_action(state):
+    # TODO: find out how to prevent loops
+    # theoretically forbidden actions: [ 0  7 15 16 24 25 33 34]
     global steps_done
     sample = random.random()
     eps_threshold = EPS_END + (EPS_START - EPS_END) * \
@@ -132,7 +134,6 @@ def select_action(state):
             # t.max(1) will return largest column value of each row.
             # second column on max result is index of where max element was
             # found, so we pick action with the larger expected reward.
-            #TODO: fix problem: TypeError: linear(): argument 'input' (position 1) must be Tensor, not NoneType
             return policy_net(state).max(1)[1].view(1, 1)
     else:
         return torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
