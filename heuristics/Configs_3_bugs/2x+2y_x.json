@@ -146,6 +146,17 @@
         },
         {
             "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 3,
+                "port": "Down"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
                 "bugId": 0,
                 "port": "Up"
             },
@@ -159,17 +170,6 @@
             "from_": {
                 "bugId": 0,
                 "port": "Up"
-            },
-            "to": {
-                "bugId": 3,
-                "port": "Down"
-            },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 0,
-                "port": "Down"
             },
             "to": {
                 "bugId": 2,
