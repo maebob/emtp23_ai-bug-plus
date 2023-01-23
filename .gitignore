@@ -148,3 +148,6 @@ aarontest/bin/ipython3
 .DS_Store
 config.json
 .DS_Store
+.DS_Store
+.idea/BugPlusEngine.iml
+src/.DS_Store

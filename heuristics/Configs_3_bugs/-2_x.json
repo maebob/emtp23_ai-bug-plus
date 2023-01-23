@@ -9,8 +9,8 @@
             "Type": "plus",
             "parent": null,
             "id": 2,
-            "xpos": 492.359375,
-            "ypos": 214.5,
+            "xpos": 437.015625,
+            "ypos": 211.87109375,
             "bugs": [],
             "edges": []
         },
@@ -18,17 +18,17 @@
             "Type": "plus",
             "parent": null,
             "id": 3,
-            "xpos": 362.359375,
-            "ypos": 360.5,
+            "xpos": 299.015625,
+            "ypos": 421.87109375,
             "bugs": [],
             "edges": []
         },
         {
             "Type": "plus",
             "parent": null,
-            "id": 4,
-            "xpos": 189.359375,
-            "ypos": 598.5,
+            "id": 8,
+            "xpos": 232.015625,
+            "ypos": 578.87109375,
             "bugs": [],
             "edges": []
         }
@@ -69,11 +69,33 @@
         },
         {
             "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 3,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 2,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 3,
+                "port": "Down"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
                 "bugId": 3,
                 "port": "Left"
             },
             "to": {
-                "bugId": 4,
+                "bugId": 8,
                 "port": "In"
             },
             "Type": "Control"
@@ -84,14 +106,14 @@
                 "port": "Right"
             },
             "to": {
-                "bugId": 4,
+                "bugId": 8,
                 "port": "In"
             },
             "Type": "Control"
         },
         {
             "from_": {
-                "bugId": 4,
+                "bugId": 8,
                 "port": "Left"
             },
             "to": {
@@ -102,7 +124,7 @@
         },
         {
             "from_": {
-                "bugId": 4,
+                "bugId": 8,
                 "port": "Right"
             },
             "to": {
@@ -117,41 +139,19 @@
                 "port": "Out"
             },
             "to": {
-                "bugId": 4,
+                "bugId": 8,
                 "port": "Up"
             },
             "Type": "Data"
         },
         {
             "from_": {
-                "bugId": 4,
+                "bugId": 8,
                 "port": "Out"
             },
             "to": {
                 "bugId": 0,
                 "port": "Out"
-            },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 0,
-                "port": "Up"
-            },
-            "to": {
-                "bugId": 4,
-                "port": "Down"
-            },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 0,
-                "port": "Up"
-            },
-            "to": {
-                "bugId": 2,
-                "port": "Up"
             },
             "Type": "Data"
         },
@@ -168,22 +168,11 @@
         },
         {
             "from_": {
-                "bugId": 2,
-                "port": "Out"
-            },
-            "to": {
-                "bugId": 3,
+                "bugId": 0,
                 "port": "Up"
             },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 2,
-                "port": "Out"
-            },
             "to": {
-                "bugId": 3,
+                "bugId": 8,
                 "port": "Down"
             },
             "Type": "Data"

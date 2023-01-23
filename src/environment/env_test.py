@@ -44,7 +44,7 @@ print(env.observation_space[1])
 
 step_reward, observation_space, ep_return, done, list = env.step(35)
 reward = step_reward
-print("Control Flow Matrix after step:")
+print("\nControl Flow Matrix after step:")
 print(env.observation_space[0])
 
 print("\nData Flow Matrix after step:")
