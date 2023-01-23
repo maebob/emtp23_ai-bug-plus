@@ -61,8 +61,9 @@ class BugPlus(Env):
         # Inrement the episode return
         self.ep_return += 1
 
-        # Check if the board contains valid bugs only and set the reward accordingly
-        reward = 1 if self.checkBugValidity() else -1
+        # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
+        # The amount of the reward is definded in the called function
+        reward = self.checkBugValidity() 
 
         # Close the episode if the board contains a valid bug
         self.done = True if reward == 1 else False
