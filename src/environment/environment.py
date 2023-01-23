@@ -70,7 +70,7 @@ class BugPlus(Env):
         reward = 1 if self.checkBugValidity() else -1
 
         # Close the episode if the board contains a valid bug
-        self.done = True if reward == 10 else False
+        self.done = True if reward == 1 else False
 
 
         return reward, self.observation_space, self.ep_return, self.done, {}
