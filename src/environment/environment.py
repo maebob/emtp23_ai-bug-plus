@@ -6,6 +6,7 @@ sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
+from src.utils.valid_matrix import is_valid_matrix
 
 class BugPlus(Env):
     def __init__(self):
@@ -79,16 +80,23 @@ class BugPlus(Env):
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
-        # TODO:Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
+        # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
+        if is_valid_matrix(self.observation_space[0]) == False:
+            reward = -100
+            return reward
 
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
         except:
-            return False
+            reward = -10
+            return reward
         if result.get("0_Out") == self.expected_output:
-            return True
-        return False
+            reward = 10
+            return reward
+
+        reward = 0
+        return reward
 
     def initializeStartingBoardSetup(self, bugs):
         '''Set the starting state of the environment in order to have control over the
