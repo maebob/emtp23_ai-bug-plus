@@ -8,27 +8,27 @@
         {
             "Type": "plus",
             "parent": null,
-            "id": 2,
-            "xpos": 437.015625,
-            "ypos": 211.87109375,
+            "id": 9,
+            "xpos": 515,
+            "ypos": 207.75,
             "bugs": [],
             "edges": []
         },
         {
             "Type": "plus",
             "parent": null,
-            "id": 3,
-            "xpos": 299.015625,
-            "ypos": 421.87109375,
+            "id": 10,
+            "xpos": 529,
+            "ypos": 379.75,
             "bugs": [],
             "edges": []
         },
         {
             "Type": "plus",
             "parent": null,
-            "id": 8,
-            "xpos": 232.015625,
-            "ypos": 578.87109375,
+            "id": 11,
+            "xpos": 462,
+            "ypos": 592.75,
             "bugs": [],
             "edges": []
         }
@@ -40,128 +40,95 @@
                 "port": "In"
             },
             "to": {
-                "bugId": 2,
+                "bugId": 9,
                 "port": "In"
             },
             "Type": "Control"
         },
         {
             "from_": {
-                "bugId": 2,
+                "bugId": 9,
                 "port": "Left"
             },
             "to": {
-                "bugId": 3,
+                "bugId": 10,
                 "port": "In"
             },
             "Type": "Control"
         },
         {
             "from_": {
-                "bugId": 2,
+                "bugId": 9,
                 "port": "Right"
             },
             "to": {
-                "bugId": 3,
+                "bugId": 10,
                 "port": "In"
             },
             "Type": "Control"
         },
         {
             "from_": {
-                "bugId": 2,
+                "bugId": 10,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 11,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 10,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 11,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 11,
+                "port": "Left"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 11,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Right"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 11,
                 "port": "Out"
             },
             "to": {
-                "bugId": 3,
-                "port": "Up"
+                "bugId": 0,
+                "port": "Out"
             },
             "Type": "Data"
         },
         {
             "from_": {
-                "bugId": 2,
-                "port": "Out"
-            },
-            "to": {
-                "bugId": 3,
+                "bugId": 0,
                 "port": "Down"
             },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 3,
-                "port": "Left"
-            },
             "to": {
-                "bugId": 8,
-                "port": "In"
-            },
-            "Type": "Control"
-        },
-        {
-            "from_": {
-                "bugId": 3,
-                "port": "Right"
-            },
-            "to": {
-                "bugId": 8,
-                "port": "In"
-            },
-            "Type": "Control"
-        },
-        {
-            "from_": {
-                "bugId": 8,
-                "port": "Left"
-            },
-            "to": {
-                "bugId": 0,
-                "port": "Left"
-            },
-            "Type": "Control"
-        },
-        {
-            "from_": {
-                "bugId": 8,
-                "port": "Right"
-            },
-            "to": {
-                "bugId": 0,
-                "port": "Right"
-            },
-            "Type": "Control"
-        },
-        {
-            "from_": {
-                "bugId": 3,
-                "port": "Out"
-            },
-            "to": {
-                "bugId": 8,
-                "port": "Up"
-            },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 8,
-                "port": "Out"
-            },
-            "to": {
-                "bugId": 0,
-                "port": "Out"
-            },
-            "Type": "Data"
-        },
-        {
-            "from_": {
-                "bugId": 0,
-                "port": "Up"
-            },
-            "to": {
-                "bugId": 2,
+                "bugId": 11,
                 "port": "Down"
             },
             "Type": "Data"
@@ -172,12 +139,45 @@
                 "port": "Up"
             },
             "to": {
-                "bugId": 8,
+                "bugId": 9,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 9,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 10,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 9,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 10,
                 "port": "Down"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 10,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 11,
+                "port": "Up"
             },
             "Type": "Data"
         }
     ],
-    "xValue": 3,
-    "yValue": 5
+    "xValue": 1,
+    "yValue": 4
 }
