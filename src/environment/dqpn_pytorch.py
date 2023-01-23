@@ -216,9 +216,9 @@ def optimize_model():
 
 if torch.cuda.is_available():
     #num_episodes = 600
-    num_episodes = 10
+    num_episodes = 60
 else:
-    num_episodes = 10
+    num_episodes = 50
 
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
