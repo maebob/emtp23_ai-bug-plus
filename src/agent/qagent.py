@@ -2,7 +2,11 @@ import numpy as np
 import random
 import gym
 import pandas as pd
-import environment.environment as env
+import sys
+#sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+import src.environment.environment as env
 
 def qLearningAgent():
     # Create environment to interact with
@@ -19,7 +23,7 @@ def qLearningAgent():
     decayRate = 0.0005
 
     # Initialize training parameters
-    numEpisodes = 1000
+    numEpisodes = 100000
     maxSteps = 1
 
     # Pick configuration from configs.csv to train on
@@ -32,17 +36,17 @@ def qLearningAgent():
         environment.reset()
         environment.setVectorAsObservationSpace(vector)
         environment.setInputAndOutputValuesFromVector(vector)
-        print("Episode: " + str(episode))
+        # print("Episode: " + str(episode))
 
         # The Q-Table learning algorithm
         for step in range(maxSteps):
             # Pick an action based on epsilon-greedy policy
             if random.uniform(0, 1) < epsilon:
                 action = environment.action_space.sample()
-                print("Random action: " + str(action))
+                # print("Random action: " + str(action))
             else:
                 action = np.argmax(Q)
-                print("Q-Table action: " + str(action))
+                # print("Q-Table action: " + str(action))
 
             # Get new state and reward from environment
             step_reward, observation_space, ep_return, done, list = environment.step(action)
@@ -56,7 +60,7 @@ def qLearningAgent():
         epsilon = min(1, max(0, epsilon - decayRate))
 
 
-    print("Training finished over {numEpisodes} episodes.")
+    print("Training finished over" + str(numEpisodes) +  "episodes.")
     input("Press Enter to see out of 100 tries how often the agent picks the correct edge to add to the matrices...")
 
     # Test agent
