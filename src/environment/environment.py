@@ -1,4 +1,5 @@
 from gym import Env, spaces
+import logging
 import numpy as np
 import sys
 #sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
@@ -96,6 +97,7 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except:
             reward = -10
+            logging.exception("Error while evaluating bug.")
             return reward
         if result.get("0_Out") == self.expected_output:
             reward = 10
@@ -141,9 +143,10 @@ class BugPlus(Env):
 
         Vector format: [input_up, input_down, expected_output, control_matrix, data_matrix]
         Target format: [[control_matrix], [data_matrix]]'''
-
+        
         # Remove the input and expected output from the vector
         vector = np.delete(vector, [0, 1, 2])
+
 
         # Split the vector into the control and data flow matrix
         control_matrix = vector[:(int)(vector.size/2)].reshape(2 + self.no_bugs, 1 + 2 * self.no_bugs)
