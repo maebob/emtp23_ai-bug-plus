@@ -77,7 +77,12 @@ class BugPlus(Env):
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
-        '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
+        '''Check if the bug is valid, i.e. if it has a valid control flow graph and data flow graph. Additionally check wether the bug produces the correct output.
+        
+        The reward given to the agent is assigned as follows:
+        -100: Invalid bug configuration
+        -10: Bug produces wrong output
+        10: Bug is valid and produces the correct output'''
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
