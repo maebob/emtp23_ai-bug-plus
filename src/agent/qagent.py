@@ -20,7 +20,7 @@ def qLearningAgent():
     learningRate = 0.8
     discountRate = 0.95
     epsilon = 1
-    decayRate = 0.0005
+    decayRate = 0.05
 
     # Initialize training parameters
     numEpisodes = 100
