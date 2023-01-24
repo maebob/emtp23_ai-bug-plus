@@ -20,7 +20,7 @@ def qLearningAgent():
     learningRate = 0.8
     discountRate = 0.95
     epsilon = 1
-    decayRate = 0.05
+    decayRate = 0.005
 
     # Initialize training parameters
     numEpisodes = 100
@@ -36,7 +36,9 @@ def qLearningAgent():
         environment.reset()
         environment.setVectorAsObservationSpace(vector)
         environment.setInputAndOutputValuesFromVector(vector)
-        # print("Episode: " + str(episode))
+        
+        if episode == 99:
+            print(environment.observation_space)
 
         # The Q-Table learning algorithm
         for step in range(maxSteps):
@@ -55,9 +57,11 @@ def qLearningAgent():
             # Update Q-Table with new knowledge
             Q[action] = Q[action] + learningRate * (
                         reward + discountRate * np.max(Q) - Q[action])
+            print(action)
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
+
 
 
     print("Training finished over " + str(numEpisodes) +  " episodes.")
@@ -72,9 +76,9 @@ def qLearningAgent():
         environment.setInputAndOutputValuesFromVector(vector)
         
         action = np.argmax(Q)
-        print(action)
-        print(np.min(Q))
-        print(np.max(Q))
+        #print(action)
+        #print(np.min(Q))
+        #print(np.max(Q))
         step_reward, observation_space, ep_return, done, list = environment.step(action)
         reward += step_reward
 
