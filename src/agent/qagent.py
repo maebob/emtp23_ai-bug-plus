@@ -23,7 +23,7 @@ def qLearningAgent():
     decayRate = 0.0005
 
     # Initialize training parameters
-    numEpisodes = 100000
+    numEpisodes = 100
     maxSteps = 1
 
     # Pick configuration from configs.csv to train on
@@ -60,7 +60,7 @@ def qLearningAgent():
         epsilon = min(1, max(0, epsilon - decayRate))
 
 
-    print("Training finished over" + str(numEpisodes) +  "episodes.")
+    print("Training finished over " + str(numEpisodes) +  " episodes.")
     input("Press Enter to see out of 100 tries how often the agent picks the correct edge to add to the matrices...")
 
     # Test agent
@@ -72,6 +72,9 @@ def qLearningAgent():
         environment.setInputAndOutputValuesFromVector(vector)
         
         action = np.argmax(Q)
+        print(action)
+        print(np.min(Q))
+        print(np.max(Q))
         step_reward, observation_space, ep_return, done, list = environment.step(action)
         reward += step_reward
 
