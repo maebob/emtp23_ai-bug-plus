@@ -1,20 +1,17 @@
 from itertools import count
 import json
 import sys
-import signal
+import threading
 
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+#sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
 # sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
-
-def handle_timeout(signum, frame):
-    raise TimeoutError
-
+time_exceeded = threading.Event()
 
 def stack_size2a(size=2):
     """
@@ -436,15 +433,22 @@ def eval_bug(bug_id: int) -> None:
     if bug_id is None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
+    # Set the timer to stop the evaluation if it takes too long
+    timer = threading.Timer(0.5, time_exceeded.set)
+    timer.start()
 
-    while memory_bug_types.get(bug_id) != "root":
+    while memory_bug_types.get(bug_id) != "root" and not time_exceeded.is_set():
         if memory_bug_types.get(bug_id) == "plus":
             bug_id = evaluate_plus_bug(bug_id)
         elif memory_bug_types.get(bug_id) != "plus":
             bug_id = evaluate_nested_bug(bug_id)
         else:
             raise Exception("Unknown bug type")
-
+    
+    # Stop the timer
+    timer.cancel()
+    if time_exceeded.is_set():
+        raise TimeoutError("Evaluation took too long")
 
 def main(board: Bug) -> dict:
     """The main function of the program
@@ -460,18 +464,8 @@ def main(board: Bug) -> dict:
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
-
-    # Limit execution time to 1 seconds
-    signal.signal(signal.SIGALRM, handle_timeout)
-    signal.alarm(1)  # 1 seconds
-
-    # Start the evaluation
-    try:
-        eval_bug(first_bug_id)
-    except TimeoutError:
-        raise Exception("Timeout")
-    finally:
-        signal.alarm(0)
+    
+    eval_bug(first_bug_id)
 
     return memory_ports
 
