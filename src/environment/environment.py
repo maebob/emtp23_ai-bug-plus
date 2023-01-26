@@ -95,6 +95,10 @@ class BugPlus(Env):
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
+        except TimeoutError:
+            print("\n timeout \n")
+            reward = -10
+            logging.exception("Took too long to evaluate bug.")
         except:
             reward = -10
             logging.exception("Error while evaluating bug.")
