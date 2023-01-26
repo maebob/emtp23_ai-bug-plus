@@ -22,8 +22,9 @@ def qLearningAgent():
     epsilon = 1
     decayRate = 0.005
 
+
     # Initialize training parameters
-    numEpisodes = 100
+    numEpisodes = 1000
     maxSteps = 1
 
     # Pick configuration from configs.csv to train on
@@ -37,8 +38,8 @@ def qLearningAgent():
         environment.setVectorAsObservationSpace(vector)
         environment.setInputAndOutputValuesFromVector(vector)
         
-        if episode == 99:
-            print(environment.observation_space)
+        # if episode == 99:
+        #    print(environment.observation_space)
 
         # The Q-Table learning algorithm
         for step in range(maxSteps):
@@ -57,7 +58,7 @@ def qLearningAgent():
             # Update Q-Table with new knowledge
             Q[action] = Q[action] + learningRate * (
                         reward + discountRate * np.max(Q) - Q[action])
-            print(action)
+            # print(action)
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
@@ -70,29 +71,30 @@ def qLearningAgent():
     # Test agent
     numCorrect = 0
     reward = 0
-    for i in range(100):
-        environment.reset()
-        environment.setVectorAsObservationSpace(vector)
-        environment.setInputAndOutputValuesFromVector(vector)
-        
-        action = np.argmax(Q)
-        #print(action)
-        #print(np.min(Q))
-        #print(np.max(Q))
-        step_reward, observation_space, ep_return, done, list = environment.step(action)
-        reward += step_reward
 
-        if step_reward == 1:
-            numCorrect += 1
-    avg_reward = reward / 100
+    environment.reset()
+    environment.setVectorAsObservationSpace(vector)
+    environment.setInputAndOutputValuesFromVector(vector)
+        
+    action = np.argmax(Q)
+    #print(action)
+    #print(np.min(Q))
+    #print(np.max(Q))
+    step_reward, observation_space, ep_return, done, list = environment.step(action)
+    reward += step_reward
+
+    if step_reward == 10:
+        numCorrect += 1
+
+    #print(action)
         
     # Print results
     #print("Agent picked the correct edge to add to the matrices " + ((str)numCorrect) + " times out of 100 tries.")
     #print("The average reward gained by the agent was " + ((str)avg_reward) + ".")
 
     # Print number of correct guesses and average reward
-    print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 100 tries.")
-    print("The average reward gained by the agent was " + str(avg_reward) + ".")
+    print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 1 tries.")
+    print("The average reward gained by the agent was " + str(step_reward) + ".")
 
     
 if __name__ == "__main__":
