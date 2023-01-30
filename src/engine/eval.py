@@ -11,6 +11,10 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
+# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
@@ -479,7 +483,7 @@ if __name__ == "__main__":
     """This function is only used for testing purposes"""
     # TODO pseudo parallel only works on first itreation
     example_file = open(
-        "Configurations/loop.json", "r").read()
+        "Configurations/isLarger.json", "r").read()
     example_board = json.loads(example_file)
     example_board["xValue"] = 10
     example_board["yValue"] = 1
