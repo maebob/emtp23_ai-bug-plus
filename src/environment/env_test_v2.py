@@ -32,6 +32,7 @@ for i in range(10):
     # Replace missing edge
     reward, observation_space, ep_return, done, list = environment.step(32)
     acc_reward += reward
+    print(i)
 
 
 print("\n Average Reward: ")

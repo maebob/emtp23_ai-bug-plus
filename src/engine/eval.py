@@ -4,15 +4,15 @@ import sys
 import threading
 import os
 
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # load the .env file
-load_dotenv()
+#load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
-sys.path.append(os.environ.get('absolute_project_path'))
+#sys.path.append(os.environ.get('absolute_project_path'))
 
 # sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
@@ -443,10 +443,11 @@ def eval_bug(bug_id: int) -> None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
     # Set the timer to stop the evaluation if it takes too long
-    timer = threading.Timer(0.5, time_exceeded.set)
-    timer.start()
+    # timer = threading.Timer(0.5, time_exceeded.set)
+    # timer.start()
+    # and not time_exceeded.is_set():
 
-    while memory_bug_types.get(bug_id) != "root" and not time_exceeded.is_set():
+    while memory_bug_types.get(bug_id) != "root" :
         if memory_bug_types.get(bug_id) == "plus":
             bug_id = evaluate_plus_bug(bug_id)
         elif memory_bug_types.get(bug_id) != "plus":
@@ -455,9 +456,9 @@ def eval_bug(bug_id: int) -> None:
             raise Exception("Unknown bug type")
     
     # Stop the timer
-    timer.cancel()
-    if time_exceeded.is_set():
-        raise TimeoutError("Evaluation took too long")
+    # timer.cancel()
+    # if time_exceeded.is_set():
+    #    raise TimeoutError("Evaluation took too long")
 
 def main(board: Bug) -> dict:
     """The main function of the program
