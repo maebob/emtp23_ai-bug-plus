@@ -69,10 +69,19 @@ class BugPlus(Env):
 
         # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
         # The amount of the reward is definded in the called function
+
+        # Debugging catch------------------------------------------------------------------------------------
+        if action == 32:
+            print("")
+        # Debugging catch------------------------------------------------------------------------------------
+
         reward = self.checkBugValidity() 
 
         # Close the episode if the board contains a valid bug
-        self.done = True if reward == 10 else False
+        if reward == 10:
+            self.done = True        
+        else:
+            self.done = False
 
 
         return reward, self.observation_space, self.ep_return, self.done, {}
@@ -96,12 +105,13 @@ class BugPlus(Env):
         try:
             result = eval_engine(matrix_as_json)
         except TimeoutError:
-            print("\n timeout \n")
+            # print("\n timeout \n")
             reward = -10
-            logging.exception("Took too long to evaluate bug.")
+            # logging.exception("Took too long to evaluate bug.")
+            return reward
         except:
             reward = -10
-            logging.exception("Error while evaluating bug.")
+            # logging.exception("Error while evaluating bug.")
             return reward
         if result.get("0_Out") == self.expected_output:
             reward = 10
@@ -113,7 +123,7 @@ class BugPlus(Env):
     def initializeStartingBoardSetup(self, bugs):
         '''Set the starting state of the environment in order to have control over the
          complexity of the problem class.'''
-        self.observation_space = bugs
+        self.no_bugs = bugs
 
     def initializeInputValues(self, up, down):
         '''Set the input values the bug bpard is supposed to process in order to have control over the

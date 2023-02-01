@@ -35,8 +35,10 @@ def qLearningAgent():
     for episode in range(numEpisodes):
         # Reset environment and get first new observation
         environment.reset()
-        environment.setVectorAsObservationSpace(vector)
-        environment.setInputAndOutputValuesFromVector(vector)
+        initialize(environment)
+        training_done = False
+        # environment.setVectorAsObservationSpace(vector)
+        # environment.setInputAndOutputValuesFromVector(vector)
         
         # if episode == 99:
         #    print(environment.observation_space)
@@ -53,12 +55,22 @@ def qLearningAgent():
 
             # Get new state and reward from environment
             step_reward, observation_space, ep_return, done, list = environment.step(action)
-            reward = step_reward
+            # reward = step_reward
+            
+            # Debugging catch------------------------------------------------------------------------------------
+            if action == 32:
+                print("AAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+            # Debugging catch------------------------------------------------------------------------------------
 
             # Update Q-Table with new knowledge
             Q[action] = Q[action] + learningRate * (
-                        reward + discountRate * np.max(Q) - Q[action])
-            # print(action)
+                        step_reward + discountRate * np.max(Q) - Q[action])
+            
+            if done == True:
+                training_done = True
+        
+        if training_done == True:
+            break
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
@@ -73,14 +85,16 @@ def qLearningAgent():
     reward = 0
 
     environment.reset()
-    environment.setVectorAsObservationSpace(vector)
-    environment.setInputAndOutputValuesFromVector(vector)
+    # environment.setVectorAsObservationSpace(vector)
+    # environment.setInputAndOutputValuesFromVector(vector)
+    initialize(environment)
         
     action = np.argmax(Q)
     #print(action)
     #print(np.min(Q))
     #print(np.max(Q))
     step_reward, observation_space, ep_return, done, list = environment.step(action)
+
     reward += step_reward
 
     if step_reward == 10:
@@ -94,8 +108,26 @@ def qLearningAgent():
 
     # Print number of correct guesses and average reward
     print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 1 tries.")
-    print("The average reward gained by the agent was " + str(step_reward) + ".")
+    print("The average reward gained by the agent was " + str(step_reward) + ". \n")
 
+def initialize(environment):
+    environment.reset()
+    # Create incrementor matrces with one edge removed
+    control_flow = np.zeros((5, 7), dtype=int)
+    data_flow = np.zeros((7, 5), dtype=int)
+
+    # Missing edge in control flow matrix: [4][4] or 33
+    control_flow[0][5] = control_flow[1][6] = control_flow[2][0] = control_flow[3][1]  = 1
+    data_flow[0][4] = data_flow[3][2] = data_flow[5][3] = data_flow[6][0] = 1
+
+    # Set the environment`s observation space
+    environment.observation_space[0] = control_flow
+    environment.observation_space[1] = data_flow
+
+    # Set input and expected output
+    environment.input_up = 4
+    environment.input_down = 2
+    environment.expected_output = 5
     
 if __name__ == "__main__":
     qLearningAgent()
