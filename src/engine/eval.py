@@ -1,7 +1,6 @@
 from itertools import count
 import json
 import sys
-import threading
 import os
 
 from dotenv import load_dotenv
@@ -20,7 +19,8 @@ from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
-time_exceeded = threading.Event()
+ITERATIONS = 0 # The number of iterations the engine has run
+MAX_ITERATIONS = 2000 # The maximum number of iterations the engine is allowed to run
 
 def stack_size2a(size=2):
     """
@@ -442,11 +442,11 @@ def eval_bug(bug_id: int) -> None:
     if bug_id is None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
-    # Set the timer to stop the evaluation if it takes too long
-    timer = threading.Timer(0.5, time_exceeded.set)
-    timer.start()
-
-    while memory_bug_types.get(bug_id) != "root" and not time_exceeded.is_set():
+    
+    # Increment the global iteration counter
+    global ITERATIONS
+    ITERATIONS += 1
+    while memory_bug_types.get(bug_id) != "root" and ITERATIONS < MAX_ITERATIONS:
         if memory_bug_types.get(bug_id) == "plus":
             bug_id = evaluate_plus_bug(bug_id)
         elif memory_bug_types.get(bug_id) != "plus":
@@ -454,9 +454,8 @@ def eval_bug(bug_id: int) -> None:
         else:
             raise Exception("Unknown bug type")
     
-    # Stop the timer
-    timer.cancel()
-    if time_exceeded.is_set():
+    # Stop the evaluation if it took too long
+    if ITERATIONS >= MAX_ITERATIONS:
         raise TimeoutError("Evaluation took too long")
 
 def main(board: Bug) -> dict:
@@ -470,6 +469,7 @@ def main(board: Bug) -> dict:
     memory_connections.clear()
     memory_ports.clear()
     memory_bug_types.clear()
+    ITERATIONS = 0
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
