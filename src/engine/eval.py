@@ -3,15 +3,15 @@ import json
 import sys
 import os
 
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # load the .env file
-load_dotenv()
+#load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
-sys.path.append(os.environ.get('absolute_project_path'))
+#sys.path.append(os.environ.get('absolute_project_path'))
 
 # sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
@@ -454,9 +454,9 @@ def eval_bug(bug_id: int) -> None:
         else:
             raise Exception("Unknown bug type")
     
-    # Stop the evaluation if it took too long
-    if ITERATIONS >= MAX_ITERATIONS:
-        raise TimeoutError("Evaluation took too long")
+    # Stop the evaluation if it took # too long
+    # if ITERATIONS >= MAX_ITERATIONS:
+    #    raise TimeoutError("Evaluation took too long")
 
 def main(board: Bug) -> dict:
     """The main function of the program

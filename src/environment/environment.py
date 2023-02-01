@@ -107,7 +107,7 @@ class BugPlus(Env):
         except TimeoutError:
             # print("\n timeout \n")
             reward = -10
-            # logging.exception("Took too long to evaluate bug.")
+            print("timeout")
             return reward
         except:
             reward = -10

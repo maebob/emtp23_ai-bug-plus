@@ -35,7 +35,22 @@ def qLearningAgent():
     for episode in range(numEpisodes):
         # Reset environment and get first new observation
         environment.reset()
-        initialize(environment)
+        control_flow = np.zeros((5, 7), dtype=int)
+        data_flow = np.zeros((7, 5), dtype=int)
+
+        # Missing edge in control flow matrix: [4][4] or 33
+        control_flow[0][5] = control_flow[1][6] = control_flow[2][0] = control_flow[3][1]  = 1
+        data_flow[0][4] = data_flow[3][2] = data_flow[5][3] = data_flow[6][0] = 1
+
+        # Set the environment`s observation space
+        environment.observation_space[0] = control_flow
+        environment.observation_space[1] = data_flow
+
+        # Set input and expected output
+        environment.input_up = 4
+        environment.input_down = 2
+        environment.expected_output = 5
+
         training_done = False
         # environment.setVectorAsObservationSpace(vector)
         # environment.setInputAndOutputValuesFromVector(vector)
@@ -55,16 +70,10 @@ def qLearningAgent():
 
             # Get new state and reward from environment
             step_reward, observation_space, ep_return, done, list = environment.step(action)
-            # reward = step_reward
-            
-            # Debugging catch------------------------------------------------------------------------------------
-            if action == 32:
-                print("AAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-            # Debugging catch------------------------------------------------------------------------------------
+            # reward = step_reward            
 
             # Update Q-Table with new knowledge
-            Q[action] = Q[action] + learningRate * (
-                        step_reward + discountRate * np.max(Q) - Q[action])
+            Q[action] = Q[action] + learningRate * (step_reward + discountRate * np.max(Q) - Q[action])
             
             if done == True:
                 training_done = True
@@ -87,7 +96,21 @@ def qLearningAgent():
     environment.reset()
     # environment.setVectorAsObservationSpace(vector)
     # environment.setInputAndOutputValuesFromVector(vector)
-    initialize(environment)
+    control_flow = np.zeros((5, 7), dtype=int)
+    data_flow = np.zeros((7, 5), dtype=int)
+
+    # Missing edge in control flow matrix: [4][4] or 33
+    control_flow[0][5] = control_flow[1][6] = control_flow[2][0] = control_flow[3][1]  = 1
+    data_flow[0][4] = data_flow[3][2] = data_flow[5][3] = data_flow[6][0] = 1
+
+    # Set the environment`s observation space
+    environment.observation_space[0] = control_flow
+    environment.observation_space[1] = data_flow
+
+    # Set input and expected output
+    environment.input_up = 4
+    environment.input_down = 2
+    environment.expected_output = 5
         
     action = np.argmax(Q)
     #print(action)
