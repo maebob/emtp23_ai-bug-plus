@@ -151,3 +151,4 @@ config.json
 .DS_Store
 .idea/BugPlusEngine.iml
 src/.DS_Store
+.DS_Store
