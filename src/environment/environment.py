@@ -70,8 +70,22 @@ class BugPlus(Env):
         # The amount of the reward is definded in the called function
         reward = self.checkBugValidity() 
 
+<<<<<<< Updated upstream
         # Close the episode if the board contains a valid bug or if the board is invalid
         self.done = True if (reward == 10 or reward == -100 )else False
+=======
+        # Close the episode if the board contains a valid bug
+        #self.done = True if reward == 10 else False
+        if reward == 10:
+            self.done = True
+            print("done :)")
+        elif reward == -100:
+            self.done = True
+            print("done :(")
+        else:
+            self.done = False
+            print('continue')
+>>>>>>> Stashed changes
 
 
         return reward, self.observation_space, self.ep_return, self.done, {}
@@ -96,7 +110,7 @@ class BugPlus(Env):
             reward = 10
             return reward
 
-        reward = 0
+        reward = -1
         return reward
 
     def initializeStartingBoardSetup(self, bugs):
