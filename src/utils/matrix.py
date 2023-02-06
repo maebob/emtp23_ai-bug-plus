@@ -29,10 +29,10 @@ def number_bugs(matrix_or_array) -> int:
 # at the beginning and end.
 
 EXTRAS_START = 3
-EXTRAS_END = 1
+EXTRAS_END = 0
 
 def array_to_matrices(array) -> tuple:
-    
+
     #reshape the array into controlflow and dataflow matrices in the shape as needed for the environment
     #n = number of bugs, #X = number of X
     #dataflow: 
@@ -60,8 +60,8 @@ def array_to_matrices(array) -> tuple:
     dataflow = array[EXTRAS_START +(no_bugs + 2) * (2 * no_bugs + 1) : EXTRAS_START + 2 * ((no_bugs + 2) * (2 * no_bugs + 1))].reshape(2 * no_bugs + 1, no_bugs + 2)
     learner_input = array[0:EXTRAS_START]
     missing_positions = array[-EXTRAS_END:]
-    tuple = np.array([controlflow, dataflow], dtype=object)
-    return tuple
+    #tuple = np.array([controlflow, dataflow], dtype=object)
+    return controlflow
 
 """
 def main():
@@ -88,6 +88,10 @@ def main():
     print(array_to_tuple)
 
 
+    test_array_with_extras = np.array( [ 7,  4, 11,  0,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  0,  0,
+  0])
 
 
 if __name__ == "__main__":
