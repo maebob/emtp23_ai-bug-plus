@@ -138,8 +138,9 @@ def json_to_graph(json: dict, formula: str, up: int, down: int) -> List[List[int
             graph.append(TableRow(formula, source_id, destination_id, edge_type, source_port, destination_port, source_value))
         # if destination is the root bug
         if destination_id == 0 and edge_type == "Data":
+            print("Destination is root bug")
             destination_value = result
-            graph.append(TableRow(formula, source_id, destination_id, edge_type, source_port, destination_port, destination_value))
+            graph.append(TableRow(formula, source_id, destination_id, edge_type, source_port, destination_port, None, destination_value))
 
         graph.append(TableRow(formula, source_id, destination_id, edge_type, source_port, destination_port))
     return graph
@@ -174,5 +175,6 @@ if __name__ == "__main__":
         for graph in graphs:
             for row in graph:
                 f.write(f"\n{row.formula};{row.src};{row.dst};{row.edge_type};{row.src_port};{row.dst_port};{row.src_value};{row.dst_value}")
+            break
 
 
