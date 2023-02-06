@@ -70,8 +70,8 @@ class BugPlus(Env):
         # The amount of the reward is definded in the called function
         reward = self.checkBugValidity() 
 
-        # Close the episode if the board contains a valid bug
-        self.done = True if reward == 10 else False
+        # Close the episode if the board contains a valid bug or if the board is invalid
+        self.done = True if (reward == 10 or reward == -100 )else False
 
 
         return reward, self.observation_space, self.ep_return, self.done, {}
