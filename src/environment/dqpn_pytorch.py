@@ -30,10 +30,23 @@ df = pd.read_csv("configs.csv", sep=";")
 vector = np.array(df.iloc[np.random.randint(0, len(df))])
 print('line 31, vector:\n', vector)
 
+"""
+# Reshape the vector to the control flow and data flow matrices
+print("****************")
+controlflow = vector[3:38].reshape(5,7)
+dataflow = vector[38:73].reshape(7,5)
+print(controlflow)
+print("\n",dataflow)
+# missing controlflow (1,6)
+# print(vector.shape) # shape is (73,), i.e. no solution appended atm
+"""
+
 # Initialize the environment with the vector
 env = environment.BugPlus()
 env.setVectorAsObservationSpace(vector)
-env.setInputAndOutputValuesFromVector(vector)
+env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm
+
+
 
 # set up matplotlib
 is_ipython = 'inline' in matplotlib.get_backend()
@@ -55,7 +68,7 @@ class ReplayMemory(object):
         self.memory = deque([],maxlen=capacity)
 
     def push(self, *args):
-        """Save a transition"""
+       #Save a transition
         self.memory.append(Transition(*args))
 
     def sample(self, batch_size):
@@ -106,8 +119,16 @@ n_actions = env.action_space.n
 
 observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-n_observations = state.size # number of possible states #1180591620717411303424 (eine Trilliarde....)
+n_observations = state.size #TODO: abklären; # number of possible states (#1180591620717411303424 (eine Trilliarde....))
 
+# Error message for 2**70
+#   File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 126, in <module>
+#     policy_net = DQN(n_observations, n_actions).to(device)
+#   File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 84, in __init__
+#     self.layer1 = nn.Linear(n_observations, 128)
+#   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 96, in __init__
+#     self.weight = Parameter(torch.empty((out_features, in_features), **factory_kwargs))
+# TypeError: empty(): argument 'size' must be tuple of SymInts, but found element of type int at pos 2
 
 
 policy_net = DQN(n_observations, n_actions).to(device)
@@ -122,8 +143,6 @@ steps_done = 0
 
 
 def select_action(state):
-    # TODO: find out how to prevent loops
-    # theoretically forbidden actions: [ 0  7 15 16 24 25 33 34]
     global steps_done
     sample = random.random()
     eps_threshold = EPS_END + (EPS_START - EPS_END) * \
@@ -216,9 +235,9 @@ def optimize_model():
 
 if torch.cuda.is_available():
     #num_episodes = 600
-    num_episodes = 60
+    num_episodes = 600
 else:
-    num_episodes = 50
+    num_episodes = 500
 
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -226,11 +245,11 @@ for i_episode in range(num_episodes):
     # TODO: check if this is correct, see line 98
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size
+    n_observations = state.size #TODO: abklären: 2**70?
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
-
+"""
     for t in count():
         print("t: ", t)
         action = select_action(state)
@@ -267,8 +286,62 @@ for i_episode in range(num_episodes):
             episode_durations.append(t + 1)
             plot_durations()
             break
+"""
+
+for i_episode in range(num_episodes):
+    print("Episode: ", i_episode)
+    # reset environment TO INITIAL STATE
+    # TODO: check if this is correct, see line 98
+    observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+    state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
+    n_observations = state.size #TODO: abklären: 2**70?
+
+    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
+
+    action = select_action(state)
+    print("action: ", action)
+    reward, observation, ep_return, done, _ = env.step(action.item())
+    print("reward: ", reward)
+    observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
+
+    if done:
+        next_state = None
+        print("done\n")
+    else:
+        next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
+
+    # Store the transition in memory
+    memory.push(state, action, next_state, reward)
+
+    # Move to the next state
+    state = next_state
+
+    # Perform one step of the optimization (on the policy network)
+    optimize_model() 
+    # TODO: fix batches
+    # Traceback (most recent call last):
+    # File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 320, in <module>
+    #     optimize_model()
+    # File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 206, in optimize_model
+    #     reward_batch = torch.cat(batch.reward)
+    # TypeError: expected Tensor as element 0 in argument 0, but got int
+
+
+    # Soft update of the target network's weights
+    # θ′ ← τ θ + (1 −τ )θ′
+    target_net_state_dict = target_net.state_dict()
+    policy_net_state_dict = policy_net.state_dict()
+    for key in policy_net_state_dict:
+        target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
+    target_net.load_state_dict(target_net_state_dict)
+
+    # if done:
+    #     episode_durations.append(t + 1)
+    #     plot_durations()
+    #     break
 
 print('Complete')
-plot_durations(show_result=True)
-plt.ioff()
-plt.show()
+# plot_durations(show_result=True)
+# plt.ioff()
+# plt.show()
+
