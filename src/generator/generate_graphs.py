@@ -15,12 +15,12 @@ node_ids = list(set(node_ids))
 # Create an empty graph and add nodes
 Graph = dgl.DGLGraph()
 Graph.add_nodes(len(node_ids), {"node_id": torch.tensor(node_ids),
-                                "Up": torch.full((len(node_ids), 1), -999, dtype=torch.int),
-                                "Down": torch.full((len(node_ids), 1), -999, dtype=torch.int),
-                                "Right": torch.full((len(node_ids), 1), -999, dtype=torch.int),
-                                "Left": torch.full((len(node_ids), 1), -999, dtype=torch.int),
-                                "Out": torch.full((len(node_ids), 1), -999, dtype=torch.int),
-                                "In": torch.full((len(node_ids), 1), -999, dtype=torch.int)})
+                                "Up": torch.full((len(node_ids), 1), -999, dtype=torch.float),
+                                "Down": torch.full((len(node_ids), 1), -999, dtype=torch.float),
+                                "Right": torch.full((len(node_ids), 1), -999, dtype=torch.float),
+                                "Left": torch.full((len(node_ids), 1), -999, dtype=torch.float),
+                                "Out": torch.full((len(node_ids), 1), -999, dtype=torch.float),
+                                "In": torch.full((len(node_ids), 1), -999, dtype=torch.float)})
 #node_features = Graph.ndata['node_id']
 
 # Set the node features for the graph
