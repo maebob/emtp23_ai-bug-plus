@@ -1,6 +1,8 @@
 from gym import Env, spaces
 import numpy as np
 import sys
+import torch
+
 sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
 # sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
@@ -72,10 +74,10 @@ class BugPlus(Env):
 
         # Close the episode if the board contains a valid bug
         #self.done = True if reward == 10 else False
-        if reward == 50:
+        if reward == torch.tensor([50]):
             self.done = True
             print("done :)")
-        elif reward == -100:
+        elif reward == torch.tensor([-100]):
             self.done = True
             print("done :(")
         else:
@@ -92,20 +94,20 @@ class BugPlus(Env):
         
         # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
         if is_valid_matrix(self.observation_space[0]) == False:
-            reward = -100
+            reward = torch.tensor([-100])
             return reward
 
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
         except:
-            reward = -10
+            reward = torch.tensor([-10])
             return reward
         if result.get("0_Out") == self.expected_output:
-            reward = 50
+            reward = torch.tensor([50])
             return reward
 
-        reward = -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
+        reward = torch.tensor([-1]) # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
 
     def initializeStartingBoardSetup(self, bugs):
         '''Set the starting state of the environment in order to have control over the
