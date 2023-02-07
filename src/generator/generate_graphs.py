@@ -14,23 +14,18 @@ node_ids = list(set(node_ids))
 
 # Create an empty graph and add nodes
 Graph = dgl.DGLGraph()
-Graph.add_nodes(len(node_ids), {"node_id": torch.tensor(node_ids),
-                                "Up": torch.full((len(node_ids), 1), -999, dtype=torch.float),
-                                "Down": torch.full((len(node_ids), 1), -999, dtype=torch.float),
-                                "Right": torch.full((len(node_ids), 1), -999, dtype=torch.float),
-                                "Left": torch.full((len(node_ids), 1), -999, dtype=torch.float),
-                                "Out": torch.full((len(node_ids), 1), -999, dtype=torch.float),
-                                "In": torch.full((len(node_ids), 1), -999, dtype=torch.float)})
-#node_features = Graph.ndata['node_id']
+# Add the nodes to the graph
+Graph.add_nodes(len(node_ids))
 
+# Create the node features tensor
+node_features = torch.full(
+    (Graph.number_of_nodes(), 6), -999, dtype=torch.float)
 # Set the node features for the graph
-for i, row in df.iterrows():
-    if row['src_value'] != "None":
-        # Set the node features for the graph
-        print(Graph.ndata[row["src_port"]][row['src']], row['src_value'])
-        Graph.ndata[row["src_port"]][row['src']] = int(row['src_value'])
-        print(Graph.ndata[row["src_port"]][row['src']])
-        print()
+Graph.ndata['features'] = node_features
+
+# Print the first node's feature
+print(Graph.ndata['features'])
+
 
 """for i, row in df.iterrows():
     if row['src_value'] != "None":
@@ -60,18 +55,32 @@ port_map = {'Up': 0, 'Down': 1, 'Right': 2, 'Left': 3, 'Out': 4, 'In': 5}
 df['src_port'] = df['src_port'].map(port_map)
 df['dst_port'] = df['dst_port'].map(port_map)
 
+# Set the node features for the graph
 for i, row in df.iterrows():
-    Graph.add_edges(row['src'], row['dst'], data={
-                    'src_port': torch.tensor([row['src_port']]),
-                    'dst_port': torch.tensor([row['dst_port']]),
-                    'edge_type': torch.tensor([row['edge_type']])}
-                    )
+    if row['src_value'] != "None":
+        # Set the node features for the graph
+        port_value = int(row['src_value'])
+        port_index = int(row["src_port"])
+        # Set the value of the port to the value of the node
+        Graph.ndata["features"][row['src']][port_index] = port_value
+
+    if row['dst_value'] != "None":
+        # Set the node features for the graph
+        port_value = int(row['dst_value'])
+        port_index = int(row["dst_port"])
+        # Set the value of the port to the value of the node
+        Graph.ndata["features"][row['dst']][port_index] = port_value
+
+for i, row in df.iterrows():
+    edge_data_tensor = torch.tensor([[row['src_port'], row['dst_port'], row['edge_type']]])
+    Graph.add_edges(row['src'], row['dst'], data={"edge_features": edge_data_tensor})
 
 print(Graph.ndata)
+print(Graph.edata)
 
 
-G = Graph.to_networkx()
-# Get node positions
+#G = Graph.to_networkx()
+"""# Get node positions
 pos = nx.spring_layout(G)
 
 # Create node labels
@@ -94,8 +103,7 @@ for u, v, data in G.edges(data=True):
     data['src_port'] = int(Graph.edges[u, v].data['src_port'])
     data['dst_port'] = int(Graph.edges[u, v].data['dst_port'])
     data['edge_type'] = int(Graph.edges[u, v].data['edge_type'])
-    edge_labels[(u, v)] = f'Edge Features: {data}'
-
+    edge_labels[(u, v)] = f'Edge Features: {data}'"""
 
 
 """# Draw graph
