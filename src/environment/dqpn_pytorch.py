@@ -15,7 +15,14 @@ import torch.nn.functional as F
 import pandas as pd
 
 import sys
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+import os
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
+#sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
 # sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 
@@ -294,17 +301,18 @@ for i_episode in range(num_episodes):
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
+    # The index in the observation space that should be updated
     action = select_action(state)
     print("action: ", action)
     reward, observation, ep_return, done, _ = env.step(action.item())
     print("reward: ", reward)
     observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
-    if done:
+    """if done:
         next_state = None
         print("done\n")
-    else:
-        next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
+    else:"""
+    next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
 
     # Store the transition in memory
     memory.push(state, action, next_state, reward)
