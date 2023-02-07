@@ -22,9 +22,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-#sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+
 
 from src.environment import environment_tensor as environment
 
@@ -34,7 +32,26 @@ from src.utils.matrix import number_bugs, array_to_matrices
 df = pd.read_csv("configs.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
-vector = np.array(df.iloc[np.random.randint(0, len(df))])
+# vector = np.array(df.iloc[np.random.randint(0, len(df))])
+test_vector = np.array(
+    [3, 5, 4,
+
+    0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 1, 
+    1, 0, 0, 0, 0, 0, 0, 
+    0, 1, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 1, 0, 0, 
+
+    0, 0, 0, 0, 1, 
+    0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 
+    0, 0, 1, 0, 0, 
+    0, 0, 0, 0, 0, 
+    0, 0, 0, 1, 0, 
+    1, 0, 0, 0, 1,
+
+    8])
+vector = test_vector[:73]
 print('line 31, vector:\n', vector)
 
 """
@@ -234,7 +251,7 @@ if torch.cuda.is_available():
     #num_episodes = 600
     num_episodes = 1000
 else:
-    num_episodes = 1000
+    num_episodes = 1
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -298,7 +315,9 @@ for i_episode in range(num_episodes):
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
     # The index in the observation space that should be updated
-    action = select_action(state)
+    #action = select_action(state)
+    action = torch.tensor([8])
+
     #print("action: ", action)
     reward, observation, ep_return, done, _ = env.step(action.item())
     #print("reward: ", reward)
