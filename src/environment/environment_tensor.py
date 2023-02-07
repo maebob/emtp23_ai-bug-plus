@@ -41,10 +41,21 @@ class BugPlus(Env):
 
         return self.observation_space
 
-    def step(self, action):
-        '''Perform an action on the environment and reward/punish said action.
+    def step(self, action: int):
+        """
+        Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
-        the control flow matrix or the data flow matrix.'''
+        the control flow matrix or the data flow matrix.
+
+        Arguments:
+            action {int} -- The action to be performed on the environment.
+        Returns:
+            reward {int} -- The reward for the performed action.
+            observation {np.array} -- The new state of the environment.
+            ep_return {int} -- The return of the episode.
+            done {bool} -- Flag to indicate if the episode is done.
+        """
+
         # Decide wether the new edge is added to the control flow or data flow matrix
         flow_matrix = 0 if action < (self.observation_space[0][0].size * self.observation_space[1][0].size) else 1
         
@@ -88,7 +99,9 @@ class BugPlus(Env):
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
-        '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
+        """
+        Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
+        """
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
@@ -109,6 +122,7 @@ class BugPlus(Env):
 
         reward = torch.tensor([-1]) # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
 
+    
     def initializeStartingBoardSetup(self, bugs):
         '''Set the starting state of the environment in order to have control over the
          complexity of the problem class.'''
