@@ -234,7 +234,7 @@ if torch.cuda.is_available():
     #num_episodes = 600
     num_episodes = 1000
 else:
-    num_episodes = 50000
+    num_episodes = 1000
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -286,9 +286,11 @@ for i_episode in range(num_episodes):
 """
 t = 0
 count_positive_rewards = 0 # counts how often the reward was positive
+sum_rewards = 0 # sum of all rewards
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
     env.reset()
+    env.setVectorAsObservationSpace(vector)
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
     n_observations = state.size #TODO: abklären: 2**70?
@@ -303,6 +305,7 @@ for i_episode in range(num_episodes):
     observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
+    sum_rewards += reward
 
     if reward > 0:
         count_positive_rewards += 1
@@ -343,6 +346,7 @@ for i_episode in range(num_episodes):
 
 print('Complete')
 print("count_positive_rewards: ", count_positive_rewards)
+print(sum_rewards)
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
