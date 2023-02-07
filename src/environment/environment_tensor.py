@@ -81,46 +81,41 @@ class BugPlus(Env):
 
         # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
         # The amount of the reward is definded in the called function
-        reward = self.checkBugValidity() 
-
-        # Close the episode if the board contains a valid bug
-        #self.done = True if reward == 10 else False
-        if reward == torch.tensor([50]):
-            self.done = True
-            print("done :)")
-        elif reward == torch.tensor([-100]):
-            self.done = True
-            print("done :(")
-        else:
-            self.done = False
-            print('continue')
-
-
+        reward, done = self.checkBugValidity() 
+        self.done = done
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
         """
         Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
+
+        Returns:
+            reward {int} -- The reward for the performed action.
+            done {bool} -- Flag to indicate if the episode is done.
         """
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
         # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
         if is_valid_matrix(self.observation_space[0]) == False:
-            reward = torch.tensor([-100])
+            reward = torch.tensor([-100]), True
             return reward
 
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
+        except TimeoutError:
+            # The engine timed out, the bug is invalid likely a loop
+            return torch.tensor([-100]), True
         except:
-            reward = torch.tensor([-10])
-            return reward
+            # If the bug is not valid, the engine will throw an error
+            return torch.tensor([-10]), True 
         if result.get("0_Out") == self.expected_output:
-            reward = torch.tensor([50])
-            return reward
-
-        reward = torch.tensor([-1]) # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
+            # If the result is correct, the reward is 50
+            return torch.tensor([50]), True 
+        
+        # Engine evaluated but result was not correct
+        return torch.tensor([-1]), False
 
     
     def initializeStartingBoardSetup(self, bugs):

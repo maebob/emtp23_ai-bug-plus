@@ -1,20 +1,26 @@
 from itertools import count
 import json
 import sys
-import signal
+import os
 
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
+
+# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+#sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
-
-def handle_timeout(signum, frame):
-    raise TimeoutError
-
+ITERATIONS = 0 # The number of iterations the engine has run
+MAX_ITERATIONS = 5 # The maximum number of iterations the engine is allowed to run
 
 def stack_size2a(size=2):
     """
@@ -436,15 +442,23 @@ def eval_bug(bug_id: int) -> None:
     if bug_id is None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
-
-    while memory_bug_types.get(bug_id) != "root":
+    
+    # Increment the global iteration counter
+    global ITERATIONS
+    
+    while memory_bug_types.get(bug_id) != "root" and ITERATIONS < MAX_ITERATIONS:
+        ITERATIONS = ITERATIONS + 1
         if memory_bug_types.get(bug_id) == "plus":
             bug_id = evaluate_plus_bug(bug_id)
         elif memory_bug_types.get(bug_id) != "plus":
             bug_id = evaluate_nested_bug(bug_id)
         else:
             raise Exception("Unknown bug type")
-
+    
+    # Stop the evaluation if it took # too long
+    if ITERATIONS >= MAX_ITERATIONS:
+        raise TimeoutError("Evaluation took too long")
+    return memory_ports
 
 def main(board: Bug) -> dict:
     """The main function of the program
@@ -457,21 +471,12 @@ def main(board: Bug) -> dict:
     memory_connections.clear()
     memory_ports.clear()
     memory_bug_types.clear()
+    ITERATIONS = 0
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
-
-    # Limit execution time to 1 seconds
-    signal.signal(signal.SIGALRM, handle_timeout)
-    signal.alarm(1)  # 1 seconds
-
-    # Start the evaluation
-    try:
-        eval_bug(first_bug_id)
-    except TimeoutError:
-        raise Exception("Timeout")
-    finally:
-        signal.alarm(0)
+    
+    eval_bug(first_bug_id)
 
     return memory_ports
 
@@ -480,13 +485,8 @@ if __name__ == "__main__":
     """This function is only used for testing purposes"""
     # TODO pseudo parallel only works on first itreation
     example_file = open(
-        "Configurations/loop.json", "r").read()
+        "Configurations/minus.json", "r").read()
     example_board = json.loads(example_file)
     example_board["xValue"] = 10
     example_board["yValue"] = 1
-    main(example_board)
-    # print(memory_connections)
-    print(memory_ports)
-    print("Data out:", memory_ports.get("0_Out"), "Control Left:", memory_ports.get(
-        "0_Left"), "Control Right:", memory_ports.get("0_Right"))
-    # print(memory_bug_types)
+    print(main(example_board))
