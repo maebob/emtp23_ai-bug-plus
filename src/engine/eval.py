@@ -10,10 +10,6 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
-# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-#sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
-
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
