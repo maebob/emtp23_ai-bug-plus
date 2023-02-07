@@ -106,7 +106,7 @@ class DQN(nn.Module):
 # EPS_DECAY controls the rate of exponential decay of epsilon, higher means a slower decay
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
-BATCH_SIZE = 2
+BATCH_SIZE = 128
 GAMMA = 0.99
 EPS_START = 0.9
 EPS_END = 0.05
@@ -116,13 +116,7 @@ LR = 1e-4
 
 # Get number of actions from gym action space
 n_actions = env.action_space.n
-# TODO: find out if what we want to do when resetting:
-    # by environment: reset everything to zero
-    # as I understand it: give it initial state (for us: the matrices with one missing edge)
-    # QUESTION: should we set it to the SAME initial state every time? or should we set it to a random initial state?
-# TODO: write function for the state? also used further down, l 215 (for i_episode in range(num_episodes):)
 
-# workaround for 'reset'
 
 observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
@@ -193,18 +187,18 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
-    print("l. 189  batch:\n", batch)
+    #print("l. 189  batch:\n", batch)
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
     non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                           batch.next_state)), device=device, dtype=torch.bool)
-    print()
+
     non_final_next_states = torch.cat([s for s in batch.next_state
                                                 if s is not None])
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
-    print("l. 199 batch.reward\n", batch.reward)
+    #print("l. 199 batch.reward\n", batch.reward)
     reward_batch = torch.cat(batch.reward)
    # print("reward_batch: ", reward_batch)
 
@@ -238,9 +232,9 @@ def optimize_model():
 
 if torch.cuda.is_available():
     #num_episodes = 600
-    num_episodes = 3
+    num_episodes = 1000
 else:
-    num_episodes = 500
+    num_episodes = 50000
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -290,11 +284,11 @@ for i_episode in range(num_episodes):
             plot_durations()
             break
 """
-
+t = 0
+count_positive_rewards = 0 # counts how often the reward was positive
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
-    # reset environment TO INITIAL STATE
-    # TODO: check if this is correct, see line 98
+    env.reset()
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
     n_observations = state.size #TODO: abklären: 2**70?
@@ -303,16 +297,19 @@ for i_episode in range(num_episodes):
 
     # The index in the observation space that should be updated
     action = select_action(state)
-    print("action: ", action)
+    #print("action: ", action)
     reward, observation, ep_return, done, _ = env.step(action.item())
-    print("reward: ", reward)
+    #print("reward: ", reward)
     observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
-    """if done:
-        next_state = None
-        print("done\n")
-    else:"""
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
+
+    if reward > 0:
+        count_positive_rewards += 1
+        vector = np.array(df.iloc[np.random.randint(0, len(df))])
+        # next_state = None
+        
+
 
     # Store the transition in memory
     memory.push(state, action, next_state, reward)
@@ -345,6 +342,7 @@ for i_episode in range(num_episodes):
     #     break
 
 print('Complete')
+print("count_positive_rewards: ", count_positive_rewards)
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
