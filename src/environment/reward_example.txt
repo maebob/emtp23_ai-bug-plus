@@ -1,0 +1,68 @@
+line 31, vector:
+ [3 6 9 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0
+ 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0]
+
+Episode:  0
+action:  tensor([[41]])
+continue
+reward:  -10
+
+Episode:  1
+action:  tensor([[61]])
+continue
+reward:  -10
+
+Episode:  2
+action:  tensor([[34]])
+done :(
+reward:  -100
+done
+
+
+Episode:  3
+action:  tensor([[60]])
+done :(
+reward:  -100
+done
+
+
+Episode:  4
+action:  tensor([[13]])
+done :(
+reward:  -100
+done
+
+
+Episode:  5
+action:  tensor([[58]])
+done :(
+reward:  -100
+done
+
+
+Episode:  6
+action:  tensor([[65]])
+done :(
+reward:  -100
+done
+
+
+Episode:  7
+action:  tensor([[7]])
+done :(
+reward:  -100
+done
+
+
+Episode:  8
+action:  tensor([[12]])
+done :(
+reward:  -100
+done
+
+
+Episode:  9
+action:  tensor([[48]])
+done :(
+reward:  -100
+done

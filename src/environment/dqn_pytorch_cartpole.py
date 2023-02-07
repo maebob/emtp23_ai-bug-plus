@@ -71,7 +71,7 @@ class DQN(nn.Module):
 # EPS_DECAY controls the rate of exponential decay of epsilon, higher means a slower decay
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
-BATCH_SIZE = 128
+BATCH_SIZE = 2
 GAMMA = 0.99
 EPS_START = 0.9
 EPS_END = 0.05
@@ -151,6 +151,7 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
+    print("l.154   batch:\n", batch)
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
@@ -161,6 +162,7 @@ def optimize_model():
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
     reward_batch = torch.cat(batch.reward)
+    print("reward_batch: ", reward_batch)
 
     # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
     # columns of actions taken. These are the actions which would've been taken
@@ -191,11 +193,12 @@ def optimize_model():
 
 
 if torch.cuda.is_available():
-    num_episodes = 600
+    num_episodes = 3
 else:
-    num_episodes = 50
+    num_episodes = 3
 
 for i_episode in range(num_episodes):
+    print("\nEpisode: ", i_episode)
     # Initialize the environment and get it's state
     if gym.__version__[:4] == '0.26':
         state, _ = env.reset()
@@ -206,10 +209,12 @@ for i_episode in range(num_episodes):
         action = select_action(state)
         observation, reward, terminated, truncated, _ = env.step(action.item())
         reward = torch.tensor([reward], device=device)
+
         done = terminated or truncated
 
         if terminated:
             next_state = None
+
         else:
             next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
 

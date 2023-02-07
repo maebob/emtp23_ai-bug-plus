@@ -19,7 +19,7 @@ sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
 # sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 
-from src.environment import environment
+from src.environment import environment_tensor as environment
 
 from src.utils.matrix import number_bugs, array_to_matrices
 
@@ -99,7 +99,7 @@ class DQN(nn.Module):
 # EPS_DECAY controls the rate of exponential decay of epsilon, higher means a slower decay
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
-BATCH_SIZE = 128
+BATCH_SIZE = 2
 GAMMA = 0.99
 EPS_START = 0.9
 EPS_END = 0.05
@@ -119,16 +119,8 @@ n_actions = env.action_space.n
 
 observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-n_observations = state.size #TODO: abklären; # number of possible states (#1180591620717411303424 (eine Trilliarde....))
+n_observations = state.size
 
-# Error message for 2**70
-#   File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 126, in <module>
-#     policy_net = DQN(n_observations, n_actions).to(device)
-#   File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 84, in __init__
-#     self.layer1 = nn.Linear(n_observations, 128)
-#   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 96, in __init__
-#     self.weight = Parameter(torch.empty((out_features, in_features), **factory_kwargs))
-# TypeError: empty(): argument 'size' must be tuple of SymInts, but found element of type int at pos 2
 
 
 policy_net = DQN(n_observations, n_actions).to(device)
@@ -194,16 +186,20 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
+    print("l. 189  batch:\n", batch)
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
     non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                           batch.next_state)), device=device, dtype=torch.bool)
+    print()
     non_final_next_states = torch.cat([s for s in batch.next_state
                                                 if s is not None])
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
+    print("l. 199 batch.reward\n", batch.reward)
     reward_batch = torch.cat(batch.reward)
+   # print("reward_batch: ", reward_batch)
 
     # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
     # columns of actions taken. These are the actions which would've been taken
@@ -235,21 +231,21 @@ def optimize_model():
 
 if torch.cuda.is_available():
     #num_episodes = 600
-    num_episodes = 600
+    num_episodes = 3
 else:
     num_episodes = 500
-
+"""
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
     # reset environment TO INITIAL STATE
     # TODO: check if this is correct, see line 98
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size #TODO: abklären: 2**70?
+    n_observations = state.size 
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
-"""
+
     for t in count():
         print("t: ", t)
         action = select_action(state)
