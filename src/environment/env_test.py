@@ -1,7 +1,7 @@
-import environment
+import environment_tensor as environment
 import numpy as np
 import pandas as pd
-
+import torch
 ''' 
 env = environment.BugPlus()
 
@@ -26,7 +26,7 @@ print(env.observation_space[1])
 print(" \nReward: " + str(reward))'''
 
 # Create data frame out of configs.csv
-df = pd.read_csv("configs.csv", sep=";")
+df = pd.read_csv("configs_0207.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
 vector = np.array(df.iloc[np.random.randint(0, len(df))])
@@ -42,7 +42,8 @@ print(env.observation_space[0])
 print("\nData Flow Matrix before step:")
 print(env.observation_space[1])
 
-step_reward, observation_space, ep_return, done, list = env.step(35)
+step_reward, observation_space, ep_return, done, list = env.step(torch.tensor([32]))
+print("Action: " + str(32))
 reward = step_reward
 print("\nControl Flow Matrix after step:")
 print(env.observation_space[0])
