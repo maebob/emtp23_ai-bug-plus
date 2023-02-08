@@ -253,7 +253,7 @@ if torch.cuda.is_available():
     #num_episodes = 600
     num_episodes = 1000
 else:
-    num_episodes = 10
+    num_episodes = 100
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -303,15 +303,20 @@ for i_episode in range(num_episodes):
             plot_durations()
             break
 """
-vector = np.array(df.iloc[np.random.randint(0, len(df))])
+print('******************************')
 dataflow = vector[3:38].reshape (5,7)
 print('dataflow:\n', dataflow)
+print('needed positions: 5, 6, 14, 22, 32 (or: 5/13, 6/12, 12/13)\n')
 controlflow = vector[38:73].reshape (7,5)
-print('l dataflow:\n', controlflow)
+print('dataflow:\n', controlflow)
+print('needed positions: 39, 52, 63, 65\n')
 print('******************************')
+
+
 t = 0
 count_positive_rewards = 0 # counts how often the reward was positive
 sum_rewards = 0 # sum of all rewards
+
 
 for i_episode in range(num_episodes):
     # print("Episode: ", i_episode)
@@ -345,7 +350,7 @@ for i_episode in range(num_episodes):
         dataflow = vector[3:38].reshape (5,7)
         print('dataflow:\n', dataflow)
         controlflow = vector[38:73].reshape (7,5)
-        print('l dataflow:\n', controlflow)
+        print('dataflow:\n', controlflow)
         print('******************************')
     #     # next_state = None
         
