@@ -315,10 +315,8 @@ t = 0
 count_positive_rewards = 0 # counts how often the reward was positive
 sum_rewards = 0 # sum of all rewards
 number_of_vectors = 1
-reward_collection = {}
-for i in range (0, 70):
-    reward_collection[i] = []
 
+# collect all rewards for one action?
 
 for i_episode in range(num_episodes):
     # print("Episode: ", i_episode)
