@@ -105,10 +105,10 @@ class BugPlus(Env):
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
-        # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
-        if is_valid_matrix(self.observation_space[0]) == False:
-            reward = torch.tensor([-100]), True
-            return reward
+        # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language #TODO: put as extra function
+        # if is_valid_matrix(self.observation_space[0]) == False:
+        #     reward = torch.tensor([-100]), True
+        #     return reward
 
         # Run the bug through the engine and check if it produces the correct output
         try:
