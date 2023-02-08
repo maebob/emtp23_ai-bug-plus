@@ -136,7 +136,6 @@ LR = 1e-4
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-
 observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
 n_observations = state.size
@@ -206,7 +205,7 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
-    #print("l. 189  batch:\n", batch)
+    #print("l. 208  batch:\n", batch)
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
@@ -217,7 +216,7 @@ def optimize_model():
                                                 if s is not None])
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
-    #print("l. 199 batch.reward\n", batch.reward)
+    #print("l. 219 batch.reward\n", batch.reward)
     reward_batch = torch.cat(batch.reward)
    # print("reward_batch: ", reward_batch)
 
@@ -250,8 +249,7 @@ def optimize_model():
 
 
 if torch.cuda.is_available():
-    #num_episodes = 600
-    num_episodes = 1000
+    num_episodes = 600
 else:
     num_episodes = 100
 """
@@ -324,9 +322,11 @@ for i_episode in range(num_episodes):
     env.reset()
     env.setVectorAsObservationSpace(vector)
     env.setInputAndOutputValuesFromVector(vector) 
+    
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size
+    # n_observations = state.size ändert sich ja nicht (eigentlich..)
+    #print ('l.329: observation_space before action:\n', observation_space)
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
@@ -342,6 +342,8 @@ for i_episode in range(num_episodes):
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
     print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
+    #print ('l.345: observation_space after action:\n', observation_space, '\n')
+
 
 
     if reward > 0:
@@ -363,13 +365,6 @@ for i_episode in range(num_episodes):
 
     # Perform one step of the optimization (on the policy network)
     optimize_model() 
-    # TODO: fix batches
-    # Traceback (most recent call last):
-    # File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 320, in <module>
-    #     optimize_model()
-    # File "/Users/mayte/GitHub/BugPlusEngine/src/environment/dqpn_pytorch.py", line 206, in optimize_model
-    #     reward_batch = torch.cat(batch.reward)
-    # TypeError: expected Tensor as element 0 in argument 0, but got int
 
 
     # Soft update of the target network's weights
