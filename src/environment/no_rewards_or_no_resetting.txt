@@ -115,7 +115,7 @@ Episode:  87     Action: tensor([[30]])     Reward: tensor([-100])
 Episode:  88     Action: tensor([[8]])     Reward: tensor([-100])
 Episode:  89     Action: tensor([[6]])     Reward: tensor([-100]) <------- why not positive reward // and also...
 Episode:  90     Action: tensor([[6]])     Reward: tensor([-100]) <------- same action, why no flip?
-Episode:  91     Action: tensor([[14]])     Reward: tensor([-10])
+Episode:  91     Action: tensor([[14]])     Reward: tensor([-10]) <------- hääääää??
 Episode:  92     Action: tensor([[41]])     Reward: tensor([-100])
 Episode:  93     Action: tensor([[35]])     Reward: tensor([-100])
 Episode:  94     Action: tensor([[8]])     Reward: tensor([-100])
