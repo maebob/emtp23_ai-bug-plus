@@ -20,7 +20,7 @@ class BugPlus(Env):
         super(BugPlus, self).__init__()
 
         # Number of possible bugs
-        self.no_bugs = 3 # TODO: make flexible
+        self.no_bugs = 3 
 
         # Obersvation and action space of the environment
         self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ], dtype=object)
@@ -78,7 +78,12 @@ class BugPlus(Env):
             edge_to = adjusted_action % self.observation_space[1][0].size
 
         # Add the new edge to the corresponding matrix
-        self.observation_space[flow_matrix][edge_from][edge_to] = 1
+        # self.observation_space[flow_matrix][edge_from][edge_to] = 1 #TODO: make flip possible (idea: add 1, and check for modulo 2; should do bitflips?)
+        position_to_change = self.observation_space[flow_matrix][edge_from][edge_to] #TODO: change back or rework!
+        if (position_to_change == 0):
+            self.observation_space[flow_matrix][edge_from][edge_to] = 1
+        else:
+            self.observation_space[flow_matrix][edge_from][edge_to] = 0
 
         # Inrement the episode return
         self.ep_return += 1
