@@ -131,23 +131,23 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
 
 if __name__ == "__main__":
     control_matrix_incrementor = np.array([
-        [0, 0, 0, 0, 0, 1, 1],
+        [0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]
         ])
     data_matrix_incrementor = np.array([
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
         [0, 0, 1, 0, 0],
+        [1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
         [0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0],
-        [1, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
     ])
     config = main(control_matrix=control_matrix_incrementor, data_matrix=data_matrix_incrementor, data_up=1, data_down=1)
     # write config to json file
-    with open('config.json', 'w') as outfile:
+    with open('config_test2.json', 'w') as outfile:
         json.dump(config, outfile, indent=4)
     
