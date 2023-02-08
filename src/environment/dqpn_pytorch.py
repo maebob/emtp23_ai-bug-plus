@@ -29,7 +29,7 @@ from src.environment import environment_tensor as environment
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-df = pd.read_csv("configs_0207.csv", sep=";")
+df = pd.read_csv("configs_x+y.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
 vector = np.array(df.iloc[np.random.randint(0, len(df))])
@@ -251,7 +251,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 100
+    num_episodes = 1000
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -314,6 +314,10 @@ print('******************************')
 t = 0
 count_positive_rewards = 0 # counts how often the reward was positive
 sum_rewards = 0 # sum of all rewards
+number_of_vectors = 1
+reward_collection = {}
+for i in range (0, 70):
+    reward_collection[i] = []
 
 
 for i_episode in range(num_episodes):
@@ -326,7 +330,7 @@ for i_episode in range(num_episodes):
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
     # n_observations = state.size ändert sich ja nicht (eigentlich..)
-    #print ('l.329: observation_space before action:\n', observation_space)
+    # print ('l.329: observation_space before action:\n', observation_space)
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
@@ -343,17 +347,20 @@ for i_episode in range(num_episodes):
     sum_rewards += reward
     print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
     #print ('l.345: observation_space after action:\n', observation_space, '\n')
+    dic
+
 
 
 
     if reward > 0:
         count_positive_rewards += 1
         vector = np.array(df.iloc[np.random.randint(0, len(df))])
-        dataflow = vector[3:38].reshape (5,7)
-        print('dataflow:\n', dataflow)
-        controlflow = vector[38:73].reshape (7,5)
-        print('dataflow:\n', controlflow)
-        print('******************************')
+        number_of_vectors += 1
+        # dataflow = vector[3:38].reshape (5,7)
+        # #print('dataflow:\n', dataflow)
+        # controlflow = vector[38:73].reshape (7,5)
+        # #print('dataflow:\n', controlflow)
+        # #print('******************************')
     #     # next_state = None
         
 
@@ -383,6 +390,7 @@ for i_episode in range(num_episodes):
 print('Complete')
 print("count_positive_rewards: ", count_positive_rewards)
 print("sum of rewards: ", sum_rewards)
+print("number of vectors: ", number_of_vectors)
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
