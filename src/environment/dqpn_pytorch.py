@@ -29,30 +29,31 @@ from src.environment import environment_tensor as environment
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-df = pd.read_csv("configs.csv", sep=";")
+df = pd.read_csv("configs_0207.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
-# vector = np.array(df.iloc[np.random.randint(0, len(df))])
-test_vector = np.array(
-    [3, 5, 4,
+vector = np.array(df.iloc[np.random.randint(0, len(df))])
+# print("vector: ", vector)
+# test_vector = np.array(
+#     [3, 5, 4,
 
-    0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 1, 
-    1, 0, 0, 0, 0, 0, 0, 
-    0, 1, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 1, 0, 0, 
+#     0, 0, 0, 0, 0, 0, 0, 
+#     0, 0, 0, 0, 0, 0, 1, 
+#     1, 0, 0, 0, 0, 0, 0, 
+#     0, 1, 0, 0, 0, 0, 0, 
+#     0, 0, 0, 0, 1, 0, 0, 
 
-    0, 0, 0, 0, 1, 
-    0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 
-    0, 0, 1, 0, 0, 
-    0, 0, 0, 0, 0, 
-    0, 0, 0, 1, 0, 
-    1, 0, 0, 0, 1,
+#     0, 0, 0, 0, 1, 
+#     0, 0, 0, 0, 0, 
+#     0, 0, 0, 0, 0, 
+#     0, 0, 1, 0, 0, 
+#     0, 0, 0, 0, 0, 
+#     0, 0, 0, 1, 0, 
+#     1, 0, 0, 0, 1,
 
-    8])
-vector = test_vector[:73]
-print('line 31, vector:\n', vector)
+#     8])
+#vector = test_vector[:73]
+print('line 55, vector:\n', vector)
 
 """
 # Reshape the vector to the control flow and data flow matrices
@@ -123,7 +124,8 @@ class DQN(nn.Module):
 # EPS_DECAY controls the rate of exponential decay of epsilon, higher means a slower decay
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
-BATCH_SIZE = 128
+# BATCH_SIZE = 128
+BATCH_SIZE = 5
 GAMMA = 0.99
 EPS_START = 0.9
 EPS_END = 0.05
@@ -251,7 +253,7 @@ if torch.cuda.is_available():
     #num_episodes = 600
     num_episodes = 1000
 else:
-    num_episodes = 1
+    num_episodes = 10
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -301,22 +303,31 @@ for i_episode in range(num_episodes):
             plot_durations()
             break
 """
+vector = np.array(df.iloc[np.random.randint(0, len(df))])
+dataflow = vector[3:38].reshape (5,7)
+print('dataflow:\n', dataflow)
+controlflow = vector[38:73].reshape (7,5)
+print('l dataflow:\n', controlflow)
+print('******************************')
 t = 0
 count_positive_rewards = 0 # counts how often the reward was positive
 sum_rewards = 0 # sum of all rewards
+
 for i_episode in range(num_episodes):
-    print("Episode: ", i_episode)
+    # print("Episode: ", i_episode)
+    #print("\nvector:\n", vector)
     env.reset()
     env.setVectorAsObservationSpace(vector)
+    env.setInputAndOutputValuesFromVector(vector) 
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size #TODO: abklären: 2**70?
+    n_observations = state.size
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
     # The index in the observation space that should be updated
-    #action = select_action(state)
-    action = torch.tensor([8])
+    action = select_action(state)
+    # action = torch.tensor([8])
 
     #print("action: ", action)
     reward, observation, ep_return, done, _ = env.step(action.item())
@@ -325,13 +336,19 @@ for i_episode in range(num_episodes):
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
+    print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
+
 
     if reward > 0:
         count_positive_rewards += 1
         vector = np.array(df.iloc[np.random.randint(0, len(df))])
-        # next_state = None
+        dataflow = vector[3:38].reshape (5,7)
+        print('dataflow:\n', dataflow)
+        controlflow = vector[38:73].reshape (7,5)
+        print('l dataflow:\n', controlflow)
+        print('******************************')
+    #     # next_state = None
         
-
 
     # Store the transition in memory
     memory.push(state, action, next_state, reward)
@@ -365,7 +382,7 @@ for i_episode in range(num_episodes):
 
 print('Complete')
 print("count_positive_rewards: ", count_positive_rewards)
-print(sum_rewards)
+print("sum of rewards: ", sum_rewards)
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
