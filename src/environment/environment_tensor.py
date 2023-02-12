@@ -78,12 +78,14 @@ class BugPlus(Env):
             edge_to = adjusted_action % self.observation_space[1][0].size
 
         # Add the new edge to the corresponding matrix
-        # self.observation_space[flow_matrix][edge_from][edge_to] = 1 #TODO: make flip possible (idea: add 1, and check for modulo 2; should do bitflips?)
-        position_to_change = self.observation_space[flow_matrix][edge_from][edge_to] #TODO: change back or rework!
-        if (position_to_change == 0):
-            self.observation_space[flow_matrix][edge_from][edge_to] = 1
+        if self.observation_space[flow_matrix][edge_from][edge_to] == 1: #TODO: rework to make consistent
+            done = True
+            reward = torch.tensor([-100])
+            self.ep_return += 1
+            return reward, self.observation_space, self.ep_return, self.done, {}
+
         else:
-            self.observation_space[flow_matrix][edge_from][edge_to] = 0
+            self.observation_space[flow_matrix][edge_from][edge_to] = 1 #TODO: later: make flip (from 1 to 0 and vice versa) possible
 
         # Inrement the episode return
         self.ep_return += 1
@@ -91,7 +93,6 @@ class BugPlus(Env):
         # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
         # The amount of the reward is definded in the called function
         reward, done = self.checkBugValidity() 
-        self.done = done
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
@@ -110,6 +111,7 @@ class BugPlus(Env):
         #     reward = torch.tensor([-100]), True
         #     return reward
 
+
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
@@ -121,7 +123,7 @@ class BugPlus(Env):
             return torch.tensor([-10]), True 
         if result.get("0_Out") == self.expected_output:
             # If the result is correct, the reward is 50
-            return torch.tensor([50]), True 
+            return torch.tensor([100]), True 
         
         # Engine evaluated but result was not correct
         return torch.tensor([-1]), False
