@@ -49,20 +49,20 @@ def generate_config_with_input_pairs(control_matrix: np.array, data_matrix: np.a
 if __name__ == "__main__":
     # generate a random matrix
     control_matrix_incrementor = np.array([
-        [0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0]
         ])
     data_matrix_incrementor = np.array([
-        [0, 0, 1, 0, 0],
+        [0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0],
         [0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
+        [0, 0, 1, 0, 0],
+        [0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 1, 0]
     ])
 
     # Get the count of ones in the control matrix
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         # delete i edges from the control matrix
         deleted_control_matrices = delete_edges_in_matrix(control_matrix, 1, np.array([i]))
         # generate a config with the input pairs
-        config = generate_config_with_input_pairs(control_matrix, data_matrix, range(1, 11), lambda x, y: x + y)
+        config = generate_config_with_input_pairs(control_matrix, data_matrix, range(1, 11), lambda x, y: 4*x + 4*y)
         
         # add the config to the configs
         if configs.size == 0:
@@ -85,4 +85,4 @@ if __name__ == "__main__":
             configs = np.concatenate((configs, config))
 
     # save the configs to a file
-    np.savetxt("configs_x+y.csv", configs, delimiter=";", fmt="%d")
+    np.savetxt("configs_4x+4y.csv", configs, delimiter=";", fmt="%d")
