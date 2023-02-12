@@ -29,7 +29,7 @@ from src.environment import environment_tensor as environment
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-df = pd.read_csv("configs_x+y.csv", sep=";")
+df = pd.read_csv("configs_4x+4y.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
 vector = np.array(df.iloc[np.random.randint(0, len(df))])
@@ -125,11 +125,11 @@ class DQN(nn.Module):
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
 # BATCH_SIZE = 128
-BATCH_SIZE = 5
+BATCH_SIZE = 128
 GAMMA = 0.99
 EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 1000
+EPS_END = 0.5
+EPS_DECAY = 10000 #controls the rate of exponential decay of epsilon, higher means a slower decay
 TAU = 0.005
 LR = 1e-4
 
@@ -251,7 +251,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 1000
+    num_episodes = 10000
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -304,19 +304,23 @@ for i_episode in range(num_episodes):
 print('******************************')
 dataflow = vector[3:38].reshape (5,7)
 print('dataflow:\n', dataflow)
-print('needed positions: 5, 6, 14, 22, 32 (or: 5/13, 6/12, 12/13)\n')
+print('needed positions: 13 (/6), 14, 23, 32\n')
 controlflow = vector[38:73].reshape (7,5)
 print('dataflow:\n', controlflow)
-print('needed positions: 39, 52, 63, 65\n')
+print('needed positions: 39, 40, 46, 52, 57, 63, 68\n')
 print('******************************')
 
 
 t = 0
 count_positive_rewards = 0 # counts how often the reward was positive
+count_neg_1 = 0
+count_neg_10 = 0
+count_neg_100 = 0
 sum_rewards = 0 # sum of all rewards
 number_of_vectors = 1
 
-# collect all rewards for one action?
+# count how often which action was chosen:
+action_count = [0] * 70
 
 for i_episode in range(num_episodes):
     # print("Episode: ", i_episode)
@@ -334,7 +338,8 @@ for i_episode in range(num_episodes):
 
     # The index in the observation space that should be updated
     action = select_action(state)
-    # action = torch.tensor([8])
+    action_count[action] += 1
+
 
     #print("action: ", action)
     reward, observation, ep_return, done, _ = env.step(action.item())
@@ -343,17 +348,25 @@ for i_episode in range(num_episodes):
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
-    print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
+    #print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
     #print ('l.345: observation_space after action:\n', observation_space, '\n')
-    dic
 
 
 
 
-    if reward > 0:
-        count_positive_rewards += 1
+
+    if done:
         vector = np.array(df.iloc[np.random.randint(0, len(df))])
         number_of_vectors += 1
+        
+    if reward > 0:
+        count_positive_rewards += 1
+    if reward == -1:
+        count_neg_1 += 1
+    if reward == -10:
+        count_neg_10 += 1
+    if reward == -100:#
+        count_neg_100 += 1
         # dataflow = vector[3:38].reshape (5,7)
         # #print('dataflow:\n', dataflow)
         # controlflow = vector[38:73].reshape (7,5)
@@ -387,8 +400,13 @@ for i_episode in range(num_episodes):
 
 print('Complete')
 print("count_positive_rewards: ", count_positive_rewards)
+print("count -1 rewards: ", count_neg_1)
+print("count -10 rewards: ", count_neg_10)
+print("count -100 rewards: ", count_neg_100)
 print("sum of rewards: ", sum_rewards)
 print("number of vectors: ", number_of_vectors)
+for i in range(70):
+    print("action ", i, " was chosen ", action_count[i], " times")
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
