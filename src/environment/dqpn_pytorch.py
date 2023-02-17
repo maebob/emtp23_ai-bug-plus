@@ -32,27 +32,42 @@ from src.utils.matrix import number_bugs, array_to_matrices
 df = pd.read_csv("configs_4x+4y.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
-vector = np.array(df.iloc[np.random.randint(0, len(df))])
+# vector = np.array(df.iloc[np.random.randint(0, len(df))])
 # print("vector: ", vector)
-# test_vector = np.array(
-#     [3, 5, 4,
+test_vector = np.array(
+    [3, 5, 32,
+    0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 0,
 
-#     0, 0, 0, 0, 0, 0, 0, 
-#     0, 0, 0, 0, 0, 0, 1, 
-#     1, 0, 0, 0, 0, 0, 0, 
-#     0, 1, 0, 0, 0, 0, 0, 
-#     0, 0, 0, 0, 1, 0, 0, 
+    0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0,
+    0, 0, 0, 1, 0])
+    # [3, 5, 4,
 
-#     0, 0, 0, 0, 1, 
-#     0, 0, 0, 0, 0, 
-#     0, 0, 0, 0, 0, 
-#     0, 0, 1, 0, 0, 
-#     0, 0, 0, 0, 0, 
-#     0, 0, 0, 1, 0, 
-#     1, 0, 0, 0, 1,
+    # 0, 0, 0, 0, 0, 0, 0, 
+    # 0, 0, 0, 0, 0, 0, 1, 
+    # 1, 0, 0, 0, 0, 0, 0, 
+    # 0, 1, 0, 0, 0, 0, 0, 
+    # 0, 0, 0, 0, 1, 0, 0, 
 
-#     8])
-#vector = test_vector[:73]
+    # 0, 0, 0, 0, 1, 
+    # 0, 0, 0, 0, 0, 
+    # 0, 0, 0, 0, 0, 
+    # 0, 0, 1, 0, 0, 
+    # 0, 0, 0, 0, 0, 
+    # 0, 0, 0, 1, 0, 
+    # 1, 0, 0, 0, 1,
+
+    # 8])
+vector = test_vector[:73]
+
 print('line 55, vector:\n', vector)
 
 """
@@ -251,7 +266,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 10000
+    num_episodes = 600
 """
 for i_episode in range(num_episodes):
     print("Episode: ", i_episode)
@@ -321,11 +336,13 @@ number_of_vectors = 1
 
 # count how often which action was chosen:
 action_count = [0] * 70
+i = 0
 
 for i_episode in range(num_episodes):
     # print("Episode: ", i_episode)
     #print("\nvector:\n", vector)
     env.reset()
+    vector = test_vector[:73]
     env.setVectorAsObservationSpace(vector)
     env.setInputAndOutputValuesFromVector(vector) 
     
@@ -337,7 +354,9 @@ for i_episode in range(num_episodes):
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
     # The index in the observation space that should be updated
-    action = select_action(state)
+
+    action = torch.tensor([[i]])
+    i = (i+1)%70
     action_count[action] += 1
 
 
@@ -348,19 +367,21 @@ for i_episode in range(num_episodes):
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
-    #print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
+    # print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
     #print ('l.345: observation_space after action:\n', observation_space, '\n')
 
 
 
 
 
-    if done:
-        vector = np.array(df.iloc[np.random.randint(0, len(df))])
-        number_of_vectors += 1
+    # if done:
+    #     # vector = np.array(df.iloc[np.random.randint(0, len(df))])
+    #     vector = test_vector[:73]
+    #     number_of_vectors += 1
         
     if reward > 0:
         count_positive_rewards += 1
+        print('positive reward in Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
     if reward == -1:
         count_neg_1 += 1
     if reward == -10:
@@ -405,8 +426,8 @@ print("count -10 rewards: ", count_neg_10)
 print("count -100 rewards: ", count_neg_100)
 print("sum of rewards: ", sum_rewards)
 print("number of vectors: ", number_of_vectors)
-for i in range(70):
-    print("action ", i, " was chosen ", action_count[i], " times")
+# for i in range(70):
+#     print("action ", i, " was chosen ", action_count[i], " times")
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
