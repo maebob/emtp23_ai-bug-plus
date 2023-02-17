@@ -117,12 +117,13 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
+            
             return torch.tensor([-10]), True
         except:
             # If the bug is not valid, the engine will throw an error
             return torch.tensor([-10]), True 
         if result.get("0_Out") == self.expected_output:
-            # If the result is correct, the reward is 50
+            # If the result is correct, the reward is 100
             return torch.tensor([100]), True 
         
         # Engine evaluated but result was not correct
