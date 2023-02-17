@@ -117,17 +117,26 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            
-            return torch.tensor([-10]), True
+            reward = torch.tensor([-10])
+            done = True
+
+            return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
-            return torch.tensor([-10]), True 
+            reward = torch.tensor([-10])
+            done = True
+            return reward, done
+        
         if result.get("0_Out") == self.expected_output:
             # If the result is correct, the reward is 100
-            return torch.tensor([100]), True 
+            reward = torch.tensor([100])
+            done = True
+            return reward, done
         
         # Engine evaluated but result was not correct
-        return torch.tensor([-1]), False
+            reward = torch.tensor([-1])
+            done = False
+        return reward, done
 
     
     def initializeStartingBoardSetup(self, bugs):
