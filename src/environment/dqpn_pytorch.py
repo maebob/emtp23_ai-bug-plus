@@ -32,23 +32,23 @@ from src.utils.matrix import number_bugs, array_to_matrices
 df = pd.read_csv("configs_4x+4y.csv", sep=";")
 
 # Create a numpy vector out of a random line in the data frame
-# vector = np.array(df.iloc[np.random.randint(0, len(df))])
+vector = np.array(df.iloc[np.random.randint(0, len(df))])
 # print("vector: ", vector)
-test_vector = np.array(
-    [3, 5, 32,
-    0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 0,
+# test_vector = np.array(
+#     [3, 5, 32,
+#     0, 0, 0, 0, 0, 0, 0,
+#     0, 0, 0, 0, 0, 0, 1,
+#     1, 0, 0, 0, 0, 0, 0,
+#     0, 0, 1, 0, 0, 0, 0,
+#     0, 0, 0, 0, 1, 0, 0,
 
-    0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0,
-    0, 1, 0, 0, 0,
-    0, 0, 1, 0, 0,
-    0, 0, 1, 0, 0,
-    0, 0, 0, 1, 0,
-    0, 0, 0, 1, 0])
+#     0, 0, 0, 0, 1,
+#     1, 0, 0, 0, 0,
+#     0, 1, 0, 0, 0,
+#     0, 0, 1, 0, 0,
+#     0, 0, 1, 0, 0,
+#     0, 0, 0, 1, 0,
+#     0, 0, 0, 1, 0])
     # [3, 5, 4,
 
     # 0, 0, 0, 0, 0, 0, 0, 
@@ -66,7 +66,7 @@ test_vector = np.array(
     # 1, 0, 0, 0, 1,
 
     # 8])
-vector = test_vector[:73]
+# vector = test_vector[:73]
 
 print('line 55, vector:\n', vector)
 
@@ -85,6 +85,7 @@ print("\n",dataflow)
 env = environment.BugPlus()
 env.setVectorAsObservationSpace(vector)
 env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm
+print("env.setInputAndOutputValuesFromVector(vector)", env.setInputAndOutputValuesFromVector(vector))
 
 
 
@@ -294,7 +295,7 @@ for i_episode in range(num_episodes):
     # print("Episode: ", i_episode)
     #print("\nvector:\n", vector)
     env.reset()
-    vector = test_vector[:73]
+    # vector = test_vector[:73]
     env.setVectorAsObservationSpace(vector)
     env.setInputAndOutputValuesFromVector(vector) 
     
@@ -307,8 +308,7 @@ for i_episode in range(num_episodes):
 
     # The index in the observation space that should be updated
 
-    action = torch.tensor([[j]])
-    j = (j+1)%70
+    action = select_action(state)
     action_count[action] += 1
 
 
@@ -326,10 +326,10 @@ for i_episode in range(num_episodes):
 
 
 
-    # if done:
-    #     # vector = np.array(df.iloc[np.random.randint(0, len(df))])
-    #     vector = test_vector[:73]
-    #     number_of_vectors += 1
+    if done:
+        vector = np.array(df.iloc[np.random.randint(0, len(df))])
+        # vector = test_vector[:73]
+        number_of_vectors += 1
         
     if reward > 0:
         count_positive_rewards += 1
@@ -338,7 +338,7 @@ for i_episode in range(num_episodes):
         count_neg_1 += 1
     if reward == -10:
         count_neg_10 += 1
-    if reward == -100:#
+    if reward == -100:
         count_neg_100 += 1
         # dataflow = vector[3:38].reshape (5,7)
         # #print('dataflow:\n', dataflow)
