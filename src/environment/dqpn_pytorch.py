@@ -238,7 +238,7 @@ if torch.cuda.is_available():
     num_episodes = 600
 else:
     # num_episodes = 1_000_000
-    num_episodes = 50_000
+    num_episodes = 5_000
 
 
 
@@ -341,23 +341,32 @@ print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, 
 
 #testing if the loading of configurations was successful:
 
-print(config_count)
-print(x)
-print(y1)
-print(y2)
+# print(config_count)
+# print(x)
+# print(y1)
+# print(y2)
+
+# plotting the learning rate of DQN learner in two subplots:
+fig, ax = plt.subplots(1, 2)
+
+# plotting the absolute number of correctly solved configurations
+plt.subplot(1, 2, 1)
+# naming the x axis
+plt.xlabel('number of episodes')
+# naming the y axis
+plt.ylabel('number of correctly solved configurations')
+plt.plot(x, y1)
+
 
 # plotting the proportion of correctly solved configurations
-plt.plot(x, y2)
-  
+plt.subplot(1, 2, 2)
 # naming the x axis
 plt.xlabel('number of episodes')
 # naming the y axis
 plt.ylabel('proportion of correctly solved configurations in %')
-  
-# giving a title to my graph
-plt.title('Learning curve of the DQN')
-  
-# function to show the plot
+plt.plot(x, y2)
+
+fig.tight_layout(pad=3.0)
+fig.suptitle('Learning rate of DQN learner', fontsize=16)
 plt.show()
-
-
+  
