@@ -12,6 +12,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+
 import pandas as pd
 
 import sys
@@ -29,72 +30,27 @@ from src.environment import environment_tensor as environment
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-df = pd.read_csv("configs_4x+4y.csv", sep=";")
+df_full = pd.read_csv("configs_4x+4y.csv", sep=";")
+df  = df_full[:]
 
 # Create a numpy vector out of a random line in the data frame
-vector = np.array(df.iloc[np.random.randint(0, len(df))])
-# print("vector: ", vector)
-# test_vector = np.array(
-#     [3, 5, 32,
-#     0, 0, 0, 0, 0, 0, 0,
-#     0, 0, 0, 0, 0, 0, 1,
-#     1, 0, 0, 0, 0, 0, 0,
-#     0, 0, 1, 0, 0, 0, 0,
-#     0, 0, 0, 0, 1, 0, 0,
+vector = np.array(df.iloc[np.random.randint(0, len(df))]) # first vector is initialized wiht a random configuration (in order to set up the environment)
 
-#     0, 0, 0, 0, 1,
-#     1, 0, 0, 0, 0,
-#     0, 1, 0, 0, 0,
-#     0, 0, 1, 0, 0,
-#     0, 0, 1, 0, 0,
-#     0, 0, 0, 1, 0,
-#     0, 0, 0, 1, 0])
-    # [3, 5, 4,
-
-    # 0, 0, 0, 0, 0, 0, 0, 
-    # 0, 0, 0, 0, 0, 0, 1, 
-    # 1, 0, 0, 0, 0, 0, 0, 
-    # 0, 1, 0, 0, 0, 0, 0, 
-    # 0, 0, 0, 0, 1, 0, 0, 
-
-    # 0, 0, 0, 0, 1, 
-    # 0, 0, 0, 0, 0, 
-    # 0, 0, 0, 0, 0, 
-    # 0, 0, 1, 0, 0, 
-    # 0, 0, 0, 0, 0, 
-    # 0, 0, 0, 1, 0, 
-    # 1, 0, 0, 0, 1,
-
-    # 8])
-# vector = test_vector[:73]
-
-print('line 55, vector:\n', vector)
-
-"""
-# Reshape the vector to the control flow and data flow matrices
-print("****************")
-controlflow = vector[3:38].reshape(5,7)
-dataflow = vector[38:73].reshape(7,5)
-print(controlflow)
-print("\n",dataflow)
-# missing controlflow (1,6)
-# print(vector.shape) # shape is (73,), i.e. no solution appended atm
-"""
+# set seed
+torch.manual_seed(42)
 
 # Initialize the environment with the vector
 env = environment.BugPlus()
 env.setVectorAsObservationSpace(vector)
-env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm
-print("env.setInputAndOutputValuesFromVector(vector)", env.setInputAndOutputValuesFromVector(vector))
+env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm; OR: ignore and delete this line? (also subsequent occurences)
 
 
+# # set up matplotlib
+# is_ipython = 'inline' in matplotlib.get_backend()
+# if is_ipython:
+#     from IPython import display
 
-# set up matplotlib
-is_ipython = 'inline' in matplotlib.get_backend()
-if is_ipython:
-    from IPython import display
-
-plt.ion()
+# plt.ion()
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -144,8 +100,8 @@ class DQN(nn.Module):
 BATCH_SIZE = 128
 GAMMA = 0.99
 EPS_START = 0.9
-EPS_END = 0.5
-EPS_DECAY = 10000 #controls the rate of exponential decay of epsilon, higher means a slower decay
+EPS_END = 0.05
+EPS_DECAY = 1000
 TAU = 0.005
 LR = 1e-4
 
@@ -188,30 +144,30 @@ def select_action(state):
 episode_durations = []
 
 
-def plot_durations(show_result=False):
-    plt.figure(1)
-    durations_t = torch.tensor(episode_durations, dtype=torch.float)
-    if show_result:
-        plt.title('Result')
-    else:
-        plt.clf()
-        plt.title('Training...')
-    plt.xlabel('Episode')
-    plt.ylabel('Duration')
-    plt.plot(durations_t.numpy())
-    # Take 100 episode averages and plot them too
-    if len(durations_t) >= 100:
-        means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
-        means = torch.cat((torch.zeros(99), means))
-        plt.plot(means.numpy())
+# def plot_durations(show_result=False):
+#     plt.figure(1)
+#     durations_t = torch.tensor(episode_durations, dtype=torch.float)
+#     if show_result:
+#         plt.title('Result')
+#     else:
+#         plt.clf()
+#         plt.title('Training...')
+#     plt.xlabel('Episode')
+#     plt.ylabel('Duration')
+#     plt.plot(durations_t.numpy())
+#     # Take 100 episode averages and plot them too
+#     if len(durations_t) >= 100:
+#         means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
+#         means = torch.cat((torch.zeros(99), means))
+#         plt.plot(means.numpy())
 
-    plt.pause(0.001)  # pause a bit so that plots are updated
-    if is_ipython:
-        if not show_result:
-            display.display(plt.gcf())
-            display.clear_output(wait=True)
-        else:
-            display.display(plt.gcf())
+#     plt.pause(0.001)  # pause a bit so that plots are updated
+#     if is_ipython:
+#         if not show_result:
+#             display.display(plt.gcf())
+#             display.clear_output(wait=True)
+#         else:
+#             display.display(plt.gcf())
 
 def optimize_model():
     if len(memory) < BATCH_SIZE:
@@ -263,23 +219,29 @@ def optimize_model():
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
 
+EPS_CONFIGS = 0.1
+
+def select_config():
+     # TODO: sort config_count by value;
+     # choose random number between 0 and 1; if it bigger than EPS_CONFIGS:
+          # then pick the one with lowest value; then load
+     # else: pick random config
+    sample = random.random()
+    if sample > EPS_CONFIGS:
+        index = config_count.index(min(config_count))
+    else:
+        index = np.random.randint(0, len(config_count))
+    return np.array(df.iloc[index]) # returns the config as a numpy array
+
 
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 40_000
-
-print('******************************')
-dataflow = vector[3:38].reshape (5,7)
-print('dataflow:\n', dataflow)
-print('needed positions: 13 (/6), 14, 23, 32\n')
-controlflow = vector[38:73].reshape (7,5)
-print('dataflow:\n', controlflow)
-print('needed positions: 39, 40, 46, 52, 57, 63, 68\n')
-print('******************************')
+    # num_episodes = 1_000_000
+    num_episodes = 50_000
 
 
-t = 0
+
 count_positive_rewards = 0 # counts how often the reward was positive
 count_neg_1 = 0
 count_neg_10 = 0
@@ -288,39 +250,37 @@ sum_rewards = 0 # sum of all rewards
 number_of_vectors = 1
 
 # count how often which action was chosen:
-action_count = [0] * 70
-j = 0
+# action_count = [0] * 70
+# j = 0
+
+# count how often a specific configuration was solved successfully:
+config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
+
 
 for i_episode in range(num_episodes):
-    # print("Episode: ", i_episode)
-    #print("\nvector:\n", vector)
+
     env.reset()
-    # vector = test_vector[:73]
     env.setVectorAsObservationSpace(vector)
     env.setInputAndOutputValuesFromVector(vector) 
     
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    # n_observations = state.size ändert sich ja nicht (eigentlich..)
-    # print ('l.329: observation_space before action:\n', observation_space)
+
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
     # The index in the observation space that should be updated
-
     action = select_action(state)
-    action_count[action] += 1
+    # action_count[action] += 1
 
 
-    #print("action: ", action)
+
     reward, observation, ep_return, done, _ = env.step(action.item())
-    #print("reward: ", reward)
     observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
-    # print('Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
-    #print ('l.345: observation_space after action:\n', observation_space, '\n')
+
 
 
     if i_episode % 1000 == 0:
@@ -329,21 +289,19 @@ for i_episode in range(num_episodes):
         
     if reward > 0:
         count_positive_rewards += 1
-        vector = np.array(df.iloc[np.random.randint(0, len(df))])
+        vector = select_config()
         number_of_vectors += 1
-        #print('positive reward in Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
+        config_count[action] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
+
+    # if reward <= 0:
+    #     config_count[action] = 0 # a configuration that was not solved successfully is reset to 0
+
     if reward == -1:
         count_neg_1 += 1
     if reward == -10:
         count_neg_10 += 1
     if reward == -100:
         count_neg_100 += 1
-        # dataflow = vector[3:38].reshape (5,7)
-        # #print('dataflow:\n', dataflow)
-        # controlflow = vector[38:73].reshape (7,5)
-        # #print('dataflow:\n', controlflow)
-        # #print('******************************')
-    #     # next_state = None
         
 
     # Store the transition in memory
@@ -364,21 +322,19 @@ for i_episode in range(num_episodes):
         target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
     target_net.load_state_dict(target_net_state_dict)
 
-    # if done:
-    #     episode_durations.append(t + 1)
-    #     plot_durations()
-    #     break
 
-print('Complete')
+print('Complete after ', num_episodes, ' episodes')
 print("count_positive_rewards: ", count_positive_rewards)
-print("count -1 rewards: ", count_neg_1)
-print("count -10 rewards: ", count_neg_10)
-print("count -100 rewards: ", count_neg_100)
 print("sum of rewards: ", sum_rewards)
-print("number of vectors: ", number_of_vectors)
-for i in range(70):
-    print("action ", i, " was chosen ", action_count[i], " times")
-# plot_durations(show_result=True)
-# plt.ioff()
-# plt.show()
+print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, "%")
+# print("count -1 rewards: ", count_neg_1)
+# print("count -10 rewards: ", count_neg_10)
+# print("count -100 rewards: ", count_neg_100)
+# for i in range(70):
+#     print("action ", i, " was chosen ", action_count[i], " times")
+
+#testing if the loading of configurations was successful:
+
+print(config_count)
+
 
