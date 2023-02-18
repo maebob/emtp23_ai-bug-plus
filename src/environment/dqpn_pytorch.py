@@ -4,6 +4,7 @@ import random
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+
 from collections import namedtuple, deque
 from itertools import count
 
@@ -222,10 +223,6 @@ def optimize_model():
 EPS_CONFIGS = 0.1
 
 def select_config():
-     # TODO: sort config_count by value;
-     # choose random number between 0 and 1; if it bigger than EPS_CONFIGS:
-          # then pick the one with lowest value; then load
-     # else: pick random config
     sample = random.random()
     if sample > EPS_CONFIGS:
         index = config_count.index(min(config_count))
@@ -237,12 +234,13 @@ def select_config():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    # num_episodes = 1_000_000
-    num_episodes = 5_000
+    num_episodes = 1_000_000
+
 
 
 
 count_positive_rewards = 0 # counts how often the reward was positive
+count_pos_epsisodes = 0 # counts how often the reward was positive within 1,000 episodes
 count_neg_1 = 0
 count_neg_10 = 0
 count_neg_100 = 0
@@ -258,8 +256,9 @@ config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that
 
 # in order to visualize the leaning process, we set up the following lists:
 x = [] # number of episodes
-y1 = [] # total number of solved configurations
-y2 = [] # proportion of solved configurations
+y1 = [] # total number of solved problems
+y2 = [] # proportion of solved problems
+y3 = [] # proportion of solved problems within the last 1,000 episodes
 
 for i_episode in range(num_episodes):
 
@@ -284,6 +283,14 @@ for i_episode in range(num_episodes):
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
+        
+    if reward > 0:
+        count_positive_rewards += 1
+        count_pos_epsisodes += 1
+        vector = select_config()
+        number_of_vectors += 1
+        config_count[action] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
+
 
 
 
@@ -292,14 +299,10 @@ for i_episode in range(num_episodes):
         x.append(i_episode)
         y1.append(count_positive_rewards)
         y2.append(100*count_positive_rewards / i_episode)
+        y3.append(count_pos_epsisodes / 10) # = count_pos_episodes / 1000 * 100
+        count_pos_epsisodes = 0
 
 
-        
-    if reward > 0:
-        count_positive_rewards += 1
-        vector = select_config()
-        number_of_vectors += 1
-        config_count[action] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
 
 
     if reward == -1:
@@ -340,31 +343,30 @@ print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, 
 #     print("action ", i, " was chosen ", action_count[i], " times")
 
 #testing if the loading of configurations was successful:
+print(config_count)
 
-# print(config_count)
-# print(x)
-# print(y1)
-# print(y2)
 
 # plotting the learning rate of DQN learner in two subplots:
-fig, ax = plt.subplots(1, 2)
+fig, ax = plt.subplots(2, 2)
+
 
 # plotting the absolute number of correctly solved configurations
-plt.subplot(1, 2, 1)
-# naming the x axis
-plt.xlabel('number of episodes')
-# naming the y axis
-plt.ylabel('number of correctly solved configurations')
-plt.plot(x, y1)
+ax[0][0].plot(x, y1)
+ax[0][0].set_xlabel('number of episodes')
+ax[0][0].set_ylabel('number of correctly solved configurations in %')
 
 
 # plotting the proportion of correctly solved configurations
-plt.subplot(1, 2, 2)
-# naming the x axis
-plt.xlabel('number of episodes')
-# naming the y axis
-plt.ylabel('proportion of correctly solved configurations in %')
-plt.plot(x, y2)
+ax[0][1].plot(x, y2)
+ax[0][1].set_xlabel('number of episodes')
+ax[0][1].set_ylabel('proportion of correctly solved configurations in %')
+
+
+
+# plotting the proportion of correctly solved configurations within the last 1,000 episodes
+ax[1][0].plot(x, y3)
+ax[1][0].set_xlabel('number of episodes')
+ax[1][0].set_ylabel('proportion of correctly solved configurations within 1,000 episodes in %')
 
 fig.tight_layout(pad=3.0)
 fig.suptitle('Learning rate of DQN learner', fontsize=16)
