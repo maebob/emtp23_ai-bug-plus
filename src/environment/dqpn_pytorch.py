@@ -34,8 +34,28 @@ from src.utils.matrix import number_bugs, array_to_matrices
 df_full = pd.read_csv("configs_4x+4y.csv", sep=";")
 df  = df_full[:]
 
+# set up a way to select the configurations which have been solved the least
+
+# count how often a specific configuration was solved successfully:
+config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
+
+EPS_CONFIGS = 0.3 # probability to choose a random configuration
+
+def select_config():
+    """
+    selects index of the configuration dataframe with the lowest count
+    """
+    sample = random.random()
+    if sample > EPS_CONFIGS:
+        index = config_count.index(min(config_count))
+    else:
+        index = np.random.randint(0, len(config_count))
+    return index
+
+
 # Create a numpy vector out of a random line in the data frame
-vector = np.array(df.iloc[np.random.randint(0, len(df))]) # first vector is initialized wiht a random configuration (in order to set up the environment)
+index = select_config()
+vector = np.array(df.iloc[index]) # first vector is initialized wiht a random configuration (in order to set up the environment)
 
 # set seed
 torch.manual_seed(42)
@@ -145,30 +165,7 @@ def select_action(state):
 episode_durations = []
 
 
-# def plot_durations(show_result=False):
-#     plt.figure(1)
-#     durations_t = torch.tensor(episode_durations, dtype=torch.float)
-#     if show_result:
-#         plt.title('Result')
-#     else:
-#         plt.clf()
-#         plt.title('Training...')
-#     plt.xlabel('Episode')
-#     plt.ylabel('Duration')
-#     plt.plot(durations_t.numpy())
-#     # Take 100 episode averages and plot them too
-#     if len(durations_t) >= 100:
-#         means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
-#         means = torch.cat((torch.zeros(99), means))
-#         plt.plot(means.numpy())
 
-#     plt.pause(0.001)  # pause a bit so that plots are updated
-#     if is_ipython:
-#         if not show_result:
-#             display.display(plt.gcf())
-#             display.clear_output(wait=True)
-#         else:
-#             display.display(plt.gcf())
 
 def optimize_model():
     if len(memory) < BATCH_SIZE:
@@ -220,15 +217,7 @@ def optimize_model():
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
 
-EPS_CONFIGS = 0.1
 
-def select_config():
-    sample = random.random()
-    if sample > EPS_CONFIGS:
-        index = config_count.index(min(config_count))
-    else:
-        index = np.random.randint(0, len(config_count))
-    return np.array(df.iloc[index]) # returns the config as a numpy array
 
 
 if torch.cuda.is_available():
@@ -251,8 +240,6 @@ number_of_vectors = 1
 # action_count = [0] * 70
 # j = 0
 
-# count how often a specific configuration was solved successfully:
-config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
 
 # in order to visualize the leaning process, we set up the following lists:
 x = [] # number of episodes
@@ -287,21 +274,24 @@ for i_episode in range(num_episodes):
     if reward > 0:
         count_positive_rewards += 1
         count_pos_epsisodes += 1
-        vector = select_config()
+        config_count[index] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
+        index = select_config() # select new configuration by first  finding index of lowest count
+        vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
         number_of_vectors += 1
-        config_count[action] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
 
 
 
 
     if (i_episode > 0) & (i_episode % 1000 == 0):
-        print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
+        # print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
         x.append(i_episode)
         y1.append(count_positive_rewards)
         y2.append(100*count_positive_rewards / i_episode)
         y3.append(count_pos_epsisodes / 10) # = count_pos_episodes / 1000 * 100
         count_pos_epsisodes = 0
 
+    if (i_episode > 0) & (i_episode % 5000 == 0):
+        print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
 
 
 
