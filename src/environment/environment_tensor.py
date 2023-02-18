@@ -137,8 +137,8 @@ class BugPlus(Env):
             return reward, done
         
         # Engine evaluated but result was not correct
-            reward = torch.tensor([-1])
-            done = False
+        reward = torch.tensor([-1])
+        done = False
         return reward, done
 
     

@@ -467,7 +467,8 @@ def main(board: Bug) -> dict:
     memory_connections.clear()
     memory_ports.clear()
     memory_bug_types.clear()
-    ITERATIONS = 0
+    global ITERATIONS
+    ITERATIONS = 0  
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
