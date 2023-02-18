@@ -267,7 +267,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 400
+    num_episodes = 40_000
 
 print('******************************')
 dataflow = vector[3:38].reshape (5,7)
@@ -323,17 +323,15 @@ for i_episode in range(num_episodes):
     #print ('l.345: observation_space after action:\n', observation_space, '\n')
 
 
+    if i_episode % 1000 == 0:
+        print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
 
-
-
-    if done:
-        vector = np.array(df.iloc[np.random.randint(0, len(df))])
-        # vector = test_vector[:73]
-        number_of_vectors += 1
         
     if reward > 0:
         count_positive_rewards += 1
-        print('positive reward in Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
+        vector = np.array(df.iloc[np.random.randint(0, len(df))])
+        number_of_vectors += 1
+        #print('positive reward in Episode: ', i_episode, '    Action:', action, '    Reward:', reward)
     if reward == -1:
         count_neg_1 += 1
     if reward == -10:
