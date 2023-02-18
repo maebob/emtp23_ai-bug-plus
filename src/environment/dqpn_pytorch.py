@@ -266,56 +266,8 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 600
-"""
-for i_episode in range(num_episodes):
-    print("Episode: ", i_episode)
-    # reset environment TO INITIAL STATE
-    # TODO: check if this is correct, see line 98
-    observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
-    state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size 
+    num_episodes = 400
 
-    state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
-
-
-    for t in count():
-        print("t: ", t)
-        action = select_action(state)
-        print("action: ", action)
-        reward, observation, ep_return, done, _ = env.step(action.item())
-        print("reward: ", reward)
-        observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
-
-        if done:
-            next_state = None
-            print("line 242 done")
-        else:
-            next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
-            print("line 245: next_state: ", next_state)
-
-        # Store the transition in memory
-        memory.push(state, action, next_state, reward)
-
-        # Move to the next state
-        state = next_state
-
-        # Perform one step of the optimization (on the policy network)
-        optimize_model()
-
-        # Soft update of the target network's weights
-        # θ′ ← τ θ + (1 −τ )θ′
-        target_net_state_dict = target_net.state_dict()
-        policy_net_state_dict = policy_net.state_dict()
-        for key in policy_net_state_dict:
-            target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
-        target_net.load_state_dict(target_net_state_dict)
-
-        if done:
-            episode_durations.append(t + 1)
-            plot_durations()
-            break
-"""
 print('******************************')
 dataflow = vector[3:38].reshape (5,7)
 print('dataflow:\n', dataflow)
@@ -336,7 +288,7 @@ number_of_vectors = 1
 
 # count how often which action was chosen:
 action_count = [0] * 70
-i = 0
+j = 0
 
 for i_episode in range(num_episodes):
     # print("Episode: ", i_episode)
@@ -355,8 +307,8 @@ for i_episode in range(num_episodes):
 
     # The index in the observation space that should be updated
 
-    action = torch.tensor([[i]])
-    i = (i+1)%70
+    action = torch.tensor([[j]])
+    j = (j+1)%70
     action_count[action] += 1
 
 
@@ -426,8 +378,8 @@ print("count -10 rewards: ", count_neg_10)
 print("count -100 rewards: ", count_neg_100)
 print("sum of rewards: ", sum_rewards)
 print("number of vectors: ", number_of_vectors)
-# for i in range(70):
-#     print("action ", i, " was chosen ", action_count[i], " times")
+for i in range(70):
+    print("action ", i, " was chosen ", action_count[i], " times")
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
