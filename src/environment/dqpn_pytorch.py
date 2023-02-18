@@ -235,6 +235,7 @@ count_neg_10 = 0
 count_neg_100 = 0
 sum_rewards = 0 # sum of all rewards
 number_of_vectors = 1
+proportion_old = 0
 
 # count how often which action was chosen:
 # action_count = [0] * 70
@@ -245,7 +246,8 @@ number_of_vectors = 1
 x = [] # number of episodes
 y1 = [] # total number of solved problems
 y2 = [] # proportion of solved problems
-y3 = [] # proportion of solved problems within the last 1,000 episodes
+y3 = [] # proportion of solved problems within the last 5,000 episodes
+y4 = [] # compare if the learner improves in comparison to previous 5,000 episodes
 
 for i_episode in range(num_episodes):
 
@@ -282,16 +284,32 @@ for i_episode in range(num_episodes):
 
 
 
-    if (i_episode > 0) & (i_episode % 1000 == 0):
-        # print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
-        x.append(i_episode)
-        y1.append(count_positive_rewards)
-        y2.append(100*count_positive_rewards / i_episode)
-        y3.append(count_pos_epsisodes / 10) # = count_pos_episodes / 1000 * 100
-        count_pos_epsisodes = 0
+    # if (i_episode > 0) & (i_episode % 1000 == 0):
+    #     print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
+    #     proportion_new = count_pos_epsisodes / 10  # = count_pos_episodes / 1000 * 100
+    #     x.append(i_episode)
+    #     y1.append(count_positive_rewards)
+    #     y2.append(100*count_positive_rewards / i_episode)
+    #     y3.append(proportion_new) # = count_pos_episodes / 1000 * 100
+    #     y4.append(proportion_new - proportion_old)
+    #     # resetting and updating the counters for the last 5,000 episodes
+    #     count_pos_epsisodes = 0
+    #     proportion_old = proportion_new
+    #     count_pos_epsisodes = 0
 
     if (i_episode > 0) & (i_episode % 5000 == 0):
         print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
+
+        proportion_new = count_pos_epsisodes / 50  # = count_pos_episodes / 5000 * 100
+        x.append(i_episode/1000)
+        y1.append(count_positive_rewards)
+        y2.append(100*count_positive_rewards / i_episode)
+        y3.append(proportion_new)
+        y4.append(proportion_new - proportion_old)
+
+        # resetting and updating the counters for the last 5,000 episodes
+        count_pos_epsisodes = 0
+        proportion_old = proportion_new
 
 
 
@@ -342,23 +360,27 @@ fig, ax = plt.subplots(2, 2)
 
 # plotting the absolute number of correctly solved configurations
 ax[0][0].plot(x, y1)
-ax[0][0].set_xlabel('number of episodes')
-ax[0][0].set_ylabel('number of correctly solved configurations in %')
+ax[0][0].set_xlabel('number of episodes (in 1,000)', fontsize=8)
+ax[0][0].set_ylabel('number of correctly solved problems', fontsize=8)
 
 
 # plotting the proportion of correctly solved configurations
 ax[0][1].plot(x, y2)
-ax[0][1].set_xlabel('number of episodes')
-ax[0][1].set_ylabel('proportion of correctly solved configurations in %')
+ax[0][1].set_xlabel('number of episodes (in 1,000)', fontsize=8)
+ax[0][1].set_ylabel('proportion of correctly solved (in %)', fontsize=8)
 
 
 
 # plotting the proportion of correctly solved configurations within the last 1,000 episodes
 ax[1][0].plot(x, y3)
-ax[1][0].set_xlabel('number of episodes')
-ax[1][0].set_ylabel('proportion of correctly solved configurations within 1,000 episodes in %')
+ax[1][0].set_xlabel('number of episodes (in 1000)', fontsize=6)
+ax[1][0].set_ylabel('proportion correctly solved within 5,000 episodes (in %)', fontsize=8)
+
+ax[1][1].plot(x, y4)
+ax[1][1].set_xlabel('number of episodes (in 1,000)', fontsize=6)
+ax[1][1].set_ylabel('trend in comparison to previous 5,000 episodes', fontsize=8)
 
 fig.tight_layout(pad=3.0)
-fig.suptitle('Learning rate of DQN learner', fontsize=16)
+fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
   
