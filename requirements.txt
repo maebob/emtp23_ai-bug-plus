@@ -27,3 +27,4 @@ gym
 pandas
 torch
 matplotlib
+matplotlib.gridspec 
