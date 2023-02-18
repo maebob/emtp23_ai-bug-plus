@@ -256,6 +256,10 @@ number_of_vectors = 1
 # count how often a specific configuration was solved successfully:
 config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
 
+# in order to visualize the leaning process, we set up the following lists:
+x = [] # number of episodes
+y1 = [] # total number of solved configurations
+y2 = [] # proportion of solved configurations
 
 for i_episode in range(num_episodes):
 
@@ -283,8 +287,12 @@ for i_episode in range(num_episodes):
 
 
 
-    if i_episode % 1000 == 0:
+    if (i_episode > 0) & (i_episode % 1000 == 0):
         print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
+        x.append(i_episode)
+        y1.append(count_positive_rewards)
+        y2.append(100*count_positive_rewards / i_episode)
+
 
         
     if reward > 0:
@@ -293,8 +301,6 @@ for i_episode in range(num_episodes):
         number_of_vectors += 1
         config_count[action] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
 
-    # if reward <= 0:
-    #     config_count[action] = 0 # a configuration that was not solved successfully is reset to 0
 
     if reward == -1:
         count_neg_1 += 1
@@ -336,5 +342,22 @@ print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, 
 #testing if the loading of configurations was successful:
 
 print(config_count)
+print(x)
+print(y1)
+print(y2)
+
+# plotting the proportion of correctly solved configurations
+plt.plot(x, y2)
+  
+# naming the x axis
+plt.xlabel('number of episodes')
+# naming the y axis
+plt.ylabel('proportion of correctly solved configurations in %')
+  
+# giving a title to my graph
+plt.title('Learning curve of the DQN')
+  
+# function to show the plot
+plt.show()
 
 
