@@ -31,13 +31,18 @@ from src.environment import environment_tensor as environment
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-df_full = pd.read_csv("configs_4x+4y.csv", sep=";")
+config_name = 'configs_x+y'
+config = f"{config_name}.csv"
+df_full = pd.read_csv(config, sep=";")
 df  = df_full[:]
 
 # set up a way to select the configurations which have been solved the least
 
 # count how often a specific configuration was solved successfully:
-config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
+config_count = [0] * len(df) # intialize with 0, meaning, a configuration that has not been used yet gets a count of 0
+
+# give values to each configuration, based on how often it was solved successfully / how long it took to be solved:
+config_priority = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
 
 EPS_CONFIGS = 0.3 # probability to choose a random configuration
 
@@ -45,19 +50,18 @@ def select_config():
     """
     selects index of the configuration dataframe with the lowest count
     """
-    #TODO: prevent from choosing the same index over and over again)
-    index = np.random.randint(0, len(config_count))
+    #TODO: prevent from choosing the same index over and over again
+    index = np.random.randint(0, len(config_priority))
     # sample = random.random()
     # if sample > EPS_CONFIGS:
-    #     index = config_count.index(min(config_count))
+    #     index = config_priority.index(min(config_priority))
 
     # else:
-    #     index = np.random.randint(0, len(config_count))
+    #     index = np.random.randint(0, len(config_priority))
     return index
 
 
-# Create a numpy vector out of a random line in the data frame
-
+# Create a numpy vector out of any config in the data frame
 index = 0
 vector = np.array(df.iloc[index]) # first vector is initialized wiht a random configuration (in order to set up the environment)
 
@@ -69,13 +73,6 @@ env = environment.BugPlus()
 env.setVectorAsObservationSpace(vector)
 env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm; OR: ignore and delete this line? (also subsequent occurences)
 
-
-# # set up matplotlib
-# is_ipython = 'inline' in matplotlib.get_backend()
-# if is_ipython:
-#     from IPython import display
-
-# plt.ion()
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -115,13 +112,12 @@ class DQN(nn.Module):
         return self.layer3(x)
 
 # BATCH_SIZE is the number of transitions sampled from the replay buffer
-# GAMMA is the discount factor as mentioned in the previous section
+# GAMMA is the discount factor
 # EPS_START is the starting value of epsilon
 # EPS_END is the final value of epsilon
 # EPS_DECAY controls the rate of exponential decay of epsilon, higher means a slower decay
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
-# BATCH_SIZE = 128
 BATCH_SIZE = 128
 GAMMA = 0.99
 EPS_START = 0.9
@@ -166,10 +162,6 @@ def select_action(state):
         return torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
 
 
-episode_durations = []
-
-
-
 
 def optimize_model():
     if len(memory) < BATCH_SIZE:
@@ -179,7 +171,6 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
-    #print("l. 208  batch:\n", batch)
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
@@ -190,9 +181,8 @@ def optimize_model():
                                                 if s is not None])
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
-    #print("l. 219 batch.reward\n", batch.reward)
     reward_batch = torch.cat(batch.reward)
-   # print("reward_batch: ", reward_batch)
+
 
     # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
     # columns of actions taken. These are the actions which would've been taken
@@ -250,7 +240,7 @@ proportion_old = 0
 # in order to visualize the leaning process, we set up the following lists:
 x = [] # number of episodes
 y1 = [] # total number of solved problems
-y2 = [] # proportion of solved problems
+y2 = [] # proportion of solved problems at each time point
 y3 = [] # proportion of solved problems within the last 5,000 episodes
 y4 = [] # compare if the learner improves in comparison to previous 5,000 episodes
 
@@ -280,34 +270,22 @@ for i_episode in range(num_episodes):
 
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
+    config_count[index] += 1 # each time a configuration is used the count is increased by 1
         
     if reward > 0:
         count_positive_rewards += 1
         count_pos_epsisodes += 1
-        config_count[index] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
+        config_priority[index] += 1 # each time a configuration is solved successfully, the count is increased by 1
         index = select_config() # select new configuration by first  finding index of lowest count
         vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
         number_of_vectors += 1
     
     if reward <= 0:
-        config_count[index] -= 1 # each time a configuration is not solved successfully, the count of the action that solved it is decreased by 1 to make it more likely to be picked again
+        config_count
+        config_priority[index] -= 1 # each time a configuration is not solved successfully, the count of the action that solved it is decreased by 1 to make it more likely to be picked again
 
 
 
-
-
-    # if (i_episode > 0) & (i_episode % 1000 == 0):
-    #     print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
-    #     proportion_new = count_pos_epsisodes / 10  # = count_pos_episodes / 1000 * 100
-    #     x.append(i_episode)
-    #     y1.append(count_positive_rewards)
-    #     y2.append(100*count_positive_rewards / i_episode)
-    #     y3.append(proportion_new) # = count_pos_episodes / 1000 * 100
-    #     y4.append(proportion_new - proportion_old)
-    #     # resetting and updating the counters for the last 5,000 episodes
-    #     count_pos_epsisodes = 0
-    #     proportion_old = proportion_new
-    #     count_pos_epsisodes = 0
 
     if (i_episode > 0) & (i_episode % 5000 == 0):
         print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
@@ -315,7 +293,7 @@ for i_episode in range(num_episodes):
         proportion_new = count_pos_epsisodes / 50  # = count_pos_episodes / 5000 * 100
         x.append(i_episode/1000)
         y1.append(count_positive_rewards)
-        y2.append(100*count_positive_rewards / i_episode)
+        y2.append(100 * count_positive_rewards / i_episode)
         y3.append(proportion_new)
         y4.append(proportion_new - proportion_old)
 
@@ -362,8 +340,18 @@ print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, 
 # for i in range(70):
 #     print("action ", i, " was chosen ", action_count[i], " times")
 
-#testing if the loading of configurations was successful:
-print(config_count)
+
+# creating dataframe with information about the configs for analysis
+config_summary = []
+config_summary.append(config_count)
+config_summary.append(config_priority)
+
+df_config_summary = pd.DataFrame(config_summary).transpose()
+df_config_summary.columns=['count', 'priority']
+
+# saving the data in a csv file
+file_name = f"summary_{config_name}_{num_episodes}_random-configs.csv"
+df_config_summary.to_csv(file_name, sep =';')
 
 
 # plotting the learning rate of DQN learner in two subplots:
@@ -396,4 +384,5 @@ fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
 
-plt.savefig('learning-4x+4y-5_000_000_random_cofigs.png')  
+# plt.savefig('learning-x+y-5_000_000_random_cofigs.png')
+
