@@ -28,6 +28,3 @@ pandas
 torch
 matplotlib
 matplotlib.gridspec 
-wcwidth==0.2.5
-Werkzeug==2.2.2
-wrapt==1.14.1
