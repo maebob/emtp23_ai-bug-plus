@@ -4,6 +4,7 @@ import random
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+
 from collections import namedtuple, deque
 from itertools import count
 
@@ -12,35 +13,69 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+
 import pandas as pd
 
 import sys
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+import os
+from dotenv import load_dotenv
 
-from src.environment import environment
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
+
+
+from src.environment import environment_tensor as environment
 
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-df = pd.read_csv("configs.csv", sep=";")
+df_full = pd.read_csv("configs_4x+4y.csv", sep=";")
+df  = df_full[:]
+
+# set up a way to select the configurations which have been solved the least
+
+# count how often a specific configuration was solved successfully:
+config_count = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
+
+EPS_CONFIGS = 0.3 # probability to choose a random configuration
+
+def select_config():
+    """
+    selects index of the configuration dataframe with the lowest count
+    """
+    #TODO: prevent from choosing the same index over and over again)
+    index = np.random.randint(0, len(config_count))
+    # sample = random.random()
+    # if sample > EPS_CONFIGS:
+    #     index = config_count.index(min(config_count))
+
+    # else:
+    #     index = np.random.randint(0, len(config_count))
+    return index
+
 
 # Create a numpy vector out of a random line in the data frame
-vector = np.array(df.iloc[np.random.randint(0, len(df))])
-print('line 31, vector:\n', vector)
+
+index = 0
+vector = np.array(df.iloc[index]) # first vector is initialized wiht a random configuration (in order to set up the environment)
+
+# set seed
+torch.manual_seed(42)
 
 # Initialize the environment with the vector
 env = environment.BugPlus()
 env.setVectorAsObservationSpace(vector)
-env.setInputAndOutputValuesFromVector(vector)
+env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm; OR: ignore and delete this line? (also subsequent occurences)
 
-# set up matplotlib
-is_ipython = 'inline' in matplotlib.get_backend()
-if is_ipython:
-    from IPython import display
 
-plt.ion()
+# # set up matplotlib
+# is_ipython = 'inline' in matplotlib.get_backend()
+# if is_ipython:
+#     from IPython import display
+
+# plt.ion()
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -55,7 +90,7 @@ class ReplayMemory(object):
         self.memory = deque([],maxlen=capacity)
 
     def push(self, *args):
-        """Save a transition"""
+       #Save a transition
         self.memory.append(Transition(*args))
 
     def sample(self, batch_size):
@@ -86,6 +121,7 @@ class DQN(nn.Module):
 # EPS_DECAY controls the rate of exponential decay of epsilon, higher means a slower decay
 # TAU is the update rate of the target network
 # LR is the learning rate of the AdamW optimizer
+# BATCH_SIZE = 128
 BATCH_SIZE = 128
 GAMMA = 0.99
 EPS_START = 0.9
@@ -96,17 +132,10 @@ LR = 1e-4
 
 # Get number of actions from gym action space
 n_actions = env.action_space.n
-# TODO: find out if what we want to do when resetting:
-    # by environment: reset everything to zero
-    # as I understand it: give it initial state (for us: the matrices with one missing edge)
-    # QUESTION: should we set it to the SAME initial state every time? or should we set it to a random initial state?
-# TODO: write function for the state? also used further down, l 215 (for i_episode in range(num_episodes):)
-
-# workaround for 'reset'
 
 observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-n_observations = state.size # number of possible states #1180591620717411303424 (eine Trilliarde....)
+n_observations = state.size
 
 
 
@@ -122,8 +151,6 @@ steps_done = 0
 
 
 def select_action(state):
-    # TODO: find out how to prevent loops
-    # theoretically forbidden actions: [ 0  7 15 16 24 25 33 34]
     global steps_done
     sample = random.random()
     eps_threshold = EPS_END + (EPS_START - EPS_END) * \
@@ -142,30 +169,7 @@ def select_action(state):
 episode_durations = []
 
 
-def plot_durations(show_result=False):
-    plt.figure(1)
-    durations_t = torch.tensor(episode_durations, dtype=torch.float)
-    if show_result:
-        plt.title('Result')
-    else:
-        plt.clf()
-        plt.title('Training...')
-    plt.xlabel('Episode')
-    plt.ylabel('Duration')
-    plt.plot(durations_t.numpy())
-    # Take 100 episode averages and plot them too
-    if len(durations_t) >= 100:
-        means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
-        means = torch.cat((torch.zeros(99), means))
-        plt.plot(means.numpy())
 
-    plt.pause(0.001)  # pause a bit so that plots are updated
-    if is_ipython:
-        if not show_result:
-            display.display(plt.gcf())
-            display.clear_output(wait=True)
-        else:
-            display.display(plt.gcf())
 
 def optimize_model():
     if len(memory) < BATCH_SIZE:
@@ -175,16 +179,20 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
+    #print("l. 208  batch:\n", batch)
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
     non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                           batch.next_state)), device=device, dtype=torch.bool)
+
     non_final_next_states = torch.cat([s for s in batch.next_state
                                                 if s is not None])
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
+    #print("l. 219 batch.reward\n", batch.reward)
     reward_batch = torch.cat(batch.reward)
+   # print("reward_batch: ", reward_batch)
 
     # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
     # columns of actions taken. These are the actions which would've been taken
@@ -214,61 +222,178 @@ def optimize_model():
     optimizer.step()
 
 
+
+
 if torch.cuda.is_available():
-    #num_episodes = 600
-    num_episodes = 60
+    num_episodes = 600
 else:
-    num_episodes = 50
+    num_episodes = 5_000_000
+ 
+
+
+
+
+count_positive_rewards = 0 # counts how often the reward was positive
+count_pos_epsisodes = 0 # counts how often the reward was positive within 1,000 episodes
+count_neg_1 = 0
+count_neg_10 = 0
+count_neg_100 = 0
+sum_rewards = 0 # sum of all rewards
+number_of_vectors = 1
+proportion_old = 0
+
+# count how often which action was chosen:
+# action_count = [0] * 70
+# j = 0
+
+
+# in order to visualize the leaning process, we set up the following lists:
+x = [] # number of episodes
+y1 = [] # total number of solved problems
+y2 = [] # proportion of solved problems
+y3 = [] # proportion of solved problems within the last 5,000 episodes
+y4 = [] # compare if the learner improves in comparison to previous 5,000 episodes
 
 for i_episode in range(num_episodes):
-    print("Episode: ", i_episode)
-    # reset environment TO INITIAL STATE
-    # TODO: check if this is correct, see line 98
+
+    if i_episode == 0:
+        index = 0
+
+    env.reset()
+    env.setVectorAsObservationSpace(vector)
+    env.setInputAndOutputValuesFromVector(vector) 
+    
     observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size
+
 
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
+    # The index in the observation space that should be updated
+    action = select_action(state)
+    # action_count[action] += 1
 
-    for t in count():
-        print("t: ", t)
-        action = select_action(state)
-        print("action: ", action)
-        reward, observation, ep_return, done, _ = env.step(action.item())
-        print("reward: ", reward)
-        observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
-        if done:
-            next_state = None
-            print("line 242 done")
-        else:
-            next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
-            print("line 245: next_state: ", next_state)
 
-        # Store the transition in memory
-        memory.push(state, action, next_state, reward)
+    reward, observation, ep_return, done, _ = env.step(action.item())
+    observation_flat = np.concatenate((observation[0].flatten(),observation[1].flatten()), axis=0)
 
-        # Move to the next state
-        state = next_state
+    next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
+    sum_rewards += reward
+        
+    if reward > 0:
+        count_positive_rewards += 1
+        count_pos_epsisodes += 1
+        config_count[index] += 1 # each time a configuration is solved successfully, the count of the action that solved it is increased by 1
+        index = select_config() # select new configuration by first  finding index of lowest count
+        vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+        number_of_vectors += 1
+    
+    if reward <= 0:
+        config_count[index] -= 1 # each time a configuration is not solved successfully, the count of the action that solved it is decreased by 1 to make it more likely to be picked again
 
-        # Perform one step of the optimization (on the policy network)
-        optimize_model()
 
-        # Soft update of the target network's weights
-        # θ′ ← τ θ + (1 −τ )θ′
-        target_net_state_dict = target_net.state_dict()
-        policy_net_state_dict = policy_net.state_dict()
-        for key in policy_net_state_dict:
-            target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
-        target_net.load_state_dict(target_net_state_dict)
 
-        if done:
-            episode_durations.append(t + 1)
-            plot_durations()
-            break
 
-print('Complete')
-plot_durations(show_result=True)
-plt.ioff()
+
+    # if (i_episode > 0) & (i_episode % 1000 == 0):
+    #     print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
+    #     proportion_new = count_pos_epsisodes / 10  # = count_pos_episodes / 1000 * 100
+    #     x.append(i_episode)
+    #     y1.append(count_positive_rewards)
+    #     y2.append(100*count_positive_rewards / i_episode)
+    #     y3.append(proportion_new) # = count_pos_episodes / 1000 * 100
+    #     y4.append(proportion_new - proportion_old)
+    #     # resetting and updating the counters for the last 5,000 episodes
+    #     count_pos_epsisodes = 0
+    #     proportion_old = proportion_new
+    #     count_pos_epsisodes = 0
+
+    if (i_episode > 0) & (i_episode % 5000 == 0):
+        print(i_episode, 'Episodes done', number_of_vectors, 'vectors done')
+
+        proportion_new = count_pos_epsisodes / 50  # = count_pos_episodes / 5000 * 100
+        x.append(i_episode/1000)
+        y1.append(count_positive_rewards)
+        y2.append(100*count_positive_rewards / i_episode)
+        y3.append(proportion_new)
+        y4.append(proportion_new - proportion_old)
+
+        # resetting and updating the counters for the last 5,000 episodes
+        count_pos_epsisodes = 0
+        proportion_old = proportion_new
+
+
+
+    if reward == -1:
+        count_neg_1 += 1
+    if reward == -10:
+        count_neg_10 += 1
+    if reward == -100:
+        count_neg_100 += 1
+        
+
+    # Store the transition in memory
+    memory.push(state, action, next_state, reward)
+
+    # Move to the next state
+    state = next_state
+
+    # Perform one step of the optimization (on the policy network)
+    optimize_model() 
+
+
+    # Soft update of the target network's weights
+    # θ′ ← τ θ + (1 −τ )θ′
+    target_net_state_dict = target_net.state_dict()
+    policy_net_state_dict = policy_net.state_dict()
+    for key in policy_net_state_dict:
+        target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
+    target_net.load_state_dict(target_net_state_dict)
+
+
+print('Complete after ', num_episodes, ' episodes')
+print("count_positive_rewards: ", count_positive_rewards)
+print("sum of rewards: ", sum_rewards)
+print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, "%")
+# print("count -1 rewards: ", count_neg_1)
+# print("count -10 rewards: ", count_neg_10)
+# print("count -100 rewards: ", count_neg_100)
+# for i in range(70):
+#     print("action ", i, " was chosen ", action_count[i], " times")
+
+#testing if the loading of configurations was successful:
+print(config_count)
+
+
+# plotting the learning rate of DQN learner in two subplots:
+fig, ax = plt.subplots(2, 2)
+
+
+# plotting the absolute number of correctly solved configurations
+ax[0][0].plot(x, y1)
+ax[0][0].set_xlabel('number of episodes (in 1,000)', fontsize=8)
+ax[0][0].set_ylabel('number of correctly solved problems', fontsize=8)
+
+
+# plotting the proportion of correctly solved configurations
+ax[0][1].plot(x, y2)
+ax[0][1].set_xlabel('number of episodes (in 1,000)', fontsize=8)
+ax[0][1].set_ylabel('proportion of correctly solved (in %)', fontsize=8)
+
+
+
+# plotting the proportion of correctly solved configurations within the last 1,000 episodes
+ax[1][0].plot(x, y3)
+ax[1][0].set_xlabel('number of episodes (in 1000)', fontsize=6)
+ax[1][0].set_ylabel('proportion correctly solved within 5,000 episodes (in %)', fontsize=8)
+
+ax[1][1].plot(x, y4)
+ax[1][1].set_xlabel('number of episodes (in 1,000)', fontsize=6)
+ax[1][1].set_ylabel('trend in comparison to previous 5,000 episodes', fontsize=8)
+
+fig.tight_layout(pad=3.0)
+fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
+
+plt.savefig('learning-4x+4y-5_000_000_random_cofigs.png')  

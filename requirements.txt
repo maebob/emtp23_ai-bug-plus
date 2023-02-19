@@ -92,3 +92,8 @@ uvicorn==0.18.3
 wcwidth==0.2.5
 Werkzeug==2.2.2
 wrapt==1.14.1
+gym
+pandas
+torch
+matplotlib
+matplotlib.gridspec
