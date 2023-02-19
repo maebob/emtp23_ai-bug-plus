@@ -1,6 +1,7 @@
 from itertools import count
 import json
 import sys
+
 import os
 
 from dotenv import load_dotenv
@@ -10,13 +11,16 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
+
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
+
 ITERATIONS = 0 # The number of iterations the engine has run
 MAX_ITERATIONS = 5 # The maximum number of iterations the engine is allowed to run
+
 
 def stack_size2a(size=2):
     """
@@ -438,12 +442,11 @@ def eval_bug(bug_id: int) -> None:
     if bug_id is None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
-    
-    # Increment the global iteration counter
-    global ITERATIONS
+
     
     while memory_bug_types.get(bug_id) != "root" and ITERATIONS < MAX_ITERATIONS:
         ITERATIONS = ITERATIONS + 1
+
         if memory_bug_types.get(bug_id) == "plus":
             bug_id = evaluate_plus_bug(bug_id)
         elif memory_bug_types.get(bug_id) != "plus":
@@ -451,10 +454,12 @@ def eval_bug(bug_id: int) -> None:
         else:
             raise Exception("Unknown bug type")
     
+
     # Stop the evaluation if it took # too long
     if ITERATIONS >= MAX_ITERATIONS:
         raise TimeoutError("Evaluation took too long")
     return memory_ports
+
 
 def main(board: Bug) -> dict:
     """The main function of the program
@@ -483,6 +488,7 @@ if __name__ == "__main__":
     # TODO pseudo parallel only works on first itreation
     example_file = open(
         "config_test2.json", "r").read()
+
     example_board = json.loads(example_file)
     example_board["xValue"] = 10
     example_board["yValue"] = 5
