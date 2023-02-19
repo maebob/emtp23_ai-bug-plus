@@ -2,11 +2,7 @@ import numpy as np
 import random
 import gym
 import pandas as pd
-import sys
-#sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
-import src.environment.environment as env
+import environment.environment as env
 
 def qLearningAgent():
     # Create environment to interact with
@@ -20,8 +16,7 @@ def qLearningAgent():
     learningRate = 0.8
     discountRate = 0.95
     epsilon = 1
-    decayRate = 0.005
-
+    decayRate = 0.0005
 
     # Initialize training parameters
     numEpisodes = 1000
@@ -37,19 +32,17 @@ def qLearningAgent():
         environment.reset()
         environment.setVectorAsObservationSpace(vector)
         environment.setInputAndOutputValuesFromVector(vector)
-        
-        # if episode == 99:
-        #    print(environment.observation_space)
+        print("Episode: " + str(episode))
 
         # The Q-Table learning algorithm
         for step in range(maxSteps):
             # Pick an action based on epsilon-greedy policy
             if random.uniform(0, 1) < epsilon:
                 action = environment.action_space.sample()
-                # print("Random action: " + str(action))
+                print("Random action: " + str(action))
             else:
                 action = np.argmax(Q)
-                # print("Q-Table action: " + str(action))
+                print("Q-Table action: " + str(action))
 
             # Get new state and reward from environment
             step_reward, observation_space, ep_return, done, list = environment.step(action)
@@ -58,43 +51,37 @@ def qLearningAgent():
             # Update Q-Table with new knowledge
             Q[action] = Q[action] + learningRate * (
                         reward + discountRate * np.max(Q) - Q[action])
-            # print(action)
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
 
 
-
-    print("Training finished over " + str(numEpisodes) +  " episodes.")
+    print("Training finished over {numEpisodes} episodes.")
     input("Press Enter to see out of 100 tries how often the agent picks the correct edge to add to the matrices...")
 
     # Test agent
     numCorrect = 0
     reward = 0
-
-    environment.reset()
-    environment.setVectorAsObservationSpace(vector)
-    environment.setInputAndOutputValuesFromVector(vector)
+    for i in range(100):
+        environment.reset()
+        environment.setVectorAsObservationSpace(vector)
+        environment.setInputAndOutputValuesFromVector(vector)
         
-    action = np.argmax(Q)
-    #print(action)
-    #print(np.min(Q))
-    #print(np.max(Q))
-    step_reward, observation_space, ep_return, done, list = environment.step(action)
-    reward += step_reward
+        action = np.argmax(Q)
+        step_reward, observation_space, ep_return, done, list = environment.step(action)
+        reward += step_reward
 
-    if step_reward == 10:
-        numCorrect += 1
-
-    #print(action)
+        if step_reward == 1:
+            numCorrect += 1
+    avg_reward = reward / 100
         
     # Print results
     #print("Agent picked the correct edge to add to the matrices " + ((str)numCorrect) + " times out of 100 tries.")
     #print("The average reward gained by the agent was " + ((str)avg_reward) + ".")
 
     # Print number of correct guesses and average reward
-    print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 1 tries.")
-    print("The average reward gained by the agent was " + str(step_reward) + ".")
+    print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 100 tries.")
+    print("The average reward gained by the agent was " + str(avg_reward) + ".")
 
     
 if __name__ == "__main__":
