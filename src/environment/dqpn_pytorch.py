@@ -51,18 +51,21 @@ def select_config():
     selects index of the configuration dataframe with the lowest count
     """
     #TODO: prevent from choosing the same index over and over again
+    # old_index = index # TODO: check if this works
     index = np.random.randint(0, len(config_priority))
-    # sample = random.random()
-    # if sample > EPS_CONFIGS:
-    #     index = config_priority.index(min(config_priority))
-
-    # else:
-    #     index = np.random.randint(0, len(config_priority))
+    sample = random.random()
+    if sample > EPS_CONFIGS:
+        index = config_priority.index(min(config_priority))
+        # if index == old_index:
+        #     index = np.argsort(config_priority)[2]
+    else:
+        index = np.random.randint(0, len(config_priority))
     return index
 
 
 # Create a numpy vector out of any config in the data frame
 index = 0
+old_index = 0
 vector = np.array(df.iloc[index]) # first vector is initialized wiht a random configuration (in order to set up the environment)
 
 # set seed
