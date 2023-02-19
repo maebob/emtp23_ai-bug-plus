@@ -45,16 +45,20 @@ def select_config():
     """
     selects index of the configuration dataframe with the lowest count
     """
-    sample = random.random()
-    if sample > EPS_CONFIGS:
-        index = config_count.index(min(config_count))
-    else:
-        index = np.random.randint(0, len(config_count))
+    #TODO: prevent from choosing the same index over and over again)
+    index = np.random.randint(0, len(config_count))
+    # sample = random.random()
+    # if sample > EPS_CONFIGS:
+    #     index = config_count.index(min(config_count))
+
+    # else:
+    #     index = np.random.randint(0, len(config_count))
     return index
 
 
 # Create a numpy vector out of a random line in the data frame
-index = select_config()
+
+index = 0
 vector = np.array(df.iloc[index]) # first vector is initialized wiht a random configuration (in order to set up the environment)
 
 # set seed
@@ -223,7 +227,8 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 1_000_000
+    num_episodes = 5_000_000
+ 
 
 
 
@@ -250,6 +255,9 @@ y3 = [] # proportion of solved problems within the last 5,000 episodes
 y4 = [] # compare if the learner improves in comparison to previous 5,000 episodes
 
 for i_episode in range(num_episodes):
+
+    if i_episode == 0:
+        index = 0
 
     env.reset()
     env.setVectorAsObservationSpace(vector)
@@ -280,6 +288,10 @@ for i_episode in range(num_episodes):
         index = select_config() # select new configuration by first  finding index of lowest count
         vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
         number_of_vectors += 1
+    
+    if reward <= 0:
+        config_count[index] -= 1 # each time a configuration is not solved successfully, the count of the action that solved it is decreased by 1 to make it more likely to be picked again
+
 
 
 
@@ -383,4 +395,5 @@ ax[1][1].set_ylabel('trend in comparison to previous 5,000 episodes', fontsize=8
 fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
-  
+
+plt.savefig('learning-4x+4y-5_000_000_random_cofigs.png')  
