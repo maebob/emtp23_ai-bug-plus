@@ -58,17 +58,9 @@ EPS_CONFIGS = 0.3 # probability to choose a random configuration
 
 def select_config(index):
     """
-    selects index of the configuration dataframe with the lowest count
+    selects random index of the configuration dataframe 
     """
-    old_index = index
-    index = config_priority.index(min(config_priority))
-    sample = random.random()
-    if sample > EPS_CONFIGS:
-        index = config_priority.index(min(config_priority))
-        if index == old_index: # if same index is chosen, choose a random one
-            index = np.random.randint(0, len(config_priority)) 
-    else:
-        index = np.random.randint(0, len(config_priority))
+    index = np.random.randint(0, len(config_priority))
     return index
 
 
@@ -237,9 +229,6 @@ else:
 
 count_positive_rewards = 0 # counts how often the reward was positive
 count_pos_epsisodes = 0 # counts how often the reward was positive within 1,000 episodes
-count_neg_1 = 0
-count_neg_10 = 0
-count_neg_100 = 0
 sum_rewards = 0 # sum of all rewards
 number_of_vectors = 1
 proportion_old = 0
@@ -286,11 +275,6 @@ for i_episode in range(num_episodes):
     sum_rewards += reward
     config_count[index] += 1 # each time a configuration is used the count is increased by 1
 
-    """
-    always load new configuration
-    """
-    index = select_config(index) # select new configuration by first  finding index of lowest count
-    vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
 
 
     if config_first_loaded[index] == -1: # write episode of first loading of configuration
@@ -305,15 +289,15 @@ for i_episode in range(num_episodes):
 
         if config_first_solved[index] == -1: # write episode of first successful solution
             config_first_solved[index] = i_episode
+        if config_first_loaded[index] == -1: # write episode of first loading of configuration
+            config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
         
         """
         load new configuration when done
         """
-        # index = select_config(index) # select new configuration by first  finding index of lowest count
-        # vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+        index = select_config(index) # select new configuration by first  finding index of lowest count
+        vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
 
-        # if config_first_loaded[index] == -1: # write episode of first loading of configuration
-        #     config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
 
     
     if reward <= 0:
@@ -336,15 +320,6 @@ for i_episode in range(num_episodes):
         count_pos_epsisodes = 0
         proportion_old = proportion_new
 
-
-
-    if reward == -1:
-        count_neg_1 += 1
-    if reward == -10:
-        count_neg_10 += 1
-    if reward == -100:
-        count_neg_100 += 1
-        
 
     # Store the transition in memory
     memory.push(state, action, next_state, reward)
@@ -369,9 +344,6 @@ print('Complete after ', num_episodes, ' episodes')
 print("count_positive_rewards: ", count_positive_rewards)
 print("sum of rewards: ", sum_rewards)
 print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, "%")
-# print("count -1 rewards: ", count_neg_1)
-# print("count -10 rewards: ", count_neg_10)
-# print("count -100 rewards: ", count_neg_100)
 # for i in range(70):
 #     print("action ", i, " was chosen ", action_count[i], " times")
 
@@ -392,7 +364,7 @@ df_config_summary = pd.DataFrame(config_summary).transpose()
 df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution', 'original_config']
 
 # saving the data in a csv file
-file_name = f"summary_{config_name}_{num_episodes}_always-new-config_lowest-rated-configs.csv"
+file_name = f"summary_{config_name}_{num_episodes}_random_reload.csv"
 df_config_summary.to_csv(file_name, sep =';')
 
 
@@ -426,6 +398,6 @@ fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
 
-plot_name = f"summary_{config_name}_{num_episodes}_always-new-config_lowest-rated-configs.png"
+plot_name = f"summary_{config_name}_{num_episodes}_random_reload.png"
 plt.savefig(plot_name)
 

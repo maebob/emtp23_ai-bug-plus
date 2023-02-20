@@ -34,6 +34,8 @@ from src.utils.matrix import number_bugs, array_to_matrices
 # choose between two modi:
 # config_strategy = 'priority' # 'random' or 'priority'
 # problem_solving_strategy = 'reload' # 'reload' or 'new'
+#TODO MD: priority_new
+#TODO MD: priority_reload
 
 # Create data frame out of configs.csv
 config_name = 'configs_4x+4y'
