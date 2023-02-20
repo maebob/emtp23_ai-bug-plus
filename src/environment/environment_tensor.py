@@ -1,9 +1,15 @@
 from gym import Env, spaces
 import numpy as np
 import sys
-# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+import torch
+import os
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
+
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
 from src.utils.valid_matrix import is_valid_matrix
@@ -14,7 +20,7 @@ class BugPlus(Env):
         super(BugPlus, self).__init__()
 
         # Number of possible bugs
-        self.no_bugs = 3
+        self.no_bugs = 3 
 
         # Obersvation and action space of the environment
         self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ], dtype=object)
@@ -39,11 +45,21 @@ class BugPlus(Env):
 
         return self.observation_space
 
-    def step(self, action):
-        print("Action: ", action)
-        '''Perform an action on the environment and reward/punish said action.
+    def step(self, action: int):
+        """
+        Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
-        the control flow matrix or the data flow matrix.'''
+        the control flow matrix or the data flow matrix.
+
+        Arguments:
+            action {int} -- The action to be performed on the environment.
+        Returns:
+            reward {int} -- The reward for the performed action.
+            observation {np.array} -- The new state of the environment.
+            ep_return {int} -- The return of the episode.
+            done {bool} -- Flag to indicate if the episode is done.
+        """
+
         # Decide wether the new edge is added to the control flow or data flow matrix
         flow_matrix = 0 if action < (self.observation_space[0][0].size * self.observation_space[1][0].size) else 1
         
@@ -62,56 +78,71 @@ class BugPlus(Env):
             edge_to = adjusted_action % self.observation_space[1][0].size
 
         # Add the new edge to the corresponding matrix
-        self.observation_space[flow_matrix][edge_from][edge_to] = 1
+        if self.observation_space[flow_matrix][edge_from][edge_to] == 1: #TODO: rework to make consistent
+            done = True
+            reward = torch.tensor([-100])
+            self.ep_return += 1
+            return reward, self.observation_space, self.ep_return, self.done, {}
+
+        else:
+            self.observation_space[flow_matrix][edge_from][edge_to] = 1 #TODO: later: make flip (from 1 to 0 and vice versa) possible
 
         # Inrement the episode return
         self.ep_return += 1
 
         # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
         # The amount of the reward is definded in the called function
-        reward = self.checkBugValidity() 
-
-        # Close the episode if the board contains a valid bug
-        #self.done = True if reward == 10 else False
-        if reward == 50:
-            self.done = True
-            print("done :)")
-        elif reward == -100:
-            self.done = True
-            print("done :(")
-        else:
-            self.done = False
-            print('continue')
-
-
+        reward, done = self.checkBugValidity() 
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
-        '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
+        """
+        Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
+
+        Returns:
+            reward {int} -- The reward for the performed action.
+            done {bool} -- Flag to indicate if the episode is done.
+        """
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
-        # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language
-        if is_valid_matrix(self.observation_space[0]) == False:
-            reward = -100
-            return reward
+        # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language #TODO: put as extra function
+        # if is_valid_matrix(self.observation_space[0]) == False:
+        #     reward = torch.tensor([-100]), True
+        #     return reward
+
 
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
-        except:
-            reward = -10
-            return reward
-        if result.get("0_Out") == self.expected_output:
-            reward = 50
-            return reward
-        
-        return -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
+        except TimeoutError:
+            # The engine timed out, the bug is invalid likely a loop
+            reward = torch.tensor([-10])
+            done = True
 
+            return reward, done
+        except:
+            # If the bug is not valid, the engine will throw an error
+            reward = torch.tensor([-10])
+            done = True
+            return reward, done
+        
+        if result.get("0_Out") == self.expected_output:
+            # If the result is correct, the reward is 100
+            reward = torch.tensor([100])
+            done = True
+            return reward, done
+        
+        # Engine evaluated but result was not correct
+        reward = torch.tensor([-1])
+        done = False
+        return reward, done
+
+    
     def initializeStartingBoardSetup(self, bugs):
         '''Set the starting state of the environment in order to have control over the
          complexity of the problem class.'''
-        self.no_bugs = bugs
+        self.observation_space = bugs
 
     def initializeInputValues(self, up, down):
         '''Set the input values the bug bpard is supposed to process in order to have control over the

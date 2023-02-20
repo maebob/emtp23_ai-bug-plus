@@ -60,18 +60,7 @@ def select_config(index):
     """
     selects index of the configuration dataframe with the lowest count
     """
-    old_index = index
-    #index = np.random.randint(0, len(config_priority))
-    index = config_priority.index(min(config_priority))
-    if index == old_index: #instead of re-loading a problem, the index of the second lowest rated config is loaded
-        index = np.argsort(config_priority)[2]
-    # sample = random.random()
-    # if sample > EPS_CONFIGS:
-    #     index = config_priority.index(min(config_priority))
-    #     if index == old_index:
-    #         index = np.argsort(config_priority)[2]
-    # else:
-    #     index = np.random.randint(0, len(config_priority))
+    index = np.random.randint(0, len(config_priority))
     return index
 
 
@@ -232,7 +221,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 5_000
+    num_episodes = 5_000_000
  
 
 
@@ -288,8 +277,19 @@ for i_episode in range(num_episodes):
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
     config_count[index] += 1 # each time a configuration is used the count is increased by 1
-        
+
+    """
+    always load new configuration
+    """
+    index = select_config(index) # select new configuration by first  finding index of lowest count
+    vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+
+
+    if config_first_loaded[index] == -1: # write episode of first loading of configuration
+        config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
+
     if reward > 0:
+        number_of_vectors += 1
         count_positive_rewards += 1
         count_pos_epsisodes += 1
         config_priority[index] += 1 # each time a configuration is solved successfully, the count is increased by 1
@@ -298,12 +298,14 @@ for i_episode in range(num_episodes):
         if config_first_solved[index] == -1: # write episode of first successful solution
             config_first_solved[index] = i_episode
         
-        index = select_config(index) # select new configuration by first  finding index of lowest count
-        vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
-        number_of_vectors += 1
+        """
+        load new configuration when done
+        """
+        # index = select_config(index) # select new configuration by first  finding index of lowest count
+        # vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
 
-        if config_first_loaded[index] == -1: # write episode of first loading of configuration
-            config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
+        # if config_first_loaded[index] == -1: # write episode of first loading of configuration
+        #     config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
 
     
     if reward <= 0:
@@ -381,14 +383,8 @@ config_summary.append(configs_list)
 df_config_summary = pd.DataFrame(config_summary).transpose()
 df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution', 'original_config']
 
-
-
-
-# pd.merge(df_config_summary, df, left_index=True, right_index=False)
-df = df_config_summary.reset_index().merge(df.reset_index(), left_index=True, right_index=True, how='left')
-
 # saving the data in a csv file
-file_name = f"summary_{config_name}_{num_episodes}_lowest-rated-configs.csv"
+file_name = f"summary_{config_name}_{num_episodes}_always-new-config_random.csv"
 df_config_summary.to_csv(file_name, sep =';')
 
 
@@ -422,5 +418,6 @@ fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
 
-plt.savefig('plot-x+y-5_000_000_lowest_rated_cofigs.png')
+plot_name = f"summary_{config_name}_{num_episodes}_always-new-config_random.png"
+plt.savefig(plot_name)
 

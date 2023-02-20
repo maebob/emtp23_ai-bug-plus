@@ -10,17 +10,13 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
-# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
-
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
 ITERATIONS = 0 # The number of iterations the engine has run
-MAX_ITERATIONS = 10 # The maximum number of iterations the engine is allowed to run
+MAX_ITERATIONS = 5 # The maximum number of iterations the engine is allowed to run
 
 def stack_size2a(size=2):
     """
@@ -458,6 +454,7 @@ def eval_bug(bug_id: int) -> None:
     # Stop the evaluation if it took # too long
     if ITERATIONS >= MAX_ITERATIONS:
         raise TimeoutError("Evaluation took too long")
+    return memory_ports
 
 def main(board: Bug) -> dict:
     """The main function of the program
@@ -470,7 +467,8 @@ def main(board: Bug) -> dict:
     memory_connections.clear()
     memory_ports.clear()
     memory_bug_types.clear()
-    ITERATIONS = 0
+    global ITERATIONS
+    ITERATIONS = 0  
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
@@ -484,13 +482,8 @@ if __name__ == "__main__":
     """This function is only used for testing purposes"""
     # TODO pseudo parallel only works on first itreation
     example_file = open(
-        "Configurations/multiply.json", "r").read()
+        "config_test2.json", "r").read()
     example_board = json.loads(example_file)
     example_board["xValue"] = 10
-    example_board["yValue"] = 1
-    main(example_board)
-    # print(memory_connections)
-    print(memory_ports)
-    print("Data out:", memory_ports.get("0_Out"), "Control Left:", memory_ports.get(
-        "0_Left"), "Control Right:", memory_ports.get("0_Right"))
-    # print(memory_bug_types)
+    example_board["yValue"] = 5
+    print(main(example_board))

@@ -1,0 +1,71 @@
+{
+    "id": 0,
+    "xValue": 1,
+    "yValue": 1,
+    "Type": "root",
+    "bugs": [
+        {
+            "id": 1,
+            "bugs": [],
+            "edges": [],
+            "Type": "plus"
+        }
+    ],
+    "edges": [
+        {
+            "from_": {
+                "bugId": 1,
+                "port": "Right"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Left"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "In"
+            },
+            "to": {
+                "bugId": 1,
+                "port": "In"
+            },
+            "Type": "Control"
+        },
+        {
+            "from_": {
+                "bugId": 1,
+                "port": "Out"
+            },
+            "to": {
+                "bugId": 0,
+                "port": "Out"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "Up"
+            },
+            "to": {
+                "bugId": 1,
+                "port": "Up"
+            },
+            "Type": "Data"
+        },
+        {
+            "from_": {
+                "bugId": 0,
+                "port": "Down"
+            },
+            "to": {
+                "bugId": 1,
+                "port": "Down"
+            },
+            "Type": "Data"
+        }
+    ]
+}

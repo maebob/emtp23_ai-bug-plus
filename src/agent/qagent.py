@@ -35,8 +35,7 @@ def qLearningAgent():
     learningRate = 0.8
     discountRate = 0.95
     epsilon = 1
-    decayRate = 0.005
-
+    decayRate = 0.0005
 
     # Initialize training parameters
     numEpisodes = 100000
@@ -53,7 +52,6 @@ def qLearningAgent():
     for episode in range(numEpisodes):
         # Reset environment and get first new observation
         environment.reset()
-
         # Initialize matrices with config from configs_4x+4y.csv
         if config_solved == False:
             environment.setVectorAsObservationSpace(vector)
@@ -69,18 +67,15 @@ def qLearningAgent():
         # environment.setVectorAsObservationSpace(vector)
         # environment.setInputAndOutputValuesFromVector(vector)
         
-        # if episode == 99:
-        #    print(environment.observation_space)
-
         # The Q-Table learning algorithm
         for step in range(maxSteps):
             # Pick an action based on epsilon-greedy policy
             if random.uniform(0, 1) < epsilon:
                 action = environment.action_space.sample()
-                # print("Random action: " + str(action))
+                print("Random action: " + str(action))
             else:
                 action = np.argmax(Q)
-                # print("Q-Table action: " + str(action))
+                print("Q-Table action: " + str(action))
 
             # Get new state and reward from environment
             step_reward, observation_space, ep_return, done, list = environment.step(action)
@@ -98,46 +93,24 @@ def qLearningAgent():
         epsilon = min(1, max(0, epsilon - decayRate))
 
 
-
-    print("Training finished over " + str(numEpisodes) +  " episodes.")
+    print("Training finished over {numEpisodes} episodes.")
     input("Press Enter to see out of 100 tries how often the agent picks the correct edge to add to the matrices...")
 
     # Test agent
     numCorrect = 0
     reward = 0
-
-    environment.reset()
-    # environment.setVectorAsObservationSpace(vector)
-    # environment.setInputAndOutputValuesFromVector(vector)
-    control_flow = np.zeros((5, 7), dtype=int)
-    data_flow = np.zeros((7, 5), dtype=int)
-
-    # Missing edge in control flow matrix: [4][4] or 33
-    control_flow[0][5] = control_flow[1][6] = control_flow[2][0] = control_flow[3][1]  = 1
-    data_flow[0][4] = data_flow[3][2] = data_flow[5][3] = data_flow[6][0] = 1
-
-    # Set the environment`s observation space
-    environment.observation_space[0] = control_flow
-    environment.observation_space[1] = data_flow
-
-    # Set input and expected output
-    
-    environment.input_up = 4
-    environment.input_down = 2
-    environment.expected_output = 5
+    for i in range(100):
+        environment.reset()
+        environment.setVectorAsObservationSpace(vector)
+        environment.setInputAndOutputValuesFromVector(vector)
         
-    action = np.argmax(Q)
-    #print(action)
-    #print(np.min(Q))
-    #print(np.max(Q))
-    step_reward, observation_space, ep_return, done, list = environment.step(action)
+        action = np.argmax(Q)
+        step_reward, observation_space, ep_return, done, list = environment.step(action)
+        reward += step_reward
 
-    reward += step_reward
-
-    if step_reward == 10:
-        numCorrect += 1
-
-    #print(action)
+        if step_reward == 1:
+            numCorrect += 1
+    avg_reward = reward / 100
         
     # Print results
     #print("Agent picked the correct edge to add to the matrices " + ((str)numCorrect) + " times out of 100 tries.")
