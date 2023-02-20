@@ -1,9 +1,8 @@
 from gym import Env, spaces
-import logging
 import numpy as np
 import sys
-#sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
@@ -87,12 +86,7 @@ class BugPlus(Env):
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
-        '''Check if the bug is valid, i.e. if it has a valid control flow graph and data flow graph. Additionally check wether the bug produces the correct output.
-        
-        The reward given to the agent is assigned as follows:
-        -100: Invalid bug configuration
-        -10: Bug produces wrong output
-        10: Bug is valid and produces the correct output'''
+        '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
@@ -104,13 +98,8 @@ class BugPlus(Env):
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
-        except TimeoutError:
-            print("\n timeout \n")
-            reward = -10
-            logging.exception("Took too long to evaluate bug.")
         except:
             reward = -10
-            logging.exception("Error while evaluating bug.")
             return reward
         if result.get("0_Out") == self.expected_output:
             reward = 50
@@ -155,10 +144,9 @@ class BugPlus(Env):
 
         Vector format: [input_up, input_down, expected_output, control_matrix, data_matrix]
         Target format: [[control_matrix], [data_matrix]]'''
-        
+
         # Remove the input and expected output from the vector
         vector = np.delete(vector, [0, 1, 2])
-
 
         # Split the vector into the control and data flow matrix
         control_matrix = vector[:(int)(vector.size/2)].reshape(2 + self.no_bugs, 1 + 2 * self.no_bugs)
