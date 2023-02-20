@@ -31,7 +31,7 @@ from src.environment import environment_tensor as environment
 from src.utils.matrix import number_bugs, array_to_matrices
 
 # Create data frame out of configs.csv
-config_name = 'configs_x+y'
+config_name = 'configs_4x+4y'
 config = f"{config_name}.csv"
 df_full = pd.read_csv(config, sep=";")
 df  = df_full[:]
@@ -61,7 +61,7 @@ def select_config(index):
     selects index of the configuration dataframe with the lowest count
     """
     old_index = index
-    index = np.random.randint(0, len(config_priority))
+    #index = np.random.randint(0, len(config_priority))
     index = config_priority.index(min(config_priority))
     if index == old_index: #instead of re-loading a problem, the index of the second lowest rated config is loaded
         index = np.argsort(config_priority)[2]
@@ -373,16 +373,22 @@ config_summary.append(config_priority)
 config_summary.append(config_first_loaded)
 config_summary.append(config_first_solved)
 config_summary.append(config_solution)
-
+# ugly workaround: configs to list, then add, then convert the whole new list to df
+configs_list = df.values.tolist()
+config_summary.append(configs_list)
 
 
 df_config_summary = pd.DataFrame(config_summary).transpose()
-df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution']
+df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution', 'original_config']
 
-# df_config_summary.join(df_config_summary)
+
+
+
+# pd.merge(df_config_summary, df, left_index=True, right_index=False)
+df = df_config_summary.reset_index().merge(df.reset_index(), left_index=True, right_index=True, how='left')
 
 # saving the data in a csv file
-file_name = f"test_{config_name}_{num_episodes}_lowest-rated-configs.csv" # TODO: change to summary
+file_name = f"summary_{config_name}_{num_episodes}_lowest-rated-configs.csv"
 df_config_summary.to_csv(file_name, sep =';')
 
 
