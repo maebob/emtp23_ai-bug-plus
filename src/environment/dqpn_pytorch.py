@@ -53,7 +53,7 @@ def select_config(index):
     old_index = index
     index = np.random.randint(0, len(config_priority))
     index = config_priority.index(min(config_priority))
-    if index == old_index: #instead of re-loading a problem, the index of the seceond lowest rated config is loaded
+    if index == old_index: #instead of re-loading a problem, the index of the second lowest rated config is loaded
         index = np.argsort(config_priority)[2]
     # sample = random.random()
     # if sample > EPS_CONFIGS:
