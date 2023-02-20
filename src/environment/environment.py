@@ -41,6 +41,7 @@ class BugPlus(Env):
         return self.observation_space
 
     def step(self, action):
+        print("Action: ", action)
         '''Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
         the control flow matrix or the data flow matrix.'''
@@ -69,12 +70,6 @@ class BugPlus(Env):
 
         # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
         # The amount of the reward is definded in the called function
-
-        # Debugging catch------------------------------------------------------------------------------------
-        if action == 32:
-            print("")
-        # Debugging catch------------------------------------------------------------------------------------
-
         reward = self.checkBugValidity() 
 
         # Close the episode if the board contains a valid bug

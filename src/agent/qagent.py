@@ -43,11 +43,11 @@ def qLearningAgent():
     maxSteps = 1
 
     # Pick configuration from configs_4x+4y.csv to train on
-    df = pd.read_csv("configs_4x+4y.csv", sep=";")
+    df = pd.read_csv("C:/Users/D073576/Documents/GitHub/BugPlusEngine/src/agent/configs_4x+4y.csv", sep=";")
     vector = np.array(df.iloc[np.random.randint(0, len(df))])
 
     # Marker to check wether or not a configuration was solved
-        config_solved = False
+    config_solved = False
 
     # Train agent
     for episode in range(numEpisodes):
