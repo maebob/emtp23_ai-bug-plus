@@ -8,13 +8,28 @@ sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 import src.environment.environment as env
 
+''' Current Expermient:
+    - Goal try to learn to restore configs for 4x + 4y 
+    - Agent is restricted to one step per episode
+    - As long as the config has not been solved the agent will be trained on the same config
+    - If the config has been solved the agent will be trained on a new randomly chosen config'''
+
 def qLearningAgent():
     # Create environment to interact with
     environment = env.BugPlus()
 
     # Initialize Q-table
-    # TODO: Calculate size of possible observations
-    Q = np.zeros(70)
+    # TODO: Calculate size of possible 
+    observation_space = environment.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+    state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
+    n_observations = state.size
+
+    # Size of action space
+    n_actions = environment.action_space.n
+
+    # Initialize Q-table
+    Q = np.zeros((n_observations, n_actions))
+    # Q = np.zeros(70)
 
     # Set hyperparameters parameters
     learningRate = 0.8
@@ -24,32 +39,31 @@ def qLearningAgent():
 
 
     # Initialize training parameters
-    numEpisodes = 1000
+    numEpisodes = 100000
     maxSteps = 1
 
-    # Pick configuration from configs.csv to train on
-    df = pd.read_csv("configs.csv", sep=";")
+    # Pick configuration from configs_4x+4y.csv to train on
+    df = pd.read_csv("configs_4x+4y.csv", sep=";")
     vector = np.array(df.iloc[np.random.randint(0, len(df))])
+
+    # Marker to check wether or not a configuration was solved
+        config_solved = False
 
     # Train agent
     for episode in range(numEpisodes):
         # Reset environment and get first new observation
         environment.reset()
-        control_flow = np.zeros((5, 7), dtype=int)
-        data_flow = np.zeros((7, 5), dtype=int)
 
-        # Missing edge in control flow matrix: [4][4] or 33
-        control_flow[0][5] = control_flow[1][6] = control_flow[2][0] = control_flow[3][1]  = 1
-        data_flow[0][4] = data_flow[3][2] = data_flow[5][3] = data_flow[6][0] = 1
-
-        # Set the environment`s observation space
-        environment.observation_space[0] = control_flow
-        environment.observation_space[1] = data_flow
-
-        # Set input and expected output
-        environment.input_up = 4
-        environment.input_down = 2
-        environment.expected_output = 5
+        # Initialize matrices with config from configs_4x+4y.csv
+        if config_solved == False:
+            environment.setVectorAsObservationSpace(vector)
+            environment.setInputAndOutputValuesFromVector(vector)
+        else:
+            # Choose new random config from configs_4x+4y.csv
+            vector = np.array(df.iloc[np.random.randint(0, len(df))])
+            environment.setVectorAsObservationSpace(vector)
+            environment.setInputAndOutputValuesFromVector(vector)
+            config_solved = False
 
         training_done = False
         # environment.setVectorAsObservationSpace(vector)
@@ -76,10 +90,9 @@ def qLearningAgent():
             Q[action] = Q[action] + learningRate * (step_reward + discountRate * np.max(Q) - Q[action])
             
             if done == True:
-                training_done = True
-        
-        if training_done == True:
-            break
+                config_solved = True
+            else:
+                config_solved = False
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
@@ -108,6 +121,7 @@ def qLearningAgent():
     environment.observation_space[1] = data_flow
 
     # Set input and expected output
+    
     environment.input_up = 4
     environment.input_down = 2
     environment.expected_output = 5

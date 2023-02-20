@@ -3,15 +3,15 @@ import json
 import sys
 import os
 
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 # load the .env file
-#load_dotenv()
+load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
-#sys.path.append(os.environ.get('absolute_project_path'))
+sys.path.append(os.environ.get('absolute_project_path'))
 
 # sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 
 from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
@@ -20,7 +20,7 @@ memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
 ITERATIONS = 0 # The number of iterations the engine has run
-MAX_ITERATIONS = 5 # The maximum number of iterations the engine is allowed to run
+MAX_ITERATIONS = 10 # The maximum number of iterations the engine is allowed to run
 
 def stack_size2a(size=2):
     """
@@ -484,7 +484,7 @@ if __name__ == "__main__":
     """This function is only used for testing purposes"""
     # TODO pseudo parallel only works on first itreation
     example_file = open(
-        "Configurations/loop.json", "r").read()
+        "Configurations/multiply.json", "r").read()
     example_board = json.loads(example_file)
     example_board["xValue"] = 10
     example_board["yValue"] = 1
