@@ -394,12 +394,6 @@ config_summary.append(configs_list)
 df_config_summary = pd.DataFrame(config_summary).transpose()
 df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution', 'original_config']
 
-
-
-
-# pd.merge(df_config_summary, df, left_index=True, right_index=False)
-df = df_config_summary.reset_index().merge(df.reset_index(), left_index=True, right_index=True, how='left')
-
 # saving the data in a csv file
 file_name = f"summary_{config_name}_{num_episodes}_always-new-config_lowest-rated-configs.csv"
 df_config_summary.to_csv(file_name, sep =';')
