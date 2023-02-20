@@ -44,6 +44,16 @@ config_count = [0] * len(df) # intialize with 0, meaning, a configuration that h
 # give values to each configuration, based on how often it was solved successfully / how long it took to be solved:
 config_priority = [-1] * len(df) # intialize with -1, meaning, a configuration that has not been used yet gets a count of -1
 
+# keep track when a configuration was first loaded:
+config_first_loaded = [-1] * len(df)
+
+# keep track when a configuration was first solved:
+config_first_solved = [-1] * len(df)
+
+# keep track which action solved the problem:
+config_solution = [-1] * len(df)
+
+
 EPS_CONFIGS = 0.3 # probability to choose a random configuration
 
 def select_config(index):
@@ -67,6 +77,7 @@ def select_config(index):
 
 # Create a numpy vector out of any config in the data frame
 index = 0
+config_first_loaded[index] = 0 # first configuration is always loaded first
 vector = np.array(df.iloc[index]) # first vector is initialized with any of the configuration (in order to set up the environment)
 
 # set seed
@@ -221,7 +232,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 5_000_000
+    num_episodes = 5_000
  
 
 
@@ -282,12 +293,20 @@ for i_episode in range(num_episodes):
         count_positive_rewards += 1
         count_pos_epsisodes += 1
         config_priority[index] += 1 # each time a configuration is solved successfully, the count is increased by 1
+        config_solution[index] = action.item() # action that solved the configuration is stored as integer
+
+        if config_first_solved[index] == -1: # write episode of first successful solution
+            config_first_solved[index] = i_episode
+        
         index = select_config(index) # select new configuration by first  finding index of lowest count
         vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
         number_of_vectors += 1
+
+        if config_first_loaded[index] == -1: # write episode of first loading of configuration
+            config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
+
     
     if reward <= 0:
-        config_count
         config_priority[index] -= 1 # each time a configuration is not solved successfully, the count of the action that solved it is decreased by 1 to make it more likely to be picked again
 
 
@@ -351,12 +370,19 @@ print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, 
 config_summary = []
 config_summary.append(config_count)
 config_summary.append(config_priority)
+config_summary.append(config_first_loaded)
+config_summary.append(config_first_solved)
+config_summary.append(config_solution)
+
+
 
 df_config_summary = pd.DataFrame(config_summary).transpose()
-df_config_summary.columns=['count', 'priority']
+df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution']
+
+# df_config_summary.join(df_config_summary)
 
 # saving the data in a csv file
-file_name = f"summary_{config_name}_{num_episodes}_lowest-rated-configs.csv"
+file_name = f"test_{config_name}_{num_episodes}_lowest-rated-configs.csv" # TODO: change to summary
 df_config_summary.to_csv(file_name, sep =';')
 
 
