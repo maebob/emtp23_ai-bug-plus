@@ -46,27 +46,28 @@ config_priority = [-1] * len(df) # intialize with -1, meaning, a configuration t
 
 EPS_CONFIGS = 0.3 # probability to choose a random configuration
 
-def select_config():
+def select_config(index):
     """
     selects index of the configuration dataframe with the lowest count
     """
-    #TODO: prevent from choosing the same index over and over again
-    # old_index = index # TODO: check if this works
+    old_index = index
     index = np.random.randint(0, len(config_priority))
-    sample = random.random()
-    if sample > EPS_CONFIGS:
-        index = config_priority.index(min(config_priority))
-        # if index == old_index:
-        #     index = np.argsort(config_priority)[2]
-    else:
-        index = np.random.randint(0, len(config_priority))
+    index = config_priority.index(min(config_priority))
+    if index == old_index: #instead of re-loading a problem, the index of the seceond lowest rated config is loaded
+        index = np.argsort(config_priority)[2]
+    # sample = random.random()
+    # if sample > EPS_CONFIGS:
+    #     index = config_priority.index(min(config_priority))
+    #     if index == old_index:
+    #         index = np.argsort(config_priority)[2]
+    # else:
+    #     index = np.random.randint(0, len(config_priority))
     return index
 
 
 # Create a numpy vector out of any config in the data frame
 index = 0
-old_index = 0
-vector = np.array(df.iloc[index]) # first vector is initialized wiht a random configuration (in order to set up the environment)
+vector = np.array(df.iloc[index]) # first vector is initialized with any of the configuration (in order to set up the environment)
 
 # set seed
 torch.manual_seed(42)
@@ -249,8 +250,10 @@ y4 = [] # compare if the learner improves in comparison to previous 5,000 episod
 
 for i_episode in range(num_episodes):
 
-    if i_episode == 0:
-        index = 0
+    # if i_episode == 0:
+    #     index = 0
+    #     old_index = 0
+    #     vector = np.array(df.iloc[index])
 
     env.reset()
     env.setVectorAsObservationSpace(vector)
@@ -279,7 +282,7 @@ for i_episode in range(num_episodes):
         count_positive_rewards += 1
         count_pos_epsisodes += 1
         config_priority[index] += 1 # each time a configuration is solved successfully, the count is increased by 1
-        index = select_config() # select new configuration by first  finding index of lowest count
+        index = select_config(index) # select new configuration by first  finding index of lowest count
         vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
         number_of_vectors += 1
     
@@ -353,7 +356,7 @@ df_config_summary = pd.DataFrame(config_summary).transpose()
 df_config_summary.columns=['count', 'priority']
 
 # saving the data in a csv file
-file_name = f"summary_{config_name}_{num_episodes}_random-configs.csv"
+file_name = f"summary_{config_name}_{num_episodes}_lowest-rated-configs.csv"
 df_config_summary.to_csv(file_name, sep =';')
 
 
@@ -387,5 +390,5 @@ fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
 
-# plt.savefig('learning-x+y-5_000_000_random_cofigs.png')
+plt.savefig('plot-x+y-5_000_000_lowest_rated_cofigs.png')
 
