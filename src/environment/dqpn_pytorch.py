@@ -232,7 +232,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 5_000
+    num_episodes = 30_000
  
 
 
@@ -384,8 +384,8 @@ df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 
 
 
 
-# pd.merge(df_config_summary, df, left_index=True, right_index=False)
-df = df_config_summary.reset_index().merge(df.reset_index(), left_index=True, right_index=True, how='left')
+# # pd.merge(df_config_summary, df, left_index=True, right_index=False)
+# df = df_config_summary.reset_index().merge(df.reset_index(), left_index=True, right_index=True, how='left')
 
 # saving the data in a csv file
 file_name = f"summary_{config_name}_{num_episodes}_lowest-rated-configs.csv"
@@ -422,5 +422,6 @@ fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plt.show()
 
-plt.savefig('plot-x+y-5_000_000_lowest_rated_cofigs.png')
+plot_name = f"plot_{config_name}_{num_episodes}_lowest-rated-configs.png"
+plt.savefig(plot_name)
 
