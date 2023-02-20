@@ -30,11 +30,6 @@ from src.environment import environment_tensor as environment
 
 from src.utils.matrix import number_bugs, array_to_matrices
 
-#TODO: implement method to apply the strategies
-# choose between two modi:
-# config_strategy = 'priority' # 'random' or 'priority'
-# problem_solving_strategy = 'reload' # 'reload' or 'new'
-
 # Create data frame out of configs.csv
 config_name = 'configs_4x+4y'
 config = f"{config_name}.csv"
@@ -66,21 +61,12 @@ def select_config(index):
     selects index of the configuration dataframe with the lowest count
     """
     old_index = index
-    #index = np.random.randint(0, len(config_priority))
     index = config_priority.index(min(config_priority))
     if index == old_index: #instead of re-loading a problem, the index of the second lowest rated config is loaded
         # really ugly workaround:
         config_priority[old_index] += 10_000
         index = config_priority.index(min(config_priority))
         config_priority[old_index] -= 10_000
-
-    # sample = random.random()
-    # if sample > EPS_CONFIGS:
-    #     index = config_priority.index(min(config_priority))
-    #     if index == old_index:
-    #         index = np.argsort(config_priority)[2]
-    # else:
-    #     index = np.random.randint(0, len(config_priority))
     return index
 
 
@@ -249,6 +235,9 @@ else:
 
 count_positive_rewards = 0 # counts how often the reward was positive
 count_pos_epsisodes = 0 # counts how often the reward was positive within 1,000 episodes
+count_neg_1 = 0
+count_neg_10 = 0
+count_neg_100 = 0
 sum_rewards = 0 # sum of all rewards
 number_of_vectors = 1
 proportion_old = 0
@@ -294,22 +283,35 @@ for i_episode in range(num_episodes):
     next_state = torch.tensor(observation_flat, dtype=torch.float32, device=device).unsqueeze(0)
     sum_rewards += reward
     config_count[index] += 1 # each time a configuration is used the count is increased by 1
-        
+
+    """
+    always load new configuration
+    """
+    index = select_config(index) # select new configuration by first  finding index of lowest count
+    vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+
+
+    if config_first_loaded[index] == -1: # write episode of first loading of configuration
+        config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
+
     if reward > 0:
+        number_of_vectors += 1
         count_positive_rewards += 1
         count_pos_epsisodes += 1
         config_priority[index] += 1 # each time a configuration is solved successfully, the count is increased by 1
         config_solution[index] = action.item() # action that solved the configuration is stored as integer
 
-        index = select_config(index) # select new configuration by first  finding index of lowest count
-        vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
-        number_of_vectors += 1
-
         if config_first_solved[index] == -1: # write episode of first successful solution
             config_first_solved[index] = i_episode
+        
+        """
+        load new configuration when done
+        """
+        # index = select_config(index) # select new configuration by first  finding index of lowest count
+        # vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
 
-        if config_first_loaded[index] == -1: # write episode of first loading of configuration
-            config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
+        # if config_first_loaded[index] == -1: # write episode of first loading of configuration
+        #     config_first_loaded[index] = i_episode+1 # new problem is loaded in the next episode
 
     
     if reward <= 0:
@@ -332,6 +334,15 @@ for i_episode in range(num_episodes):
         count_pos_epsisodes = 0
         proportion_old = proportion_new
 
+
+
+    if reward == -1:
+        count_neg_1 += 1
+    if reward == -10:
+        count_neg_10 += 1
+    if reward == -100:
+        count_neg_100 += 1
+        
 
     # Store the transition in memory
     memory.push(state, action, next_state, reward)
@@ -356,6 +367,11 @@ print('Complete after ', num_episodes, ' episodes')
 print("count_positive_rewards: ", count_positive_rewards)
 print("sum of rewards: ", sum_rewards)
 print("proportion of correct steps: ", count_positive_rewards/num_episodes*100, "%")
+# print("count -1 rewards: ", count_neg_1)
+# print("count -10 rewards: ", count_neg_10)
+# print("count -100 rewards: ", count_neg_100)
+# for i in range(70):
+#     print("action ", i, " was chosen ", action_count[i], " times")
 
 
 # creating dataframe with information about the configs for analysis
@@ -374,7 +390,7 @@ df_config_summary = pd.DataFrame(config_summary).transpose()
 df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution', 'original_config']
 
 # saving the data in a csv file
-file_name = f"summary_{config_name}_{num_episodes}_priority_reload.csv"
+file_name = f"summary_{config_name}_{num_episodes}_always-new-config_lowest-rated-configs.csv"
 df_config_summary.to_csv(file_name, sep =';')
 
 
@@ -406,6 +422,8 @@ ax[1][1].set_ylabel('trend in comparison to previous 5,000 episodes', fontsize=8
 
 fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
-plot_name = f"plot_{config_name}_{num_episodes}_priority_reload.png"
-plt.savefig(plot_name)
 plt.show()
+
+plot_name = f"summary_{config_name}_{num_episodes}_always-new-config_lowest-rated-configs.png"
+plt.savefig(plot_name)
+
