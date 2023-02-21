@@ -8,6 +8,9 @@ sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 import src.environment.environment as env
 
+import matplotlib
+import matplotlib.pyplot as plt
+
 ''' Current Expermient:
     - Goal try to learn to restore configs for 4x + 4y 
     - Agent is restricted to one step per episode
@@ -15,6 +18,17 @@ import src.environment.environment as env
     - If the config has been solved the agent will be trained on a new randomly chosen config'''
 
 def qLearningAgent():
+    # Create variables needed to store information about the learning progress
+    count_solved_problems = 0 # count the number of solved problems
+    proportion_new = 0 # proportion of solved problems at current time point
+    proportion_old = 0 # proportion of solved problems at preceeding time point
+
+    no_episodes = [] # number of episodes
+    tot_prblems_solved = [] # total number of solved problems
+    prop_problems_solved = [] # proportion of solved problems at each time point
+    prop_problems_solved_lastX = [] # proportion of solved problems within the last 5,000 episodes
+    improvement_lastX = [] # compare if the learner improves in comparison to previous 5,000 episodes
+
     # Create environment to interact with
     environment = env.BugPlus()
 
@@ -33,7 +47,7 @@ def qLearningAgent():
     decayRate = 0.0005
 
     # Initialize training parameters
-    numEpisodes = 20000
+    numEpisodes = 100000
     maxSteps = 1
 
     # Import configurations from configs_4x+4y.csv to train on
@@ -91,12 +105,29 @@ def qLearningAgent():
             
             if done == True:
                 config_solved = True
+                count_solved_problems += 1
             else:
                 config_solved = False
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
-    
+
+        # Update the plotting information
+        if (episode > 0) & (episode % 5000 == 0):
+        
+            proportion_new = count_solved_problems / 50  # = count_solved_problems / 5000 * 100
+            no_episodes.append(episode/1000)
+            tot_prblems_solved.append(count_solved_problems)
+            prop_problems_solved.append(100 * count_solved_problems / episode)
+            prop_problems_solved_lastX.append(proportion_new)
+            improvement_lastX.append(proportion_new - proportion_old)
+
+            # Reset and update the counters for the last 5,000 episodes
+            count_pos_epsisodes = 0
+            proportion_old = proportion_new
+    # Plot the results
+    plotResults(no_episodes, tot_prblems_solved, prop_problems_solved, prop_problems_solved_lastX, improvement_lastX, 'Q-Learning_Progress_over_100,000_Episodes')
+
     # Test the agent on 100 random configurations from configs_4x+4y.csv
     testAgent(df, Q)
 
@@ -132,8 +163,7 @@ def testAgent(df, Q):
     print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 100 tries.")
     print("The average reward gained by the agent was " + str(avg_reward) + ". \n")
 
-
-
+    
 def initialize(environment):
     environment.reset()
     # Create incrementor matrces with one edge removed
@@ -152,6 +182,39 @@ def initialize(environment):
     environment.input_up = 4
     environment.input_down = 2
     environment.expected_output = 5
+
+def plotResults(x, y1, y2, y3, y4, name):
+    # plotting the learning rate of DQN learner in two subplots:
+    fig, ax = plt.subplots(2, 2)
+
+
+    # plotting the absolute number of correctly solved configurations
+    ax[0][0].plot(x, y1)
+    ax[0][0].set_xlabel('number of episodes (in 1,000)', fontsize=8)
+    ax[0][0].set_ylabel('number of correctly solved problems', fontsize=8)
+
+
+    # plotting the proportion of correctly solved configurations
+    ax[0][1].plot(x, y2)
+    ax[0][1].set_xlabel('number of episodes (in 1,000)', fontsize=8)
+    ax[0][1].set_ylabel('proportion of correctly solved (in %)', fontsize=8)
+
+
+
+    # plotting the proportion of correctly solved configurations within the last 1,000 episodes
+    ax[1][0].plot(x, y3)
+    ax[1][0].set_xlabel('number of episodes (in 1000)', fontsize=6)
+    ax[1][0].set_ylabel('proportion correctly solved within 5,000 episodes (in %)', fontsize=8)
+
+    ax[1][1].plot(x, y4)
+    ax[1][1].set_xlabel('number of episodes (in 1,000)', fontsize=6)
+    ax[1][1].set_ylabel('trend in comparison to previous 5,000 episodes', fontsize=8)
+
+    fig.tight_layout(pad=3.0)
+    fig.suptitle('Learning progress of the Q-Learning Agent', fontsize=16)
+    plt.show()
+
+    plt.savefig(name + '.png')
     
 if __name__ == "__main__":
     qLearningAgent()
