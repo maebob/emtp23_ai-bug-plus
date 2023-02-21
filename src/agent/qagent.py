@@ -19,17 +19,12 @@ def qLearningAgent():
     environment = env.BugPlus()
 
     # Initialize Q-table
-    # TODO: Calculate size of possible 
     observation_space = environment.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
-    state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    n_observations = state.size
+    # state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
+    # n_observations = state.size
 
     # Size of action space
     n_actions = environment.action_space.n
-
-    # Initialize Q-table
-    Q = np.zeros((n_observations, n_actions))
-    # Q = np.zeros(70)
 
     # Set hyperparameters parameters
     learningRate = 0.8
@@ -38,12 +33,16 @@ def qLearningAgent():
     decayRate = 0.0005
 
     # Initialize training parameters
-    numEpisodes = 100000
+    numEpisodes = 20000
     maxSteps = 1
 
-    # Pick configuration from configs_4x+4y.csv to train on
+    # Import configurations from configs_4x+4y.csv to train on
     df = pd.read_csv("C:/Users/D073576/Documents/GitHub/BugPlusEngine/src/agent/configs_4x+4y.csv", sep=";")
-    vector = np.array(df.iloc[np.random.randint(0, len(df))])
+
+    # Initialize Q-table
+    Q = np.zeros((len(df), n_actions))
+    state = np.random.randint(0, len(df))
+    vector = np.array(df.iloc[state])
 
     # Marker to check wether or not a configuration was solved
     config_solved = False
@@ -51,6 +50,7 @@ def qLearningAgent():
     # Train agent
     for episode in range(numEpisodes):
         # Reset environment and get first new observation
+        #state = environment.reset()
         environment.reset()
         # Initialize matrices with config from configs_4x+4y.csv
         if config_solved == False:
@@ -58,11 +58,14 @@ def qLearningAgent():
             environment.setInputAndOutputValuesFromVector(vector)
         else:
             # Choose new random config from configs_4x+4y.csv
-            vector = np.array(df.iloc[np.random.randint(0, len(df))])
+            state = np.random.randint(0, len(df))
+            vector = np.array(df.iloc[state])
             environment.setVectorAsObservationSpace(vector)
             environment.setInputAndOutputValuesFromVector(vector)
             config_solved = False
 
+        # Upodate state of the environment
+        # state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0)
         training_done = False
         # environment.setVectorAsObservationSpace(vector)
         # environment.setInputAndOutputValuesFromVector(vector)
@@ -74,15 +77,17 @@ def qLearningAgent():
                 action = environment.action_space.sample()
                 print("Random action: " + str(action))
             else:
-                action = np.argmax(Q)
+                # Select action with highest Q-value
+                action = np.argmax(Q[state, :])
                 print("Q-Table action: " + str(action))
 
             # Get new state and reward from environment
-            step_reward, observation_space, ep_return, done, list = environment.step(action)
-            # reward = step_reward            
+            step_reward, new_state, ep_return, done, list = environment.step(action)
+            # reward = step_reward         
+            #state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0)
 
             # Update Q-Table with new knowledge
-            Q[action] = Q[action] + learningRate * (step_reward + discountRate * np.max(Q) - Q[action])
+            Q[state, action] = Q[state, action] + learningRate * (step_reward + discountRate * np.max(Q[state, :]) - Q[state, action])
             
             if done == True:
                 config_solved = True
@@ -91,34 +96,43 @@ def qLearningAgent():
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
+    
+    # Test the agent on 100 random configurations from configs_4x+4y.csv
+    testAgent(df, Q)
 
+def testAgent(df, Q):
+    # Test agent on 100 random configurations from configs_4x+4y.csv
 
-    print("Training finished over {numEpisodes} episodes.")
-    input("Press Enter to see out of 100 tries how often the agent picks the correct edge to add to the matrices...")
-
-    # Test agent
+    # Create environment to interact with
+    environment = env.BugPlus()
     numCorrect = 0
     reward = 0
+
+    state = np.random.randint(0, len(df))
+
     for i in range(100):
         environment.reset()
-        environment.setVectorAsObservationSpace(vector)
-        environment.setInputAndOutputValuesFromVector(vector)
+        environment.setVectorAsObservationSpace(np.array(df.iloc[state]))
+        environment.setInputAndOutputValuesFromVector(np.array(df.iloc[state]))
         
-        action = np.argmax(Q)
+        action = np.argmax(Q[state, :])
         step_reward, observation_space, ep_return, done, list = environment.step(action)
         reward += step_reward
 
-        if step_reward == 1:
+        if step_reward == 50:
             numCorrect += 1
-    avg_reward = reward / 100
         
-    # Print results
-    #print("Agent picked the correct edge to add to the matrices " + ((str)numCorrect) + " times out of 100 tries.")
-    #print("The average reward gained by the agent was " + ((str)avg_reward) + ".")
+        # Prepare next random config
+        state = np.random.randint(0, len(df))
+
+    # Calculate average reward    
+    avg_reward = reward / 100
 
     # Print number of correct guesses and average reward
-    print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 1 tries.")
-    print("The average reward gained by the agent was " + str(step_reward) + ". \n")
+    print("Agent picked the correct edge to add to the matrices " + str(numCorrect) + " times out of 100 tries.")
+    print("The average reward gained by the agent was " + str(avg_reward) + ". \n")
+
+
 
 def initialize(environment):
     environment.reset()
