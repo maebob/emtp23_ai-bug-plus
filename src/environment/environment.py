@@ -1,8 +1,8 @@
 from gym import Env, spaces
 import numpy as np
 import sys
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
+# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
+sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 # sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
@@ -40,6 +40,7 @@ class BugPlus(Env):
         return self.observation_space
 
     def step(self, action):
+        print("Action: ", action)
         '''Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
         the control flow matrix or the data flow matrix.'''
@@ -104,13 +105,13 @@ class BugPlus(Env):
         if result.get("0_Out") == self.expected_output:
             reward = 50
             return reward
-
-        reward = -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
+        
+        return -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
 
     def initializeStartingBoardSetup(self, bugs):
         '''Set the starting state of the environment in order to have control over the
          complexity of the problem class.'''
-        self.observation_space = bugs
+        self.no_bugs = bugs
 
     def initializeInputValues(self, up, down):
         '''Set the input values the bug bpard is supposed to process in order to have control over the
