@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 def qLearningAgent():
     # Create variables needed to store information about the learning progress
     count_solved_problems = 0 # count the number of solved problems
+    count_solved_problems_total = 0 # count the number of solved problems in total
     proportion_new = 0 # proportion of solved problems at current time point
     proportion_old = 0 # proportion of solved problems at preceeding time point
 
@@ -106,6 +107,7 @@ def qLearningAgent():
             if done == True:
                 config_solved = True
                 count_solved_problems += 1
+                count_solved_problems_total += 1
             else:
                 config_solved = False
 
@@ -117,13 +119,13 @@ def qLearningAgent():
         
             proportion_new = count_solved_problems / 50  # = count_solved_problems / 5000 * 100
             no_episodes.append(episode/1000)
-            tot_prblems_solved.append(count_solved_problems)
-            prop_problems_solved.append(100 * count_solved_problems / episode)
+            tot_prblems_solved.append(count_solved_problems_total)
+            prop_problems_solved.append(100 * count_solved_problems_total / episode)
             prop_problems_solved_lastX.append(proportion_new)
             improvement_lastX.append(proportion_new - proportion_old)
 
             # Reset and update the counters for the last 5,000 episodes
-            count_pos_epsisodes = 0
+            count_solved_problems = 0
             proportion_old = proportion_new
     # Plot the results
     plotResults(no_episodes, tot_prblems_solved, prop_problems_solved, prop_problems_solved_lastX, improvement_lastX, 'Q-Learning_Progress_over_100,000_Episodes')
