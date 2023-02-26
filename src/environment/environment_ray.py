@@ -31,7 +31,7 @@ class BugPlus(Env):
         # Number of possible bugs
         self.no_bugs = 3
 
-        # Obersvation and action space of the environment
+        # Observation and action space of the environment
         self.observation_space = spaces.MultiBinary(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
         self.action_space = spaces.Discrete(
@@ -54,8 +54,8 @@ class BugPlus(Env):
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''
-        # self.observation_space = spaces.MultiBinary(
-        #     (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        self.observation_space = spaces.MultiBinary(
+            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
         # self.action_space = spaces.Discrete(
         #     (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
         self.done = False
@@ -63,7 +63,7 @@ class BugPlus(Env):
         vector = load_config()
         self.setInputAndOutputValuesFromVector(vector)
         self.setVectorAsObservationSpace(vector) # returns self.state now
-        return self.state, {} #geändert nach Ende des Calls
+        return self.state, {} # self.observation_space -> self.state geändert nach Ende des Calls
 
     def step(self, action: torch):
         """
