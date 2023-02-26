@@ -33,23 +33,6 @@ from ray import tune
 from ray.rllib.algorithms.dqn import DQNConfig
 
 
-#RLlib:
-# config
-# build
-# train
-# evaluate
-
-#TODO: implement method to apply the strategies
-# choose between two modi:
-# config_strategy = 'priority' # 'random' or 'priority'
-# problem_solving_strategy = 'reload' # 'reload' or 'new'
-
-
-#RLlib:
-# config
-# build
-# train
-# evaluate
 ray.init()
 config = (  # 1. Configure the algorithm,
     DQNConfig()
