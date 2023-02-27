@@ -41,11 +41,13 @@ config = (  # 1. Configure the algorithm,
     .framework("tf2")
     .training(model={"fcnet_hiddens": [64, 64]})
     .evaluation(evaluation_num_workers=1)
+    .evaluation(evaluation_interval=500)
+    # .spec(max_episode_steps=1)
 )
 
 algo = config.build()  # 2. build the algorithm,
 
-for _ in range(5):
+for _ in range(20):
     print(algo.train())  # 3. train it,
 
 algo.evaluate()  # 4. and evaluate it.
