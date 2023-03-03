@@ -52,7 +52,7 @@ _enable_rl_trainer_api: bool | None = NotProvided, rl_trainer_class: Type[RLTrai
 """
 algo = config.build()  # 2. build the algorithm,
 
-for _ in range(5_000):
+for _ in range(100):
     print(algo.train())  # 3. train it,
 
 algo.evaluate()  # 4. and evaluate it.
