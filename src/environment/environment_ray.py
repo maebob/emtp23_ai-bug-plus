@@ -28,26 +28,26 @@ class BugPlus(Env):
         '''Initialize the environment.'''
 
         # Number of possible bugs
-        self.no_bugs = 3
-        # Observation and action space of the environment
+        self.n_bugs = 3
+
+        # Observation space of the environment
+            # thought process/inspiration:
+            # discrete space from 0 to inf:
+            # spaces.Box(np.array([0]), np.array([inf]),dtype = np.int64 ) 
+            # source: https://stackoverflow.com/questions/55787460/openai-gym-box-space-configuration
+            # Documentation Gymnasium Fundamental Spaces: https://gymnasium.farama.org/api/spaces/fundamental/
         self.observation_space = spaces.Dict(
             {
             "matrix": spaces.MultiBinary((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)),
-             "sample_input": spaces.MultiDiscrete( # TODO https://gymnasium.farama.org/api/spaces/fundamental/#multidiscrete
-                    shape=([1,2]),
-                    dtype=np.int64
-                ),
-                "sample_output": spaces.Discrete()
+            "sample_input": spaces.MultiDiscrete( # TODO https://gymnasium.farama.org/api/spaces/fundamental/#multidiscrete
+                    shape=([1,2]), dtype=np.int64),
+            "sample_output": spaces.Discrete()
             })
+        # Action space of the environment
+        self.action_space = spaces.Discrete(((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)
         
-        # discrete space from 0 to inf:
-        # spaces.Box(np.array([0]), np.array([inf]),dtype = np.int64 ) 
-        # source: https://stackoverflow.com/questions/55787460/openai-gym-box-space-configuration
-
-        # Documentation Gymnasium Fundamental Spaces: https://gymnasium.farama.org/api/spaces/fundamental/
-
-        # create array with zeroes
-        self.state = np.zeros((((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        # State of the environment; initially array of zeros
+        self.state = np.zeros((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2))
 
         # Flag to indicate if the episode is done
         self.done = False
@@ -55,32 +55,24 @@ class BugPlus(Env):
         # Episode return
         self.ep_return = 0
 
-        # TODO: reorganize; this should be now part of the observation space, right?
+        # formerly: input pair and output, now part of observation space
         # Input and expected output of the bug
-        self.input_up = None # # TODO: do we need to change this? (see also the def of set_vector_as_input_output)
-        self.input_down = None
-        self.expected_output = None
+        # self.input_up = None # # TODO: do we need to change this? (see also the def of set_vector_as_input_output)
+        # self.input_down = None
+        # self.expected_output = None
 
     def reset(self, *, seed=None, options=None):
-        '''Reset the environment to its original state.'''
-        #TODO: adjust to all changes in init
-        
-        
+        '''Reset the environment to its original state.'''      
+        vector = load_config() # load config
         self.state = spaces.Dict( #TODO: change if necessary, i.e. if init is changed
             {
             "matrix": spaces.MultiBinary((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)),
-             "sample_input": spaces.MultiDiscrete( 
-                    shape=([1,2]),
-                    dtype=np.int64
-                ),
-                "sample_output": spaces.Discrete()
+            "sample_input": [ self.set_vector_as_input_output(vector)],
+            "sample_output": spaces.Discrete(self.set_vector_as_state(vector) )
             })
 
         self.done = False
         self.ep_return = 0
-        vector = load_config()
-        self.set_vector_as_input_output(vector)
-        self.set_vector_as_state(vector) 
         return self.state, {}
     
         # example for resetting from previous project:
@@ -138,9 +130,10 @@ class BugPlus(Env):
         # Translate the matrix representation to a JSON representation
         split_index = int(len(self.state) / 2)
         matrix_as_json = matrix_to_json(
-            control_matrix=self.state[:split_index].reshape(2 * self.no_bugs + 1, self.no_bugs + 2),    # controlflow shape (2n+1, n+2)
-            data_matrix = self.state[split_index:].reshape(self.no_bugs + 2, 2 * self.no_bugs + 1),     # dataflow shape: (n+2, 2n+1)v
-            data_up=self.input_up, data_down=self.input_down)
+            control_matrix=self.state[:split_index].reshape(2 * self.n_bugs + 1, self.n_bugs + 2),    # controlflow shape (2n+1, n+2)
+            data_matrix = self.state[split_index:].reshape(self.n_bugs + 2, 2 * self.n_bugs + 1),     # dataflow shape: (n+2, 2n+1)v
+            data_up=self.input_up, #change!
+            data_down=self.input_down)
 
         # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language 
         # #TODO: put as extra function (is this still a todo or can we delete/ignore this step with the updated evaluation process of the engine?)
@@ -181,13 +174,17 @@ class BugPlus(Env):
         '''
         self.state = vector[3:]
 
-    def set_vector_as_input_output(self, vector):   # TODO: do we need to change this? (see reset)
+    def set_vector_as_input(self, vector):   # TODO: do we need to change this? (see reset)
                                                     # input up-down together as one vector?
                                                     # also, check if we need to make this coherent with the gym space
                                                     # does the output need its own method if it does have its own space?
         '''
         Set the input and output values of the environment.
         '''
-        self.input_up = vector[0]
-        self.input_down = vector[1]
+        np.array[vector[0], vector[1]]
+
+    def set_vector_as_output(self, vector):
+        '''
+        Set the output value of the environment.
+        '''
         self.expected_output = vector[2]
