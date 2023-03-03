@@ -55,21 +55,15 @@ class BugPlus(Env):
         # Episode return
         self.ep_return = 0
 
-        # formerly: input pair and output, now part of observation space
-        # Input and expected output of the bug
-        # self.input_up = None # # TODO: do we need to change this? (see also the def of set_vector_as_input_output)
-        # self.input_down = None
-        # self.expected_output = None
 
     def reset(self, *, seed=None, options=None):
         '''Resets the environment to the initial state given by the vector.''' 
         vector = load_config() # load config
         self.state ={
             "matrix": self.set_vector_as_state(vector),
-            "sample_input": [self.set_vector_as_input(vector)],
-            "sample_output": spaces.Discrete(self.set_vector_as_output(vector) )
+            "sample_input": self.set_vector_as_input(vector),
+            "sample_output": self.set_vector_as_output(vector)
             }
-
         self.done = False
         self.ep_return = 0
         return self.state, {}
@@ -93,11 +87,11 @@ class BugPlus(Env):
         """
         #TODO: discuss if we need a step counter?
 
-        matrix = deepcopy(self.state["matrix"])
-        matrix[action] = 1 # if matrix[action] == 0 else 0 # TODO for later: think about flipping the value (code copied from previous project)
+        update_matrix = deepcopy(self.state["matrix"])
+        update_matrix[action] = 1 # if matrix[action] == 0 else 0 # TODO for later: think about flipping the value (code copied from previous project)
 
         self.state = {
-            "matrix": matrix,
+            "matrix": update_matrix,
             "sample_input": self.state["sample_input"],
             "sample_output": self.state["sample_output"]
         }
@@ -116,16 +110,17 @@ class BugPlus(Env):
 
         # Translate the matrix representation to a JSON representation
         split_index = int(len(self.state) / 2)
+        input_pair = self.state["sample_input"] # get input pair from state
         matrix_as_json = matrix_to_json(
             control_matrix=self.state[:split_index].reshape(2 * self.n_bugs + 1, self.n_bugs + 2),    # controlflow shape (2n+1, n+2)
             data_matrix = self.state[split_index:].reshape(self.n_bugs + 2, 2 * self.n_bugs + 1),     # dataflow shape: (n+2, 2n+1)v
-            data_up=self.input_up, #change!
-            data_down=self.input_down)
+            data_up = input_pair[0],
+            data_down = input_pair[1])
 
         # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language 
         # #TODO (Aaron/engine): put as extra function (is this still a todo or can we delete/ignore this step with the updated evaluation process of the engine?)
         # if is_valid_matrix(self.observation_space[0]) == False:
-        #     reward = torch.tensor([-100]), True
+        #     reward = -100, True
         #     return reward
 
         # Run the bug through the engine and check if it produces the correct output
@@ -159,17 +154,17 @@ class BugPlus(Env):
         '''
         Set the state of the environment using the vector representation.
         '''
-        return vector[3:]  #TODO: muss das returnen, wenn wir nicht mehr direkt self.state setzen?
+        vector[3:]  #TODO: muss das returnen, wenn wir nicht mehr direkt self.state setzen?
 
     def set_vector_as_input(self, vector):
         '''
         Set the input and output values of the environment.
         '''
-        return np.array([vector[0], vector[1]]) #TODO: type: list or array?
+        np.array(vector[0], vector[1]) #TODO: type: list or array?
 
     def set_vector_as_output(self, vector):
         '''
         Set the output value of the environment.
         '''
-        return vector[2] #TODO
+        vector[2] #TODO
 
