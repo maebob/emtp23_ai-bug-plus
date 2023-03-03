@@ -5,6 +5,7 @@ import sys
 import torch
 import os
 from dotenv import load_dotenv
+from copy import deepcopy
 
 # load the .env file
 load_dotenv()
@@ -16,7 +17,8 @@ from src.translation.matrix_to_json import main as matrix_to_json
 
 
 
-def load_config():
+def load_config() -> np.array:
+    '''Load a random configuration from the csv file.'''
     df = pd.read_csv("configs_4x+4y.csv", sep=';') # TODO: check if this works for everyone
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
@@ -30,18 +32,16 @@ class BugPlus(Env):
         # Number of possible bugs
         self.n_bugs = 3
 
-        # Observation space of the environment
-            # thought process/inspiration:
-            # discrete space from 0 to inf:
-            # spaces.Box(np.array([0]), np.array([inf]),dtype = np.int64 ) 
-            # source: https://stackoverflow.com/questions/55787460/openai-gym-box-space-configuration
-            # Documentation Gymnasium Fundamental Spaces: https://gymnasium.farama.org/api/spaces/fundamental/
         self.observation_space = spaces.Dict(
             {
             "matrix": spaces.MultiBinary((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)),
-            "sample_input": spaces.MultiDiscrete( # TODO https://gymnasium.farama.org/api/spaces/fundamental/#multidiscrete
-                    shape=([1,2]), dtype=np.int64),
-            "sample_output": spaces.Discrete()
+            "sample_input": spaces.MultiDiscrete( 
+                np.array([1,2]), dtype=np.int64),
+            "sample_output": spaces.Box(
+                low = np.NINF,
+                high = np.inf,
+                shape = (1,),
+                dtype = np.int64)
             })
         # Action space of the environment
         self.action_space = spaces.Discrete(((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)
@@ -62,42 +62,20 @@ class BugPlus(Env):
         # self.expected_output = None
 
     def reset(self, *, seed=None, options=None):
-        '''Reset the environment to its original state.'''      
+        '''Resets the environment to the initial state given by the vector.''' 
         vector = load_config() # load config
-        self.state = spaces.Dict( #TODO: change if necessary, i.e. if init is changed
-            {
-            "matrix": spaces.MultiBinary((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)),
-            "sample_input": [ self.set_vector_as_input_output(vector)],
-            "sample_output": spaces.Discrete(self.set_vector_as_state(vector) )
-            })
+        self.state ={
+            "matrix": self.set_vector_as_state(vector),
+            "sample_input": [self.set_vector_as_input(vector)],
+            "sample_output": spaces.Discrete(self.set_vector_as_output(vector) )
+            }
 
         self.done = False
         self.ep_return = 0
         return self.state, {}
     
-        # example for resetting from previous project:
-    # def reset(self) -> Dict[str, Any]:
-    #     """
-    #     Resets the environment and returns the reset state.
-    #     :return:
-    #     """
 
-    #     self.done = False
-    #     self.reward = 0
-    #     self.info = dict()
-    #     self.step_counter = 0
-
-    #     row = self._sample_from_training_set()
-
-    #     self.state = {
-    #         "control_flow_matrix": row["modified_control_flow_matrix"].values[0],
-    #         "sample_input_pairs": row["input_samples"].values[0],
-    #         "sample_output_pairs": row["output_samples"].values[0]
-    #     }
-
-    #     return self.state
-
-    def step(self, action: torch):
+    def step(self, action: int):
         """
         Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
@@ -106,14 +84,23 @@ class BugPlus(Env):
         Arguments:
             action {int} -- The action to be performed on the environment.
         Returns:
-            state {Env.space} -- The new state of the environment. # TODO: check for correct type
+            state {dict} -- The new state of the environment. 
             reward {int} -- The reward for the performed action.
             done {bool} -- Flag to indicate if the episode is done.
             truncated {bool} -- Flag to indicate if the episode was truncated.
             info {dict} -- Additional information about the episode:
                 ep_return {int} -- The return of the episode.
         """
-        self.state[action] = 1  # TODO: later: think about flipping the value
+        #TODO: discuss if we need a step counter?
+
+        matrix = deepcopy(self.state["matrix"])
+        matrix[action] = 1 # if matrix[action] == 0 else 0 # TODO for later: think about flipping the value (code copied from previous project)
+
+        self.state = {
+            "matrix": matrix,
+            "sample_input": self.state["sample_input"],
+            "sample_output": self.state["sample_output"]
+        }
         reward, done = self.checkBugValidity()
         truncated = True
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
@@ -136,7 +123,7 @@ class BugPlus(Env):
             data_down=self.input_down)
 
         # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language 
-        # #TODO: put as extra function (is this still a todo or can we delete/ignore this step with the updated evaluation process of the engine?)
+        # #TODO (Aaron/engine): put as extra function (is this still a todo or can we delete/ignore this step with the updated evaluation process of the engine?)
         # if is_valid_matrix(self.observation_space[0]) == False:
         #     reward = torch.tensor([-100]), True
         #     return reward
@@ -172,19 +159,17 @@ class BugPlus(Env):
         '''
         Set the state of the environment using the vector representation.
         '''
-        self.state = vector[3:]
+        return vector[3:]  #TODO: muss das returnen, wenn wir nicht mehr direkt self.state setzen?
 
-    def set_vector_as_input(self, vector):   # TODO: do we need to change this? (see reset)
-                                                    # input up-down together as one vector?
-                                                    # also, check if we need to make this coherent with the gym space
-                                                    # does the output need its own method if it does have its own space?
+    def set_vector_as_input(self, vector):
         '''
         Set the input and output values of the environment.
         '''
-        np.array[vector[0], vector[1]]
+        return np.array([vector[0], vector[1]]) #TODO: type: list or array?
 
     def set_vector_as_output(self, vector):
         '''
         Set the output value of the environment.
         '''
-        self.expected_output = vector[2]
+        return vector[2] #TODO
+
