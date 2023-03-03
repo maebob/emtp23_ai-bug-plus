@@ -35,7 +35,7 @@ from src.utils.matrix import number_bugs, array_to_matrices
 # config_strategy = 'priority' # 'random' or 'priority'
 # problem_solving_strategy = 'reload' # 'reload' or 'new'
 #TODO MD: priority_new
-#TODO MD: priority_reload
+
 
 # Create data frame out of configs.csv
 config_name = 'configs_4x+4y'
@@ -296,10 +296,13 @@ for i_episode in range(num_episodes):
         count_pos_epsisodes += 1
         config_priority[index] += 1 # each time a configuration is solved successfully, the count is increased by 1
         config_solution[index] = action.item() # action that solved the configuration is stored as integer
-
-        index = select_config(index) # select new configuration by first  finding index of lowest count
-        vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
         number_of_vectors += 1
+        """
+        this loads new problems only when the current problem is solved successfully
+        """
+        # index = select_config(index) # select new configuration by first  finding index of lowest count
+        # vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+
 
         if config_first_solved[index] == -1: # write episode of first successful solution
             config_first_solved[index] = i_episode
@@ -311,7 +314,11 @@ for i_episode in range(num_episodes):
     if reward <= 0:
         config_priority[index] -= 1 # each time a configuration is not solved successfully, the count of the action that solved it is decreased by 1 to make it more likely to be picked again
 
-
+    """
+    This loads a new problem every episode
+    """
+    index = select_config(index) # select new configuration by first  finding index of lowest count
+    vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
 
 
     if (i_episode > 0) & (i_episode % 5000 == 0):
@@ -370,7 +377,7 @@ df_config_summary = pd.DataFrame(config_summary).transpose()
 df_config_summary.columns=['count', 'priority', 'first_loaded', 'first_solved', 'solution', 'original_config']
 
 # saving the data in a csv file
-file_name = f"summary_{config_name}_{num_episodes}_priority_reload.csv"
+file_name = f"summary_{config_name}_{num_episodes}_priority_new.csv"
 df_config_summary.to_csv(file_name, sep =';')
 
 
@@ -402,6 +409,6 @@ ax[1][1].set_ylabel('trend in comparison to previous 5,000 episodes', fontsize=8
 
 fig.tight_layout(pad=3.0)
 fig.suptitle('Learning progress of DQN learner', fontsize=16)
-plot_name = f"plot_{config_name}_{num_episodes}_priority_reload.png"
+plot_name = f"plot_{config_name}_{num_episodes}_priority_new.png"
 plt.savefig(plot_name)
 plt.show()
