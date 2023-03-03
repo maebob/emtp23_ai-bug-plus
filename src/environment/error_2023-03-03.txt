@@ -1,0 +1,160 @@
+**************************************************************************************************************************
+TODO:
+* talk about new spaces, incl. input /output (no self.up/down/out anymore)
+* what does engine need to evaluate? check if input and output can be accessed this way;
+* do we still need an extra check for direct loops or covered by engine?
+* check structures of state in init, reset and step
+
+* check errors; we now have a None elemetn somewhere
+
+
+
+**************************************************************************************************************************
+Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
+    check_gym_environments(env)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 205, in check_gym_environments
+    temp_sampled_reset_obs = convert_element_to_space_type(
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/spaces/space_utils.py", line 378, in convert_element_to_space_type
+    return tree.map_structure(map_, element, sampled_element, check_types=False)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 435, in map_structure
+    [func(*args) for args in zip(*map(flatten, structures))])
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 435, in <listcomp>
+    [func(*args) for args in zip(*map(flatten, structures))])
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/spaces/space_utils.py", line 357, in map_
+    assert isinstance(
+AssertionError: ERROR: `elem` (None) must be np.array, float or int!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/src/environment/test_env_ray.py", line 4, in <module>
+    check_env(environment_ray.BugPlus()) # checks the custom environment for errors
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 93, in check_env
+    raise ValueError(
+ValueError: Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
+    check_gym_environments(env)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 205, in check_gym_environments
+    temp_sampled_reset_obs = convert_element_to_space_type(
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/spaces/space_utils.py", line 378, in convert_element_to_space_type
+    return tree.map_structure(map_, element, sampled_element, check_types=False)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 435, in map_structure
+    [func(*args) for args in zip(*map(flatten, structures))])
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 435, in <listcomp>
+    [func(*args) for args in zip(*map(flatten, structures))])
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/spaces/space_utils.py", line 357, in map_
+    assert isinstance(
+AssertionError: ERROR: `elem` (None) must be np.array, float or int!
+
+The above error has been found in your environment! We've added a module for checking your custom environments. It may cause your experiment to fail if your environment is not set up correctly. You can disable this behavior via calling `config.environment(disable_env_checking=True)`. You can run the environment checking module standalone by calling ray.rllib.utils.check_env([your env]).
+
+
+**************************************************************************************************************************
+(evtl. gehandelt)
+Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 284, in assert_same_structure
+    _tree.assert_same_structure(a, b, check_types)
+ValueError: The two structures don't have the same nested structure.
+
+First structure: type=dict str={'matrix': array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
+       0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+       0, 0, 1, 0]), 'sample_input': [array([10,  3])], 'sample_output': Discrete(52)}
+
+Second structure: type=OrderedDict str=OrderedDict([('matrix', array([0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0,
+       1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0,
+       0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+       0, 1, 1, 1], dtype=int8)), ('sample_input', array([0, 0])), ('sample_output', array([0]))])
+
+More specifically: Substructure "type=list str=[array([10,  3])]" is a sequence, while substructure "type=ndarray str=[0 0]" is not
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
+    check_gym_environments(env)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 205, in check_gym_environments
+    temp_sampled_reset_obs = convert_element_to_space_type(
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/spaces/space_utils.py", line 378, in convert_element_to_space_type
+    return tree.map_structure(map_, element, sampled_element, check_types=False)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 433, in map_structure
+    assert_same_structure(structures[0], other, check_types=check_types)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 288, in assert_same_structure
+    raise type(e)("%s\n"
+ValueError: The two structures don't have the same nested structure.
+
+First structure: type=dict str={'matrix': array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
+       0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+       0, 0, 1, 0]), 'sample_input': [array([10,  3])], 'sample_output': Discrete(52)}
+
+Second structure: type=OrderedDict str=OrderedDict([('matrix', array([0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0,
+       1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0,
+       0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+       0, 1, 1, 1], dtype=int8)), ('sample_input', array([0, 0])), ('sample_output', array([0]))])
+
+More specifically: Substructure "type=list str=[array([10,  3])]" is a sequence, while substructure "type=ndarray str=[0 0]" is not
+Entire first structure:
+{'matrix': ., 'sample_input': [.], 'sample_output': .}
+Entire second structure:
+OrderedDict([('matrix', .), ('sample_input', .), ('sample_output', .)])
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/src/environment/test_env_ray.py", line 4, in <module>
+    check_env(environment_ray.BugPlus()) # checks the custom environment for errors
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 93, in check_env
+    raise ValueError(
+ValueError: Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 284, in assert_same_structure
+    _tree.assert_same_structure(a, b, check_types)
+ValueError: The two structures don't have the same nested structure.
+
+First structure: type=dict str={'matrix': array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
+       0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+       0, 0, 1, 0]), 'sample_input': [array([10,  3])], 'sample_output': Discrete(52)}
+
+Second structure: type=OrderedDict str=OrderedDict([('matrix', array([0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0,
+       1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0,
+       0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+       0, 1, 1, 1], dtype=int8)), ('sample_input', array([0, 0])), ('sample_output', array([0]))])
+
+More specifically: Substructure "type=list str=[array([10,  3])]" is a sequence, while substructure "type=ndarray str=[0 0]" is not
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
+    check_gym_environments(env)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 205, in check_gym_environments
+    temp_sampled_reset_obs = convert_element_to_space_type(
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/spaces/space_utils.py", line 378, in convert_element_to_space_type
+    return tree.map_structure(map_, element, sampled_element, check_types=False)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 433, in map_structure
+    assert_same_structure(structures[0], other, check_types=check_types)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/tree/__init__.py", line 288, in assert_same_structure
+    raise type(e)("%s\n"
+ValueError: The two structures don't have the same nested structure.
+
+First structure: type=dict str={'matrix': array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
+       0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+       0, 0, 1, 0]), 'sample_input': [array([10,  3])], 'sample_output': Discrete(52)}
+
+Second structure: type=OrderedDict str=OrderedDict([('matrix', array([0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0,
+       1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0,
+       0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+       0, 1, 1, 1], dtype=int8)), ('sample_input', array([0, 0])), ('sample_output', array([0]))])
+
+More specifically: Substructure "type=list str=[array([10,  3])]" is a sequence, while substructure "type=ndarray str=[0 0]" is not
+Entire first structure:
+{'matrix': ., 'sample_input': [.], 'sample_output': .}
+Entire second structure:
+OrderedDict([('matrix', .), ('sample_input', .), ('sample_output', .)])
+
+The above error has been found in your environment! We've added a module for checking your custom environments. It may cause your experiment to fail
+if your environment is not set up correctly. You can disable this behavior via calling `config.environment(disable_env_checking=True)`.
+You can run the environment checking module standalone by calling ray.rllib.utils.check_env([your env]).
