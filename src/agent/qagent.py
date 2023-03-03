@@ -10,6 +10,7 @@ import src.environment.environment as env
 
 import matplotlib
 import matplotlib.pyplot as plt
+import wandb
 
 ''' Current Expermient:
     - Goal try to learn to restore configs for 4x + 4y 
@@ -54,10 +55,16 @@ def qLearningAgent():
     # Import configurations from configs_4x+4y.csv to train on
     df = pd.read_csv("C:/Users/D073576/Documents/GitHub/BugPlusEngine/src/agent/configs_4x+4y.csv", sep=";")
 
+    # Create vector that stores the difficulty of each configuration
+    difficulty = np.zeros(len(df))
+
+    # Create index for configurtation location in df and vector
+    index = 0
+
     # Initialize Q-table
     Q = np.zeros((len(df), n_actions))
     state = np.random.randint(0, len(df))
-    vector = np.array(df.iloc[state])
+    vector = chooseNewConfig(df, 2, difficulty)
 
     # Marker to check wether or not a configuration was solved
     config_solved = False
@@ -67,17 +74,22 @@ def qLearningAgent():
         # Reset environment and get first new observation
         #state = environment.reset()
         environment.reset()
-        # Initialize matrices with config from configs_4x+4y.csv
-        if config_solved == False:
-            environment.setVectorAsObservationSpace(vector)
-            environment.setInputAndOutputValuesFromVector(vector)
-        else:
-            # Choose new random config from configs_4x+4y.csv
-            state = np.random.randint(0, len(df))
-            vector = np.array(df.iloc[state])
-            environment.setVectorAsObservationSpace(vector)
-            environment.setInputAndOutputValuesFromVector(vector)
-            config_solved = False
+        # config_solved = True
+        # # Initialize matrices with config from configs_4x+4y.csv
+        # if config_solved == False:
+        #     environment.setVectorAsObservationSpace(vector)
+        #     environment.setInputAndOutputValuesFromVector(vector)
+        # else:
+        #     # Choose new random config from configs_4x+4y.csv
+        #     state = np.random.randint(0, len(df))
+        #     vector = np.array(df.iloc[state])
+        #     environment.setVectorAsObservationSpace(vector)
+        #     environment.setInputAndOutputValuesFromVector(vector)
+        #     config_solved = False
+
+        vector, index = chooseNewConfig(df, 2, difficulty)
+        environment.setVectorAsObservationSpace(vector)
+        environment.setInputAndOutputValuesFromVector(vector)
 
         # Upodate state of the environment
         # state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0)
@@ -106,10 +118,12 @@ def qLearningAgent():
             
             if done == True:
                 config_solved = True
+                updateDifficulty(difficulty, index, True)
                 count_solved_problems += 1
                 count_solved_problems_total += 1
             else:
                 config_solved = False
+                updateDifficulty(difficulty, index, False)
 
         # Reduce epsilon (because we need less and less exploration)
         epsilon = min(1, max(0, epsilon - decayRate))
@@ -217,6 +231,31 @@ def plotResults(x, y1, y2, y3, y4, name):
     plt.show()
 
     plt.savefig(name + '.png')
+
+def updateDifficulty(difs, index, solved):
+    # Decreasde the difficulty of the problem by 100 if it was solved, increase it by 1 if it was not solved
+    if solved == True:
+        difs[index] += -1
+    else:
+        difs[index] -= 100
+
+def chooseNewConfig(df, strategy, difs):
+    '''Get a new vector from the dataframe based on the strategy chosen
+    The strategies are:
+    - random: choose a random vector from the dataframe (1)
+    - most difficult: choose the vector with the highest difficulty value (2)'''
+
+    if strategy == 1:
+        # Choose a random vector from the dataframe
+        candidate = np.random.randint(0, len(df))
+    elif strategy == 2:
+        # Choose the vector with the highest difficulty value
+        maxId = np.argmax(difs)
+        candidate = np.array(df.iloc[maxId])
+
+    # return the first column of the dataframe (the vector)
+    return candidate, maxId
     
 if __name__ == "__main__":
+    # wandb.init(project="BugPlus Q-Learning", entity="bugplus")
     qLearningAgent()
