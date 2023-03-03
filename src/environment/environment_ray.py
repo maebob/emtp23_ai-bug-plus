@@ -32,7 +32,7 @@ class BugPlus(Env):
         # Observation and action space of the environment
         self.observation_space = spaces.Dict(
             {
-            "matrix": spaces.MultiBinary((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)),
+            "matrix": spaces.MultiBinary((((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)),
              "sample_input": spaces.MultiDiscrete( # TODO https://gymnasium.farama.org/api/spaces/fundamental/#multidiscrete
                     shape=([1,2]),
                     dtype=np.int64
