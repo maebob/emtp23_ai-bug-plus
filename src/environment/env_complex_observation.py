@@ -21,6 +21,9 @@ INDEX = 0
 config_path = os.environ.get('config_path')
 DF = pd.read_csv(config_path, sep=";", header=None)
 
+config_path = os.environ.get('config_path')
+DF = pd.read_csv(config_path, sep=";", header=None)
+
 def load_config(load_new: bool = False):
     """
     This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
@@ -35,7 +38,10 @@ def load_config(load_new: bool = False):
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(DF))
+<<<<<<< HEAD
         print("INDEX: ", INDEX)
+=======
+>>>>>>> 37fc3a3cdabb308d658df863ae426e517c5b5781
     
     vector = np.array(DF.iloc[INDEX])
     return vector
@@ -79,7 +85,7 @@ class BugPlus(Env):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config(self.load_new_config)
+        vector = load_config(True) #MD für always reload
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)  # returns self.state now
         return self.state, {}  # self.observation_space -> self.state geändert nach Ende des Calls
@@ -94,7 +100,7 @@ class BugPlus(Env):
             action {int} -- The action to be performed on the environment.
         Returns:
             reward {int} -- The reward for the performed action.
-            observation {Env.space} -- The new state of the environment. # TODO: check for correct type
+            state{dict} -- The new state of the environment. # TODO: check for correct type
             ep_return {int} -- The return of the episode.
             done {bool} -- Flag to indicate if the episode is done.
         """
