@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-from src.environment import environment_ray as environment
+from src.environment import environment_ray_functioning as environment #TODO: change to the new environment (once fixed)
 from src.utils.matrix import number_bugs, array_to_matrices
 
 
@@ -52,7 +52,7 @@ _enable_rl_trainer_api: bool | None = NotProvided, rl_trainer_class: Type[RLTrai
 """
 algo = config.build()  # 2. build the algorithm,
 
-for _ in range(100):
+for _ in range(10):
     print(algo.train())  # 3. train it,
 
 algo.evaluate()  # 4. and evaluate it.
