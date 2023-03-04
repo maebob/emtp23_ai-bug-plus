@@ -1,6 +1,4 @@
-from src.translation.matrix_to_json import main as matrix_to_json
-from src.utils.valid_matrix import is_valid_matrix
-from src.engine.eval import main as eval_engine
+
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
@@ -8,16 +6,24 @@ import sys
 import torch
 import os
 from dotenv import load_dotenv
+from copy import deepcopy
 # load the .env file
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
+from src.translation.matrix_to_json import main as matrix_to_json
+from src.utils.valid_matrix import is_valid_matrix
+from src.engine.eval import main as eval_engine
+
+SPACE_SIZE = 1_000
+
 
 def load_config():
     # config_name = 'configs_4x+4y'
     # config = f"{config_name}.csv"
-    df = pd.read_csv("configs_4x+4y.csv", sep=";", header=None)
+    df = pd.read_csv(
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";", header=None)
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
     return vector
@@ -30,34 +36,40 @@ class BugPlus(Env):
         self.no_bugs = 3
 
         # Observation and action space of the environment
-        self.observation_space = spaces.MultiBinary(
-            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        self.observation_space = spaces.Dict({
+            "matrix": spaces.MultiBinary(
+            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)),
+            "up": spaces.Discrete(SPACE_SIZE),
+            "down": spaces.Discrete(SPACE_SIZE),
+            "output": spaces.Discrete(10 * SPACE_SIZE),
+            })
+        
         self.action_space = spaces.Discrete(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        
         # = spaces.MultiBinary(70) for 3 bugs
         # create array with zeroes
-        self.state = np.zeros(
-            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+
+        self.state = {
+            "matrix": np.zeros(
+            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)),
+            "up": 0,
+            "down": 0,
+            "output": 0,
+        }
+        
         # Flag to indicate if the episode is done
         self.done = False
         # Episode return
         self.ep_return = 0
-        # Input and expected output of the bug
-        self.input_up = None
-        self.input_down = None
-        self.expected_output = None
 
     def reset(self, *, seed=None, options=None):
-        '''Reset the environment to its original state.'''
-        self.observation_space = spaces.MultiBinary(
-            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
-        # self.action_space = spaces.Discrete(
-        #     (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
         vector = load_config()
-        self.setInputAndOutputValuesFromVector(vector)
-        self.setVectorAsObservationSpace(vector)  # returns self.state now
+        self.set_input_output_state(vector)
+        self.set_matrix_state(vector)  # returns self.state now
         return self.state, {}  # self.observation_space -> self.state geändert nach Ende des Calls
 
     def step(self, action: torch):
@@ -74,13 +86,13 @@ class BugPlus(Env):
             ep_return {int} -- The return of the episode.
             done {bool} -- Flag to indicate if the episode is done.
         """
-        self.state[action] = 1  # TODO: later: think about flipping the value
-        reward, done = self.checkBugValidity()
+        self.state["matrix"][action] = 1
+        reward, done = self.check_bug_validity()
         truncated = True
         # geändert nach Call: self.observation_space -> self.state
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
-    def checkBugValidity(self):
+    def check_bug_validity(self):
         """
         Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
         Returns:
@@ -88,14 +100,17 @@ class BugPlus(Env):
             done {bool} -- Flag to indicate if the episode is done.
         """
         # Translate the matrix representation to a JSON representation
-        split_index = int(len(self.state) / 2)
+        matrix = deepcopy(self.state.get("matrix"))
+        split_index = int(len(matrix) / 2)
+
+        control_matrix = matrix[:split_index].reshape(self.no_bugs + 2, 2 * self.no_bugs + 1)
+        data_matrix = matrix[split_index:].reshape(2 * self.no_bugs + 1, self.no_bugs + 2)
+       
 
         matrix_as_json = matrix_to_json(
-            control_matrix=self.state[:split_index].reshape(
-                self.no_bugs + 2, 2 * self.no_bugs + 1),    # controlflow shape (2n+1, n+2)
-            data_matrix=self.state[split_index:].reshape(
-                2 * self.no_bugs + 1, self.no_bugs + 2),     # dataflow shape: (n+2, 2n+1)v
-            data_up=self.input_up, data_down=self.input_down)
+            control_matrix=control_matrix,    # controlflow shape (2n+1, n+2)
+            data_matrix=data_matrix,     # dataflow shape: (n+2, 2n+1)v
+            data_up=self.state.get("up"), data_down=self.state.get("down"))
         
         try:
             result = eval_engine(matrix_as_json)
@@ -107,11 +122,11 @@ class BugPlus(Env):
         except:
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
-            reward = -5
+            reward = -2
             done = True  # TODO: think about in the future; EIGENTLICH hier auch nicht done, weil er es noch retten könnte
             #print("expected: ", self.expected_output)
             return reward, done
-        if result.get("0_Out") == self.expected_output:
+        if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
             # reward = torch.tensor([100])
             reward = 100
@@ -123,14 +138,14 @@ class BugPlus(Env):
         done = False
         return reward, done
 
-    def setVectorAsObservationSpace(self, vector):  # TODO: rename
+    def set_matrix_state(self, vector):  # TODO: rename
         '''
         TODO: write documentation
         '''
-        self.state = vector[3:]
+        self.state["matrix"] = vector[3:]
 
-    def setInputAndOutputValuesFromVector(self, vector):
+    def set_input_output_state(self, vector):
         '''Set the input and output values of the environment.'''
-        self.input_up = vector[0]
-        self.input_down = vector[1]
-        self.expected_output = vector[2]
+        self.state["up"] = vector[0]
+        self.state["down"] = vector[1]
+        self.state["output"] = vector[2]
