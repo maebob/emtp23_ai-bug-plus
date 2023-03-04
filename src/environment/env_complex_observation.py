@@ -18,6 +18,8 @@ from src.engine.eval import main as eval_engine
 
 SPACE_SIZE = 1_000
 INDEX = 0
+config_path = os.environ.get('config_path')
+DF = pd.read_csv(config_path, sep=";", header=None)
 
 def load_config(load_new: bool = False):
     """
@@ -29,14 +31,12 @@ def load_config(load_new: bool = False):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
-    config_path = os.environ.get('config_path')
-    df = pd.read_csv(config_path, sep=";", header=None)
 
     if load_new:
         global INDEX
-        INDEX = np.random.randint(0, len(df))
+        INDEX = np.random.randint(0, len(DF))
     
-    vector = np.array(df.iloc[INDEX])
+    vector = np.array(DF.iloc[INDEX])
     return vector
 
 class BugPlus(Env):
