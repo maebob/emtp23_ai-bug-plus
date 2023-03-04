@@ -77,6 +77,7 @@ class BugPlus(Env):
         # Episode return
         self.ep_return = 0
         self.load_new_config = True
+        self.epsiode_length = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
@@ -85,6 +86,7 @@ class BugPlus(Env):
         vector = load_config(True) #MD für always reload
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)  # returns self.state now
+        self.epsiode_length = 0
         return self.state, {}  # self.observation_space -> self.state geändert nach Ende des Calls
 
     def step(self, action: torch):
@@ -101,9 +103,15 @@ class BugPlus(Env):
             ep_return {int} -- The return of the episode.
             done {bool} -- Flag to indicate if the episode is done.
         """
+        self.epsiode_length += 1
+        if self.epsiode_length > 30:
+            self.done = True
+            truncated = True
+            return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
+        
         if self.state.get("matrix")[action] == 1:
             # The action was already performed, punish the agent
-            reward = -1
+            reward = -0.2
             done = False
             truncated = False
             return self.state, reward, done, truncated, {'ep_return': self.ep_return}
@@ -153,7 +161,7 @@ class BugPlus(Env):
         except:
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
-            reward = -1
+            reward = -0.1
             done = False  # TODO: think about in the future; EIGENTLICH hier auch nicht done, weil er es noch retten könnte
             
             return reward, done
@@ -165,7 +173,7 @@ class BugPlus(Env):
             return reward, done
         # Engine evaluated but result was not correct
         # reward = torch.tensor([-1])
-        reward = -1
+        reward = -0.1
         done = False
         return reward, done
 
