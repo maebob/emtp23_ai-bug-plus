@@ -15,7 +15,7 @@ from src.translation.matrix_to_json import main as matrix_to_json
 def load_config():
     # config_name = 'configs_4x+4y'
     # config = f"{config_name}.csv"
-    df = pd.read_csv("/Users/mayte/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";")
+    df = pd.read_csv("configs_4x+4y.csv", sep=";")
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
     return vector
@@ -96,6 +96,7 @@ class BugPlus(Env):
             # The engine timed out, the bug is invalid likely a loop
             reward = -10
             done = True
+            print("TimeoutError", "reward: ", reward, "action: ", self.action)
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
