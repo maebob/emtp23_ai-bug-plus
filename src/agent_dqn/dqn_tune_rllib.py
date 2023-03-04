@@ -34,7 +34,7 @@ tune.stopper.ExperimentPlateauStopper(
     patience=10,
 )
 
-tune.run(# "PPO", # "DQN", #TODO: anpassen vor run!
+tune.run("DQN",
          config={"env": BugPlus,
                  "seed": 42069,
                  "framework": "torch",
