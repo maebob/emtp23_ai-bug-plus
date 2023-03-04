@@ -17,15 +17,17 @@ from src.utils.valid_matrix import is_valid_matrix
 from src.engine.eval import main as eval_engine
 
 SPACE_SIZE = 1_000
+INDEX = 0
 
-
-def load_config():
+def load_config(load_new: bool = False):
     config_path = os.environ.get('config_path')
     df = pd.read_csv(config_path, sep=";", header=None)
-    index = np.random.randint(0, len(df))
-    vector = np.array(df.iloc[index])
+    if load_new:
+        global INDEX
+        INDEX = np.random.randint(0, len(df))
+    
+    vector = np.array(df.iloc[INDEX])
     return vector
-
 
 class BugPlus(Env):
     def __init__(self, render_mode=None):
@@ -60,12 +62,13 @@ class BugPlus(Env):
         self.done = False
         # Episode return
         self.ep_return = 0
+        self.load_new_config = True
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config()
+        vector = load_config(self.load_new_config)
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)  # returns self.state now
         return self.state, {}  # self.observation_space -> self.state geändert nach Ende des Calls
@@ -87,6 +90,11 @@ class BugPlus(Env):
         self.state["matrix"][action] = 1
         reward, done = self.check_bug_validity()
         truncated = True
+        if reward > 0:
+            self.load_new_config = True
+        else:
+            self.load_new_config = False
+
         # geändert nach Call: self.observation_space -> self.state
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
