@@ -20,7 +20,7 @@ def load_config():
     df = pd.read_csv(
         "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";", header=None)
     index = np.random.randint(0, len(df))
-    vector = np.array(df.iloc[3])
+    vector = np.array(df.iloc[index])
     return vector
 
 
