@@ -17,11 +17,10 @@ sys.path.append(os.environ.get('absolute_project_path'))
 def load_config():
     # config_name = 'configs_4x+4y'
     # config = f"{config_name}.csv"
-    df = pd.read_csv("configs_4x+4y.csv", sep=";")
     df = pd.read_csv(
-        "/Users/mayte/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";")
+        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";", header=None)
     index = np.random.randint(0, len(df))
-    vector = np.array(df.iloc[index])
+    vector = np.array(df.iloc[3])
     return vector
 
 
@@ -91,29 +90,27 @@ class BugPlus(Env):
         """
         # Translate the matrix representation to a JSON representation
         split_index = int(len(self.state) / 2)
+
         matrix_as_json = matrix_to_json(
             control_matrix=self.state[:split_index].reshape(
-                2 * self.no_bugs + 1, self.no_bugs + 2),    # controlflow shape (2n+1, n+2)
+                self.no_bugs + 2, 2 * self.no_bugs + 1),    # controlflow shape (2n+1, n+2)
             data_matrix=self.state[split_index:].reshape(
-                self.no_bugs + 2, 2 * self.no_bugs + 1),     # dataflow shape: (n+2, 2n+1)v
+                2 * self.no_bugs + 1, self.no_bugs + 2),     # dataflow shape: (n+2, 2n+1)v
             data_up=self.input_up, data_down=self.input_down)
-        # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language #TODO: put as extra function
-        # if is_valid_matrix(self.observation_space[0]) == False:
-        #     return reward
-        # Run the bug through the engine and check if it produces the correct output
+        
         try:
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
             reward = -10
             done = True
-            print("TimeoutError", reward, "result: ", result.get("0_Out"), "expected: ", self.expected_output)
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
-            reward = -1
+            reward = -5
             done = True  # TODO: think about in the future; EIGENTLICH hier auch nicht done, weil er es noch retten könnte
+            #print("expected: ", self.expected_output)
             return reward, done
         if result.get("0_Out") == self.expected_output:
             # If the result is correct, the reward is 100
