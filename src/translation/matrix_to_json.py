@@ -103,6 +103,11 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
     Returns:
         dict -- The json
     """
+    # Check if the control matrix less more columns than the data matrix
+    if control_matrix.shape[1] < data_matrix.shape[1]:
+        # This should never happen -> raise error
+        raise ValueError("The control matrix has less columns than the data matrix")
+    
     # Get all bugs used in the matrix
     bugs = list(set(np.argwhere(control_matrix == 1).flatten().tolist() + np.argwhere(data_matrix == 1).flatten().tolist()))
     bugs = [math.ceil(bug / 2) for bug in bugs]
