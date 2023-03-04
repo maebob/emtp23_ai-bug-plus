@@ -20,10 +20,8 @@ SPACE_SIZE = 1_000
 
 
 def load_config():
-    # config_name = 'configs_4x+4y'
-    # config = f"{config_name}.csv"
-    df = pd.read_csv(
-        "/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";", header=None)
+    config_path = os.environ.get('config_path')
+    df = pd.read_csv(config_path, sep=";", header=None)
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
     return vector

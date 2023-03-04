@@ -24,7 +24,13 @@ ray.init()
 
 tune.run("DQN",
          config={"env": BugPlus,
-                "seed": 42069 },
+                 "seed": 42069,
+                 "framework": "torch",
+                 "num_workers": 1,
+                 "num_gpus": 0,
+                 "num_envs_per_worker": 1,
+                 "num_cpus_per_worker": 1,
+                 },
          local_dir="result_data/",
          callbacks=[
              # adjust the entries here to conform to your wandb environment
@@ -32,6 +38,10 @@ tune.run("DQN",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="bugplus",
+                 group="dqn",
+                 job_type="train",
+                 info={"env": "BugPlus", "seed": 42069, "algorithm": "DQN",
+                       "config": os.environ.get('config_path')},
              ),
          ],
          verbose=0,
