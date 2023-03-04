@@ -152,3 +152,6 @@ config.json
 .idea/BugPlusEngine.iml
 src/.DS_Store
 .DS_Store
+
+#ignore rlib results
+result_data/
