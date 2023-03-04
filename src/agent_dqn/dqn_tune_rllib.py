@@ -21,9 +21,10 @@ from src.environment.env_complex_observation import BugPlus
 os.system('clear')
 ray.init()
 
+
 tune.run("DQN",
-         config={"env": BugPlus
-                 },
+         config={"env": BugPlus,
+                "seed": 42069 },
          local_dir="result_data/",
          callbacks=[
              # adjust the entries here to conform to your wandb environment
