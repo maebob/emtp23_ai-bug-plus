@@ -1,3 +1,6 @@
+from src.translation.matrix_to_json import main as matrix_to_json
+from src.utils.valid_matrix import is_valid_matrix
+from src.engine.eval import main as eval_engine
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
@@ -9,16 +12,18 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-from src.engine.eval import main as eval_engine
-from src.utils.valid_matrix import is_valid_matrix
-from src.translation.matrix_to_json import main as matrix_to_json
+
+
 def load_config():
     # config_name = 'configs_4x+4y'
     # config = f"{config_name}.csv"
     df = pd.read_csv("configs_4x+4y.csv", sep=";")
+    df = pd.read_csv(
+        "/Users/mayte/GitHub/BugPlusEngine/configs_4x+4y.csv", sep=";")
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
     return vector
+
 
 class BugPlus(Env):
     def __init__(self, render_mode=None):
@@ -29,10 +34,12 @@ class BugPlus(Env):
         # Observation and action space of the environment
         self.observation_space = spaces.MultiBinary(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
-        self.action_space = spaces.Discrete((((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        self.action_space = spaces.Discrete(
+            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
         # = spaces.MultiBinary(70) for 3 bugs
         # create array with zeroes
-        self.state = np.zeros((((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        self.state = np.zeros(
+            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
         # Flag to indicate if the episode is done
         self.done = False
         # Episode return
@@ -52,8 +59,8 @@ class BugPlus(Env):
         self.ep_return = 0
         vector = load_config()
         self.setInputAndOutputValuesFromVector(vector)
-        self.setVectorAsObservationSpace(vector) # returns self.state now
-        return self.state, {} # self.observation_space -> self.state geändert nach Ende des Calls
+        self.setVectorAsObservationSpace(vector)  # returns self.state now
+        return self.state, {}  # self.observation_space -> self.state geändert nach Ende des Calls
 
     def step(self, action: torch):
         """
@@ -72,7 +79,9 @@ class BugPlus(Env):
         self.state[action] = 1  # TODO: later: think about flipping the value
         reward, done = self.checkBugValidity()
         truncated = True
-        return self.state, reward, done, truncated, {'ep_return': self.ep_return} # geändert nach Call: self.observation_space -> self.state
+        # geändert nach Call: self.observation_space -> self.state
+        return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+
     def checkBugValidity(self):
         """
         Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
@@ -83,8 +92,10 @@ class BugPlus(Env):
         # Translate the matrix representation to a JSON representation
         split_index = int(len(self.state) / 2)
         matrix_as_json = matrix_to_json(
-            control_matrix=self.state[:split_index].reshape(2 * self.no_bugs + 1, self.no_bugs + 2),    # controlflow shape (2n+1, n+2)
-            data_matrix = self.state[split_index:].reshape(self.no_bugs + 2, 2 * self.no_bugs + 1),     # dataflow shape: (n+2, 2n+1)v
+            control_matrix=self.state[:split_index].reshape(
+                2 * self.no_bugs + 1, self.no_bugs + 2),    # controlflow shape (2n+1, n+2)
+            data_matrix=self.state[split_index:].reshape(
+                self.no_bugs + 2, 2 * self.no_bugs + 1),     # dataflow shape: (n+2, 2n+1)v
             data_up=self.input_up, data_down=self.input_down)
         # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language #TODO: put as extra function
         # if is_valid_matrix(self.observation_space[0]) == False:
@@ -96,7 +107,7 @@ class BugPlus(Env):
             # The engine timed out, the bug is invalid likely a loop
             reward = -10
             done = True
-            print("TimeoutError", "reward: ", reward, "action: ", self.action)
+            print("TimeoutError", reward, "result: ", result.get("0_Out"), "expected: ", self.expected_output)
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
@@ -115,11 +126,13 @@ class BugPlus(Env):
         reward = -1
         done = False
         return reward, done
-    def setVectorAsObservationSpace(self, vector): #TODO: rename
+
+    def setVectorAsObservationSpace(self, vector):  # TODO: rename
         '''
         TODO: write documentation
         '''
         self.state = vector[3:]
+
     def setInputAndOutputValuesFromVector(self, vector):
         '''Set the input and output values of the environment.'''
         self.input_up = vector[0]
