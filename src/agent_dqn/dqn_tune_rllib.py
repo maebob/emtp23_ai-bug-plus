@@ -21,6 +21,18 @@ from src.environment.env_complex_observation import BugPlus
 os.system('clear')
 ray.init()
 
+# implement erarly stopping based on the mean reward
+stop = {
+    "episode_reward_mean": 100,
+    "timesteps_total": 100000,
+}
+tune.stopper.ExperimentPlateauStopper(
+    metric="episode_reward_mean",
+    std=0.01,
+    top=100,
+    mode="max",
+    patience=10,
+)
 
 tune.run("DQN",
          config={"env": BugPlus,
@@ -37,10 +49,13 @@ tune.run("DQN",
              # cf. https://docs.wandb.ai/ and https://docs.ray.io/en/master/tune/examples/tune-wandb.html
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
-                 project="bugplus",
+                 project="BugsPlus",
                  group="dqn",
                  job_type="train",
              ),
          ],
          verbose=0,
+         checkpoint_freq=10,
+         checkpoint_at_end=True,
+         keep_checkpoints_num=5,
          )
