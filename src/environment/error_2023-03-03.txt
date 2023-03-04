@@ -10,6 +10,7 @@ TODO:
 
 
 **************************************************************************************************************************
+evtl. verschlimmbessert...
 Traceback (most recent call last):
   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
     check_gym_environments(env)
