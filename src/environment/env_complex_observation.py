@@ -20,8 +20,18 @@ SPACE_SIZE = 1_000
 INDEX = 0
 
 def load_config(load_new: bool = False):
+    """
+    This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
+    Otherwise, the last loaded configuration is returned.
+
+    Arugments:
+        load_new {bool} -- If True, a new random configuration is loaded. Otherwise, the last loaded configuration is returned. (default: {False})
+    Returns:
+        vector {np.array} -- The vector containing the configuration.
+    """
     config_path = os.environ.get('config_path')
     df = pd.read_csv(config_path, sep=";", header=None)
+
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(df))
