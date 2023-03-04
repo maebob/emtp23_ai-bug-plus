@@ -19,6 +19,7 @@ def load_config():
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
     return vector
+
 class BugPlus(Env):
     def __init__(self, render_mode=None):
         '''Initialize the environment.'''
