@@ -35,6 +35,7 @@ def load_config(load_new: bool = False):
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(DF))
+        print("INDEX: ", INDEX)
     
     vector = np.array(DF.iloc[INDEX])
     return vector
@@ -97,13 +98,24 @@ class BugPlus(Env):
             ep_return {int} -- The return of the episode.
             done {bool} -- Flag to indicate if the episode is done.
         """
+        if self.state.get("matrix")[action] == 1:
+            # The action was already performed, punish the agent
+            reward = -1
+            done = False
+            truncated = False
+            return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+        
         self.state["matrix"][action] = 1
         reward, done = self.check_bug_validity()
-        truncated = True
-        if reward > 0:
-            self.load_new_config = True
+        if done:
+            truncated = True
         else:
+            truncated = False
+
+        if reward == -10 and done:
             self.load_new_config = False
+        else:
+            self.load_new_config = True
 
         # geändert nach Call: self.observation_space -> self.state
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
@@ -138,9 +150,9 @@ class BugPlus(Env):
         except:
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
-            reward = -2
-            done = True  # TODO: think about in the future; EIGENTLICH hier auch nicht done, weil er es noch retten könnte
-            #print("expected: ", self.expected_output)
+            reward = -1
+            done = False  # TODO: think about in the future; EIGENTLICH hier auch nicht done, weil er es noch retten könnte
+            
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
