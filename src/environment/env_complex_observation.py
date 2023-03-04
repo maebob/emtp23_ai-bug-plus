@@ -38,10 +38,7 @@ def load_config(load_new: bool = False):
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(DF))
-<<<<<<< HEAD
         print("INDEX: ", INDEX)
-=======
->>>>>>> 37fc3a3cdabb308d658df863ae426e517c5b5781
     
     vector = np.array(DF.iloc[INDEX])
     return vector
