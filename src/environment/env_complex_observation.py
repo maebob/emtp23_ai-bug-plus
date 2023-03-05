@@ -18,11 +18,13 @@ from src.engine.eval import main as eval_engine
 
 SPACE_SIZE = 1_000
 INDEX = 0
-config_path = os.environ.get('config_path')
-DF = pd.read_csv(config_path, sep=";", header=None)
 
+# load config file and do some simple preprocessing
 config_path = os.environ.get('config_path')
-DF = pd.read_csv(config_path, sep=";", header=None)
+df = pd.read_csv(config_path, sep=";", header=None)
+df = df.dropna(axis=0, how='all') # drop empty rows
+DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
+
 
 def load_config(load_new: bool = False):
     """
@@ -39,7 +41,7 @@ def load_config(load_new: bool = False):
         global INDEX
         INDEX = np.random.randint(0, len(DF))
     
-    vector = np.array(DF.iloc[INDEX])
+    vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
     return vector
 
 class BugPlus(Env):
