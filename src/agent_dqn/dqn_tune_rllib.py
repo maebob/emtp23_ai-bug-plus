@@ -24,20 +24,20 @@ os.system('clear')
 ray.init()
 
 # implement erarly stopping based on the mean reward
-# stop = {
-#     "episode_reward_mean": 100,
-#     "timesteps_total": 100000,
-# }
-tune.stopper = CombinedStopper(
-    MaximumIterationStopper(max_iter=10),
-    ExperimentPlateauStopper(
-        metric="episode_reward_mean",
-        std=1.0,
-        top=100,
-        mode="max",
-        patience=10
-    )
-)
+stop = {
+    "episode_reward_mean": 100,
+    "timesteps_total": 100000,
+}
+# tune.stopper = CombinedStopper(
+#     MaximumIterationStopper(max_iter=10),
+#     ExperimentPlateauStopper(
+#         metric="episode_reward_mean",
+#         std=1.0,
+#         top=100,
+#         mode="max",
+#         patience=10
+#     )
+# )
 
 from src.environment.env_complex_observation import BugPlus
 
@@ -57,7 +57,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="ppo_test_stopper",
+                 group="ppo_remove_edge",
                  job_type="train",
                  entity="bugplus",
              ),
