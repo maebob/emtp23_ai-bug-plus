@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-# from src.environment import environment_ray as environment
+from src.environment.env_complex_observation import BugPlus
 
 
 # clear the terminal
@@ -28,22 +28,11 @@ stop = {
     "episode_reward_mean": 100,
     "timesteps_total": 100000,
 }
-# tune.stopper = CombinedStopper(
-#     MaximumIterationStopper(max_iter=10),
-#     ExperimentPlateauStopper(
-#         metric="episode_reward_mean",
-#         std=1.0,
-#         top=100,
-#         mode="max",
-#         patience=10
-#     )
-# )
 
-from src.environment.env_complex_observation import BugPlus
+# TODO: test for hyperparameter tuning: config before tune.run with grid_search
+# 'parameter_name': tune.grid_search([True, False])
 
 tune.run("PPO", 
-         # test for hyperparameter tuning: config before tune.run with grid_search
-         #  'parameter_name': tune.grid_search([True, False])
         config={"env": BugPlus, 
             "seed": 42069,
             "framework": "torch",
@@ -61,12 +50,12 @@ tune.run("PPO",
                  job_type="train",
                  entity="bugplus",
              ),
-            #  wandb.log() # would need wandb.init() before in order to log code as well
 ],
     verbose=0,
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
 )
+# Warning message from run:
 # Current log_level is WARN.
 # For more information, set 'log_level': 'INFO' / 'DEBUG' or use the -v and -vv flags.
