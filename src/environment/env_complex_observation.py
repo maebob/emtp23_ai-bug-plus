@@ -36,7 +36,6 @@ def load_config(load_new: bool = False):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
-
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(DF))
@@ -62,9 +61,6 @@ class BugPlus(Env):
         self.action_space = spaces.Discrete(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
         
-        # = spaces.MultiBinary(70) for 3 bugs
-        # create array with zeroes
-
         self.state = {
             "matrix": np.zeros(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)),
@@ -84,25 +80,26 @@ class BugPlus(Env):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config(True) #MD für always reload
+        vector = load_config()
         self.set_input_output_state(vector)
-        self.set_matrix_state(vector)  # returns self.state now
+        self.set_matrix_state(vector)
         self.epsiode_length = 0
-        return self.state, {}  # self.observation_space -> self.state geändert nach Ende des Calls
+        return self.state, {}
 
     def step(self, action: torch):
         """
-        #TODO: rewrite documentation
         Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
         the control flow matrix or the data flow matrix.
         Arguments:
             action {int} -- The action to be performed on the environment.
         Returns:
+            state{dict} -- The new state of the environment.
             reward {int} -- The reward for the performed action.
-            state{dict} -- The new state of the environment. # TODO: check for correct type
-            ep_return {int} -- The return of the episode.
             done {bool} -- Flag to indicate if the episode is done.
+            truncated {bool} -- Flag to indicate if the episode was truncated.
+            info {dict}
+                ep_return {int} -- The return of the episode.
         """
         self.epsiode_length += 1
         if self.epsiode_length > 30:
@@ -128,8 +125,6 @@ class BugPlus(Env):
             self.load_new_config = False
         else:
             self.load_new_config = True
-
-        # geändert nach Call: self.observation_space -> self.state
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
@@ -163,22 +158,20 @@ class BugPlus(Env):
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
             reward = -0.1
-            done = False  # TODO: think about in the future; EIGENTLICH hier auch nicht done, weil er es noch retten könnte
+            done = False
             
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
-            # reward = torch.tensor([100])
             reward = 100
             done = True
             return reward, done
         # Engine evaluated but result was not correct
-        # reward = torch.tensor([-1])
         reward = -0.1
         done = False
         return reward, done
 
-    def set_matrix_state(self, vector):  # TODO: rename
+    def set_matrix_state(self, vector):
         '''
         TODO: write documentation
         '''
