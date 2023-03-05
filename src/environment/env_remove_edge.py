@@ -25,8 +25,6 @@ df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
-# set up counter for deleted edges
-deleted_edge_counter = 0
 
 def load_config(load_new: bool = False):
     """
@@ -113,12 +111,12 @@ class BugPlus(Env):
         
         if self.state.get("matrix")[action] == 1:
             self.state.get("matrix")[action] = 0 # remove the edge in the matrix
-            deleted_edge_counter += 1
             
         else:        
             self.state.get("matrix")[action] = 1 # set a new edge in the matrix
 
         reward, done = self.check_bug_validity()
+
         if done:
             truncated = True
         else:
