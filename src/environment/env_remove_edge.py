@@ -19,6 +19,8 @@ from src.engine.eval import main as eval_engine
 SPACE_SIZE = 1_000
 INDEX = 0
 
+deleted_edge_counter = 0
+
 # load config file and do some simple preprocessing
 config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
@@ -111,10 +113,13 @@ class BugPlus(Env):
         
         if self.state.get("matrix")[action] == 1:
             self.state.get("matrix")[action] = 0 # remove the edge in the matrix
-            print("removed edge: ", action, " from matrix", self.state.get("matrix"))
+            deleted_edge_counter += 1
+            if (deleted_edge_counter % 1_000 ) == 0:
+                print(f"Deleted {deleted_edge_counter} edges so far.")
+            
         else:        
             self.state.get("matrix")[action] = 1 # set a new edge in the matrix
-            
+
         reward, done = self.check_bug_validity()
         if done:
             truncated = True
