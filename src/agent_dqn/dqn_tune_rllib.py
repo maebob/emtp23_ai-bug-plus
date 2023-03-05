@@ -32,7 +32,7 @@ stop = {
 # TODO: test for hyperparameter tuning: config before tune.run with grid_search
 # 'parameter_name': tune.grid_search([True, False])
 
-tune.run("PPO", 
+tune.run("DQN", 
         config={"env": BugPlus, 
             "seed": 42069,
             "framework": "torch",
@@ -46,7 +46,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="ppo_remove_edge",
+                 group="dqn_remove_edge",
                  job_type="train",
                  entity="bugplus",
              ),
