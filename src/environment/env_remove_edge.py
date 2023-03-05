@@ -111,6 +111,7 @@ class BugPlus(Env):
         
         if self.state.get("matrix")[action] == 1:
             self.state.get("matrix")[action] = 0 # remove the edge in the matrix
+            print("removed edge: ", action, " from matrix", self.state.get("matrix"))
         else:        
             self.state.get("matrix")[action] = 1 # set a new edge in the matrix
             reward, done = self.check_bug_validity()
