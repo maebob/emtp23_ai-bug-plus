@@ -114,16 +114,17 @@ class BugPlus(Env):
             print("removed edge: ", action, " from matrix", self.state.get("matrix"))
         else:        
             self.state.get("matrix")[action] = 1 # set a new edge in the matrix
-            reward, done = self.check_bug_validity()
-            if done:
-                truncated = True
-            else:
-                truncated = False
+            
+        reward, done = self.check_bug_validity()
+        if done:
+            truncated = True
+        else:
+            truncated = False
 
-            if reward == -10 and done:
-                self.load_new_config = False
-            else:
-                self.load_new_config = True
+        if reward == -10 and done:
+            self.load_new_config = False
+        else:
+            self.load_new_config = True
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
