@@ -76,6 +76,8 @@ class BugPlus(Env):
         self.ep_return = 0
         self.load_new_config = True
         self.epsiode_length = 0
+        # number of deleted edges
+        self.deleted_edges = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
@@ -111,6 +113,9 @@ class BugPlus(Env):
         
         if self.state.get("matrix")[action] == 1:
             self.state.get("matrix")[action] = 0 # remove the edge in the matrix
+            self.deleted_edges += 1
+            if (self.deleted_edges % 1_000) == 0:
+                print("Deleted edges: ", self.deleted_edges)
             
         else:        
             self.state.get("matrix")[action] = 1 # set a new edge in the matrix
@@ -126,7 +131,7 @@ class BugPlus(Env):
             self.load_new_config = False
         else:
             self.load_new_config = True
-        return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+        return self.state, reward, done, truncated, {'deleted_edges': self.deleted_edges, 'ep_return': self.ep_return}
 
     def check_bug_validity(self):
         """
