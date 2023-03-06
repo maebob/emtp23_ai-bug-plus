@@ -3,7 +3,6 @@ import numpy as np
 from typing import Tuple
 import matrix_to_json
 
-
 def calculate_matrix_size(number_of_bugs: int, control: bool) -> Tuple[int, int]:
     """Calculate the size of a matrix given the number of bugs and a control flag.
 
@@ -110,17 +109,33 @@ def create_matrices(data: dict) -> Tuple[np.ndarray, np.ndarray]:
     return control_flow_matrix, data_flow_matrix
 
 
-
 if __name__ == "__main__":
-    # Read the JSON file
-    with open("src/configs/-4.json", "r") as f:
-        data = json.load(f)
+    import os
+    
+    directory = "src/configs"
+    import sys
+    import os
+    from dotenv import load_dotenv
 
-    control, data = create_matrices(data)
-    print("control:\n", control)
-    print("data:\n", data)
-    config = matrix_to_json.main(control, data, 4, 5)
-    # Write the JSON file
-    with open('config_test2.json', 'w') as outfile:
-        json.dump(config, outfile, indent=4)
+    # load the .env file
+    load_dotenv()
+    # append the absolute_project_path from .env variable to the sys.path
+    sys.path.append(os.environ.get('absolute_project_path'))
+    from src.engine.test_configs import test_config
 
+    # get all json files in the configs folder
+    for file in os.listdir(directory):
+        with open(f"{directory}/{file}", "r") as f:
+            data = json.load(f)
+
+        control, data = create_matrices(data)
+        # print("control:\n", control)
+        # print("data:\n", data)
+        config = matrix_to_json.main(control, data, 4, 5)
+        formula = file.replace(".json", "")
+        test_config(formula, config)
+
+        if formula == "2y-2":
+            # Save the json file
+            with open(f"{formula}_test.json", "w") as f:
+                json.dump(config, f, indent=4)
