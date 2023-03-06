@@ -28,7 +28,8 @@ DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep in
 
 def load_config(load_new: bool = False):
     """
-    This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
+    This function loads a random configuration from the config file.
+    If load_new is set to True, a new random configuration is loaded.
     Otherwise, the last loaded configuration is returned.
 
     Arugments:
@@ -60,7 +61,7 @@ class BugPlus(Env):
         
         self.action_space = spaces.Discrete(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
-        
+
         self.state = {
             "matrix": np.zeros(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)),
@@ -75,6 +76,8 @@ class BugPlus(Env):
         self.ep_return = 0
         self.load_new_config = True
         self.epsiode_length = 0
+        # number of deleted edges
+        self.deleted_edges = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
@@ -103,19 +106,22 @@ class BugPlus(Env):
         """
         self.epsiode_length += 1
         if self.epsiode_length > 30:
+            reward = -1
             self.done = True
             truncated = True
-            return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
-            # The action was already performed, punish the agent
-            reward = -0.2
-            done = False
-            truncated = False
-            return self.state, reward, done, truncated, {'ep_return': self.ep_return}
-        
-        self.state["matrix"][action] = 1
+            self.state.get("matrix")[action] = 0 # remove the edge in the matrix
+            self.deleted_edges += 1
+            if (self.deleted_edges % 1_000) == 0:
+                print("Deleted edges: ", self.deleted_edges)
+            
+        else:        
+            self.state.get("matrix")[action] = 1 # set a new edge in the matrix
+
         reward, done = self.check_bug_validity()
+
         if done:
             truncated = True
         else:
@@ -125,7 +131,7 @@ class BugPlus(Env):
             self.load_new_config = False
         else:
             self.load_new_config = True
-        return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+        return self.state, reward, done, truncated, {'deleted_edges': self.deleted_edges, 'ep_return': self.ep_return}
 
     def check_bug_validity(self):
         """
@@ -163,6 +169,7 @@ class BugPlus(Env):
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
+
             reward = 100
             done = True
             return reward, done
@@ -171,7 +178,7 @@ class BugPlus(Env):
         done = False
         return reward, done
 
-    def set_matrix_state(self, vector):
+    def set_matrix_state(self, vector):  # TODO: rename
         '''
         TODO: write documentation
         '''
