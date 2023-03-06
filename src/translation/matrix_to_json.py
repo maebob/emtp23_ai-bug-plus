@@ -2,16 +2,13 @@ import math
 import json
 import numpy as np
 import sys
-import sys
 import os
-
 from dotenv import load_dotenv
 
 # load the .env file
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-
 from src.api.boardTypes import EdgeType, Edge, PortAdress, PortType
 
 
