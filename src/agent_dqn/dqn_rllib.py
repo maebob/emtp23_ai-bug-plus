@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-from environment import ens_simple_observation as environment #TODO: change to the new environment (once fixed)
+from environment import env_simple_observation as environment #TODO: change to the new environment (once fixed)
 from src.utils.matrix import number_bugs, array_to_matrices
 
 
