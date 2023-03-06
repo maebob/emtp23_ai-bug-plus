@@ -86,7 +86,7 @@ def test_config(formula: str, config: dict) -> bool:
             print(f"Result: {result}")
             print("Engine Result: None")
             print("\n"*3)
-            break
+            raise Exception("Config does not run")
 
         # check if the result is incorrect
         if result != engine_result:
@@ -96,7 +96,7 @@ def test_config(formula: str, config: dict) -> bool:
             print(f"Result: {result}")
             print(f"Engine Result: {engine_result}")
             print("\n"*3)
-            break
+            raise Exception("Config gives wrong result")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import json
 import numpy as np
 from typing import Tuple
-import matrix_to_json
+import src.translation.matrix_to_json
 
 def calculate_matrix_size(number_of_bugs: int, control: bool) -> Tuple[int, int]:
     """Calculate the size of a matrix given the number of bugs and a control flag.
