@@ -80,7 +80,7 @@ class BugPlus(Env):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config()
+        vector = load_config(True)
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
