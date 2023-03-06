@@ -138,6 +138,8 @@ def generate(directory: str, num_edges: int, low: int, high: int, all_permutatio
             for x in range(low, high):
                 for y in range(low, high):
                     config_result = calculate_result(formula=formula, x=x, y=y)[1]
+                    if config_result < 1:
+                        continue
                     # Add x, y, and the result in front of the config
                     result.append([x, y, config_result, *config])
     
