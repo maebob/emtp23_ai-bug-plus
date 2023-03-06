@@ -2,9 +2,13 @@ import math
 import json
 import numpy as np
 import sys
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+import os
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
 from src.api.boardTypes import EdgeType, Edge, PortAdress, PortType
 
 
