@@ -4,6 +4,7 @@ import sys
 import os
 from dotenv import load_dotenv
 import json
+from typing import List
 
 # load the .env file
 load_dotenv()
@@ -78,10 +79,28 @@ def delete_exact_edges(array: np.ndarray, num_edges: int) -> np.ndarray:
     return unique_permutations
 
 
-def generate(directory, num_edges, low, high, all_permutations, output):
+def generate(directory: str, num_edges: int, low: int, high: int, all_permutations: bool, output: str) -> None:
+    """
+    Generate a list of configurations for a set of JSON files.
+
+    Args:
+    directory (str): The directory containing the JSON files.
+    num_edges (int): The number of edges to delete from each matrix.
+    low (int): The lower bound of the range of values for x and y.
+    high (int): The upper bound of the range of values for x and y.
+    all_permutations (bool): If True, generate all possible permutations of the matrices with the specified number of edges deleted. If False, generate only permutations with exactly the specified number of edges deleted.
+    output (str): The filename of the output CSV file.
+
+    Returns:
+    None
+
+    Raises:
+    None
+    """
+
+    result: List[List[int]] = []
     
-    result = []
-    # get all json files in the configs folder
+    # Iterate over all JSON files in the specified directory
     for file in os.listdir(directory):
         if not file.endswith(".json"):
             continue
@@ -98,6 +117,7 @@ def generate(directory, num_edges, low, high, all_permutations, output):
             print(f"Error in {file}")
             continue
 
+        # Create control and data flow matrices
         control, data = create_matrices(data)
         
         # Flatten the matrices
@@ -113,17 +133,15 @@ def generate(directory, num_edges, low, high, all_permutations, output):
         else:
             permutations = delete_exact_edges(combined, num_edges)
         
-        
-
         # Create a list of all the possible configurations
         for config in permutations:
             for x in range(low, high):
                 for y in range(low, high):
                     config_result = calculate_result(formula=formula, x=x, y=y)[1]
-                    # Add x, y, and the result infront of the config
+                    # Add x, y, and the result in front of the config
                     result.append([x, y, config_result, *config])
     
-    # Save the result to a csv file as ints 
+    # Save the result to a CSV file as integers 
     np.savetxt(output, result, delimiter=";", fmt="%d")
     print(f"Saved {len(result)} configurations to {output}")
 
