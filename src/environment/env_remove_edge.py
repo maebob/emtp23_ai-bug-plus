@@ -105,7 +105,7 @@ class BugPlus(Env):
                 ep_return {int} -- The return of the episode.
         """
         self.epsiode_length += 1
-        if self.epsiode_length > 30:
+        if self.epsiode_length > 100: #30:
             reward = -1
             self.done = True
             truncated = True
@@ -157,7 +157,7 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            reward = -10
+            reward = -30 # -10 # change timeout error reward in order to make this option less attractive with more steps allowed
             done = True
             return reward, done
         except:
