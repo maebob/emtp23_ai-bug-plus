@@ -105,7 +105,7 @@ class BugPlus(Env):
                 ep_return {int} -- The return of the episode.
         """
         self.epsiode_length += 1
-        if self.epsiode_length > 100: #30:
+        if self.epsiode_length > 30:
             reward = -1
             self.done = True
             truncated = True
@@ -157,7 +157,7 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            reward = -30 # -10 # change timeout error reward in order to make this option less attractive with more steps allowed
+            reward = -10
             done = True
             return reward, done
         except:
@@ -182,8 +182,7 @@ class BugPlus(Env):
         '''
         TODO: write documentation
         '''
-        # self.state["matrix"] = vector[3:]
-        self.state["matrix"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
+        self.state["matrix"] = vector[3:]
 
     def set_input_output_state(self, vector):
         '''Set the input and output values of the environment.'''
