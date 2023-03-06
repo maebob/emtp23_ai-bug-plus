@@ -182,7 +182,8 @@ class BugPlus(Env):
         '''
         TODO: write documentation
         '''
-        self.state["matrix"] = vector[3:]
+        # self.state["matrix"] = vector[3:]
+        self.state["matrix"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
 
     def set_input_output_state(self, vector):
         '''Set the input and output values of the environment.'''
