@@ -20,7 +20,7 @@ SPACE_SIZE = 1_000
 INDEX = 0
 
 # load config file and do some simple preprocessing
-config_path = os.environ.get('config_path')
+config_path = os.environ.get('src/train_data/2_edges.csv')
 df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
@@ -80,7 +80,7 @@ class BugPlus(Env):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config()
+        vector = load_config(self.load_new_config)
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
@@ -121,9 +121,9 @@ class BugPlus(Env):
         else:
             truncated = False
 
-        if reward == -10 and done:
+        if reward < 0 and done:
             self.load_new_config = False
-        else:
+        elif reward > 0 and done:
             self.load_new_config = True
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 

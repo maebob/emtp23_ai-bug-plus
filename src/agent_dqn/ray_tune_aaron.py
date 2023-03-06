@@ -23,22 +23,16 @@ from src.environment.env_remove_edge import BugPlus
 os.system('clear')
 ray.init()
 
-# implement erarly stopping based on the mean reward
-stop = {
-    "episode_reward_mean": 100,
-    "timesteps_total": 100000,
-}
-
 # TODO: test for hyperparameter tuning: config before tune.run with grid_search
 # 'parameter_name': tune.grid_search([True, False])
 
-tune.run("DQN", 
+tune.run("PPO", 
         config={"env": BugPlus, 
             "seed": 42069,
             "framework": "torch",
-            "num_workers": 2, # TODO: anpassen
+            "num_workers": 20, # TODO: anpassen
             "num_gpus": 0,
-            "num_envs_per_worker": 1,
+            "num_envs_per_worker": 10,
             "num_cpus_per_worker": 1,
         },
          local_dir="result_data/",
@@ -46,7 +40,7 @@ tune.run("DQN",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="dqn_remove_edge",
+                 group="PPO_2_edges_all_configs",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -55,6 +49,7 @@ tune.run("DQN",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
+    stop={"episode_reward_mean": 99.1},
 )
 # Warning message from run:
 # Current log_level is WARN.
