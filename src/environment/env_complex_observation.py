@@ -20,8 +20,7 @@ SPACE_SIZE = 1_000
 INDEX = 0
 
 # load config file and do some simple preprocessing
-config_path = os.environ.get('src/train_data/2_edges.csv')
-df = pd.read_csv(config_path, sep=";", header=None)
+df = pd.read_csv("src/train_data/2_edges.csv", sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
@@ -42,6 +41,7 @@ def load_config(load_new: bool = False):
     
     vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
     return vector
+
 
 class BugPlus(Env):
     def __init__(self, render_mode=None):
