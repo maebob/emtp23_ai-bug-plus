@@ -105,11 +105,13 @@ class BugPlus(Env):
         if self.epsiode_length > 100: #30:
             self.done = True
             truncated = True
-            return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
+            reward = -1
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
             # The action was already performed, punish the agent
-            reward = -0.2
+            # reward = -0.2
+            reward = 0 # sparse reward
             done = False
             truncated = False
             return self.state, reward, done, truncated, {'ep_return': self.ep_return}
@@ -151,23 +153,27 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            reward = -30 #-10 #TODO: change back
+            # reward = -10
+            reward = -2 # sparse reward
             done = True
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
-            reward = -0.1
+            # reward = -0.1
+            reward = 0 # sparse reward
             done = False
             
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
-            reward = 100
+            # reward = 100
+            reward = 1 # sparse reward
             done = True
             return reward, done
         # Engine evaluated but result was not correct
-        reward = -0.1
+        # reward = -0.1
+        reward = 0 # sparse reward
         done = False
         return reward, done
 
