@@ -152,3 +152,4 @@ config.json
 .idea/BugPlusEngine.iml
 src/.DS_Store
 .DS_Store
+result_data/
