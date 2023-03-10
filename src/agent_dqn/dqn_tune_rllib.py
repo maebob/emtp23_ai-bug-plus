@@ -25,10 +25,9 @@ ray.init()
 
 # implement erarly stopping based on the mean reward
 stop = {
-    "episode_reward_mean": 1,
+    "episode_reward_mean": 100,
     "timesteps_total": 100000,
 }
-
 
 # TODO: test for hyperparameter tuning: config before tune.run with grid_search
 # 'parameter_name': tune.grid_search([True, False])
@@ -52,7 +51,7 @@ tune.run("PPO",
                  entity="bugplus",
              ),
 ],
-    verbose=1,
+    verbose=0,
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
