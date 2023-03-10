@@ -37,7 +37,10 @@ def delete_edges(array: np.ndarray, num_edges: int) -> np.ndarray:
         perm = np.copy(array)
         for index in indices:
             perm[index] = 0
-        permutations.append(perm)
+        
+        # Check the number of 1 in perm
+        if np.count_nonzero(perm) != np.count_nonzero(array):
+            permutations.append(perm)
 
     # Remove duplicates
     unique_permutations = np.unique(permutations, axis=0)
@@ -150,4 +153,4 @@ def generate(directory: str, num_edges: int, low: int, high: int, all_permutatio
 
 
 if (__name__ == "__main__"):
-    generate(directory="src/configs", num_edges=2, low=5, high=10, all_permutations=False, output="src/train_data/2_edges.csv")
+    generate(directory="src/configs", num_edges=3, low=5, high=10, all_permutations=True, output="src/train_data/3_edges_5_10.csv")

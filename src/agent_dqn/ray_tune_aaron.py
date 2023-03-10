@@ -40,7 +40,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="PPO_2_edges_all_configs",
+                 group="PPO_3_edges_all_configs",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -49,7 +49,7 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
-    stop={"episode_reward_mean": 99.1},
+    stop={"episode_reward_mean": 93.1},
 )
 # Warning message from run:
 # Current log_level is WARN.
