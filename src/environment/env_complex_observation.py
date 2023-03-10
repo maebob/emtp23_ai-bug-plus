@@ -24,7 +24,9 @@ df = pd.read_csv("src/train_data/2_edges.csv", sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
-
+solved_problems = 0
+unsolved_problems = 0
+loops = 0
 
 def load_config(load_new: bool = False):
     """
@@ -107,6 +109,7 @@ class BugPlus(Env):
             self.done = True
             truncated = True
             reward = 0 # sparse reward
+            unsolved_problems += 1
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
@@ -158,6 +161,8 @@ class BugPlus(Env):
             # reward = -10
             reward = 0 # sparse reward
             done = True
+            unsolved_problems += 1
+            loops += 1
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
@@ -171,6 +176,10 @@ class BugPlus(Env):
             # If the result is correct, the reward is 100
             # reward = 100
             reward = 1 # sparse reward
+            solved_problems += 1
+            print("Solved problems: ", solved_problems)
+            print("Unsolved problems: ", unsolved_problems)
+            print("    davon Loops: ", loops)
             done = True
 
             return reward, done
