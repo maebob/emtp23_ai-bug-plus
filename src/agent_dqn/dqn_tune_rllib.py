@@ -29,14 +29,12 @@ stop = {
     "timesteps_total": 100000,
 }
 
-# TODO: test for hyperparameter tuning: config before tune.run with grid_search
-# 'parameter_name': tune.grid_search([True, False])
 
 tune.run("PPO", 
         config={"env": BugPlus, 
             "seed": 42069,
             "framework": "torch",
-            "num_workers": 2, # TODO: anpassen
+            "num_workers": 2, 
             "num_gpus": 0,
             "num_envs_per_worker": 1,
             "num_cpus_per_worker": 1,
@@ -56,6 +54,3 @@ tune.run("PPO",
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
 )
-# Warning message from run:
-# Current log_level is WARN.
-# For more information, set 'log_level': 'INFO' / 'DEBUG' or use the -v and -vv flags.
