@@ -107,7 +107,8 @@ class BugPlus(Env):
         if self.epsiode_length > 30:
             self.done = True
             truncated = True
-            return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
+            reward = 0
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
             # The action was already performed, punish the agent
