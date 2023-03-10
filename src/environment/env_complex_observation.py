@@ -123,7 +123,7 @@ class BugPlus(Env):
         else:
             truncated = False
 
-        if reward < 0 and done:
+        if reward <= 0 and done:
             self.load_new_config = False
         elif reward > 0 and done:
             self.load_new_config = True
