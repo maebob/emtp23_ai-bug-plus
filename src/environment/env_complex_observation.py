@@ -19,8 +19,10 @@ from src.engine.eval import main as eval_engine
 SPACE_SIZE = 1_000
 INDEX = 0
 
+
 # load config file and do some simple preprocessing
-df = pd.read_csv("src/train_data/2_edges.csv", sep=";", header=None)
+config_path = os.environ.get('config_path')
+df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
