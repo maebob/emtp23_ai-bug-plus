@@ -177,9 +177,6 @@ class BugPlus(Env):
             # reward = 100
             reward = 1 # sparse reward
             solved_problems += 1
-            print("Solved problems: ", solved_problems)
-            print("Unsolved problems: ", unsolved_problems)
-            print("    davon Loops: ", loops)
             done = True
 
             return reward, done
