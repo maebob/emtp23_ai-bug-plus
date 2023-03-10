@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-from src.environment.env_remove_edge import BugPlus
+from src.environment.env_complex_observation import BugPlus
 
 
 # clear the terminal
@@ -32,7 +32,7 @@ stop = {
 # TODO: test for hyperparameter tuning: config before tune.run with grid_search
 # 'parameter_name': tune.grid_search([True, False])
 
-tune.run("DQN", 
+tune.run("PPO", 
         config={"env": BugPlus, 
             "seed": 42069,
             "framework": "torch",
@@ -46,7 +46,7 @@ tune.run("DQN",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="dqn_remove_edge",
+                 group="all_empty",
                  job_type="train",
                  entity="bugplus",
              ),
