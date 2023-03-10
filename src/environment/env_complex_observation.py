@@ -24,6 +24,9 @@ df = pd.read_csv("src/train_data/2_edges.csv", sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
+solved_problems = 0
+unsolved_problems = 0
+loops = 0
 
 def load_config(load_new: bool = False):
     """
@@ -105,7 +108,8 @@ class BugPlus(Env):
         if self.epsiode_length > 100: #30:
             self.done = True
             truncated = True
-            reward = -1
+            reward = 0 # sparse reward
+            unsolved_problems += 1
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
@@ -123,10 +127,11 @@ class BugPlus(Env):
         else:
             truncated = False
 
-        if reward < 0 and done:
-            self.load_new_config = False
-        elif reward > 0 and done:
-            self.load_new_config = True
+        # if reward < 0 and done:
+        #     self.load_new_config = False
+        # elif reward > 0 and done:
+        #     self.load_new_config = True
+        self.load_new_config = True # always load new config
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
@@ -154,8 +159,10 @@ class BugPlus(Env):
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
             # reward = -10
-            reward = -2 # sparse reward
+            reward = 0 # sparse reward
             done = True
+            unsolved_problems += 1
+            loops += 1
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
@@ -169,7 +176,9 @@ class BugPlus(Env):
             # If the result is correct, the reward is 100
             # reward = 100
             reward = 1 # sparse reward
+            solved_problems += 1
             done = True
+
             return reward, done
         # Engine evaluated but result was not correct
         # reward = -0.1
