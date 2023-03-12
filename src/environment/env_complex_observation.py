@@ -104,7 +104,7 @@ class BugPlus(Env):
                 ep_return {int} -- The return of the episode.
         """
         self.epsiode_length += 1
-        if self.epsiode_length > 10:
+        if self.epsiode_length > 5:
             self.done = True
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
