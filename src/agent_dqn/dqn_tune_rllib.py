@@ -25,7 +25,7 @@ ray.init()
 
 # implement erarly stopping based on the mean reward
 stop = {
-    "episode_reward_mean": 99.8, # set mean reward lower than 100 as the agent gets negative rewards for each step!
+    "episode_reward_mean": 100, # can mean reward of 100 even be reached if agent collects negative reward for the first step??
     "timesteps_total": 100000,
 }
 
