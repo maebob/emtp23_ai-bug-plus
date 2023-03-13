@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-from src.environment.env_complex_observation import BugPlus
+from src.environment.env_complex_observation_sparse_rewards import BugPlus
 
 
 # clear the terminal
@@ -25,7 +25,7 @@ ray.init()
 
 # implement erarly stopping based on the mean reward
 stop = {
-    "episode_reward_mean": 100, # can mean reward of 100 even be reached if agent collects negative reward for the first step??
+    "episode_reward_mean": 100,
     "timesteps_total": 100000,
 }
 
@@ -36,7 +36,7 @@ tune.run("PPO",
             "framework": "torch",
             "num_workers": 2, 
             "num_gpus": 0,
-            "num_envs_per_worker": 10,
+            "num_envs_per_worker": 1,
             "num_cpus_per_worker": 1,
         },
          local_dir="result_data/",
@@ -44,7 +44,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="PPO_2_edges_all_configs_05_episode_length",
+                 group="PPO_2_edges_all_configs_positive_rewards",
                  job_type="train",
                  entity="bugplus",
              ),
