@@ -41,7 +41,8 @@ class BugPlus(Env):
                 low = np.NINF,
                 high = np.inf,
                 shape = (1,),
-                dtype = np.int64)
+                dtype = np.int64),
+            "error_info": spaces.MultiBinary((((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2))
             })
         # Action space of the environment
         self.action_space = spaces.Discrete(((2 + self.n_bugs) * (1 + 2 * self.n_bugs)) * 2)
@@ -167,4 +168,5 @@ class BugPlus(Env):
         Set the output value of the environment.
         '''
         vector[2] #TODO
+
 
