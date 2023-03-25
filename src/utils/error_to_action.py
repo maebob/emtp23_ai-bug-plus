@@ -16,7 +16,7 @@ def translate(error: dict, no_bugs: int) -> np.ndarray:
 
     """
 
-    actions = np.array([])
+    actions = []
     index_col = 0
     indices_missing_edges = []
 
@@ -37,7 +37,7 @@ def translate(error: dict, no_bugs: int) -> np.ndarray:
         # Translate indices into the corresponding actions used to place the edges
         for index_pair in indices_missing_edges:
             
-            actions = np.append(actions, (index_pair[1] + (2 * no_bugs) + index_pair[0] + 35))
+            actions.append(index_pair[1] * (2 * no_bugs) + index_pair[0] + 35) 
 
     else:
         # CONTROL FLOW
@@ -56,6 +56,12 @@ def translate(error: dict, no_bugs: int) -> np.ndarray:
 
         # Translate indices into the corresponding actions used to place the edges
         for index_pair in indices_missing_edges:
-            actions = np.append(actions, index_pair[1] + (2 * no_bugs) + index_pair[0])
+            actions.append(index_pair[1] * (2 * no_bugs + 1) + index_pair[0])
 
     return actions
+
+if __name__ == '__main__':
+    error = {'port': 'Right', 'bug': 2}
+    no_bugs = 3
+    actions = translate(error, no_bugs)
+    print(actions)
