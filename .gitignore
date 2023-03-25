@@ -153,3 +153,6 @@ config.json
 src/.DS_Store
 .DS_Store
 result_data/
+
+#ignore rlib results
+result_data/

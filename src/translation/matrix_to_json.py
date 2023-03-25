@@ -2,9 +2,13 @@ import math
 import json
 import numpy as np
 import sys
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+import os
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
 from src.api.boardTypes import EdgeType, Edge, PortAdress, PortType
 
 
@@ -103,6 +107,11 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
     Returns:
         dict -- The json
     """
+    # Check if the control matrix less more columns than the data matrix
+    if control_matrix.shape[1] < data_matrix.shape[1]:
+        # This should never happen -> raise error
+        raise ValueError("The control matrix has less columns than the data matrix")
+    
     # Get all bugs used in the matrix
     bugs = list(set(np.argwhere(control_matrix == 1).flatten().tolist() + np.argwhere(data_matrix == 1).flatten().tolist()))
     bugs = [math.ceil(bug / 2) for bug in bugs]
@@ -129,25 +138,27 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
 
     return json
 
-# if __name__ == "__main__":
-#     control_matrix_incrementor = np.array([
-#         [0, 0, 1, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0, 0, 0],
-#         [1, 0, 0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0, 0, 0]
-#         ])
-#     data_matrix_incrementor = np.array([
-#         [0, 0, 1, 0, 0],
-#         [1, 0, 0, 0, 0],
-#         [0, 1, 0, 0, 0],
-#         [0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0]
-#     ])
-#     config = main(control_matrix=control_matrix_incrementor, data_matrix=data_matrix_incrementor, data_up=1, data_down=1)
-#     # write config to json file
-#     with open('config_test2.json', 'w') as outfile:
-#         json.dump(config, outfile, indent=4)
+if __name__ == "__main__":
+    control_matrix_incrementor = np.array([
+        [0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]
+        ])
+    data_matrix_incrementor = np.array([
+        [0, 0, 1, 0, 0],
+        [1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ])
+    matrix = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0])
+
+    config = main(control_matrix=matrix[:35].reshape(3 + 2, 2 * 3 + 1), data_matrix=matrix[35:].reshape(2 * 3 + 1, 3 + 2), data_up=1, data_down=1)
+    # write config to json file
+    with open('config_test2.json', 'w') as outfile:
+        json.dump(config, outfile, indent=4)
     
