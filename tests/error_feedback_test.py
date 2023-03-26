@@ -1,7 +1,7 @@
 import sys
 sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
 
-import src.environment.environment_ray as env
+import src.environment.env_complex_observation_engine_feedback as env
 import src.utils.error_to_action as error_to_action
 from src.translation.matrix_to_json import main as matrix_to_json
 import pandas as pd
@@ -17,3 +17,4 @@ env = env.BugPlus()
 env.reset()
 
 env.step(39)
+env.step(13)

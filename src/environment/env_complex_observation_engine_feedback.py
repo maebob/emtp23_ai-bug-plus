@@ -41,7 +41,8 @@ def load_config(load_new: bool = False):
         global INDEX
         INDEX = np.random.randint(0, len(DF))
     
-    vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
+    # vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
+    vector = np.array(df.iloc[0]) # get the vector without the index from the configs in the DF
     return vector
 
 
@@ -165,14 +166,17 @@ class BugPlus(Env):
             # something in the control flow is not connected (but not a loop), execution cannot terminate
             # The engine feedback is translated and fed into the current state of the environment
             actions = []
+            e = dict(e.args[0])
+            error = {'port': e['fromPort'],
+                     'bug': e['fromBug']}
             try:
-                actions = translate_error_to_actions(e, self.no_bugs)
+                actions = translate_error_to_actions(error, self.no_bugs)
             except:
                 # TODO How to handle errors that are not related to missing edges?
                 pass
 
             # Create numpy array of the engine feedback
-            engine_feedback = np.zeros(len(self.state.get("enigne_feedback")))
+            engine_feedback = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
             for action in actions:
                 engine_feedback[action] = 1
             
@@ -184,7 +188,7 @@ class BugPlus(Env):
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
-            self.state["engine_feedback"] = np.zeros(len(self.state.get("enigne_feedback")))
+            self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
             reward = 100
             done = True
             return reward, done
