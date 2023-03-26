@@ -1,4 +1,4 @@
-from gym import Env, spaces
+from gymnasium import Env, spaces as gym
 import numpy as np
 import pandas as pd
 import sys
