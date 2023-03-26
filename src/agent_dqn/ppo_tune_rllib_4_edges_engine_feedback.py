@@ -11,6 +11,7 @@ import sys
 import os
 from dotenv import load_dotenv
 
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 # load the .env file
 load_dotenv()
