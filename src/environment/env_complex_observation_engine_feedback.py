@@ -186,6 +186,13 @@ class BugPlus(Env):
             done = False
             
             return reward, done
+        except:
+            # If there is an error other than a value error, the bug is still invalid and ththus receives a negative reward
+            # Because the error can't be translated into feedback for the agent, the engine feedback is set to 0
+            self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)            
+            reward = -0.1
+            done = False
+
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
             self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
