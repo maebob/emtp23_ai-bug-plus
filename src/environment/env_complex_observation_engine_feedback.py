@@ -192,6 +192,7 @@ class BugPlus(Env):
             self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)            
             reward = -0.1
             done = False
+            return reward, done
 
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
