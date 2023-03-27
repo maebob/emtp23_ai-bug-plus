@@ -19,7 +19,7 @@ from src.environment.env_complex_observation import BugPlus
 
 
 # clear the terminal
-os.system('clear')
+os.system('cls' if os.name == 'nt' else 'clear')
 ray.init()
 
 # implement erarly stopping based on the mean reward
