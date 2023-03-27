@@ -1,5 +1,5 @@
-from ray.tune.integration.wandb import WandbLoggerCallback
-# from ray.air.integrations.wandb import WandbLoggerCallback
+# from ray.tune.integration.wandb import WandbLoggerCallback
+from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.tune.stopper import CombinedStopper, ExperimentPlateauStopper, MaximumIterationStopper
 import ray.rllib.algorithms.dqn
 import ray.rllib.algorithms.ppo
@@ -10,8 +10,6 @@ from ray import tune
 import sys
 import os
 from dotenv import load_dotenv
-
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 # load the .env file
 load_dotenv()

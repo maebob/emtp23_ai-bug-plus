@@ -1,4 +1,4 @@
-from gymnasium import Env, spaces as gym
+from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
 import sys
@@ -156,7 +156,7 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            self.state["engine_feedback"] = np.zeros(len(self.state.get("enigne_feedback")))
+            self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
             reward = -10 
             done = True
             return reward, done
