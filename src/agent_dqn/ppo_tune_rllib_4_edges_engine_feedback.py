@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path')) #TODO: adjust path for project
-from src.environment.env_complex_observation_engine_feedback import BugPlus
+from src.environment.env_complex_observation import BugPlus
 
 
 # clear the terminal
@@ -43,7 +43,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="PPO_4_edges_Engine_Feedback_Observation_Space", #TODO: adjust group name
+                 group="Debugging Mae ._.", #TODO: adjust group name
                  job_type="train",
                  entity="bugplus",
              ),
