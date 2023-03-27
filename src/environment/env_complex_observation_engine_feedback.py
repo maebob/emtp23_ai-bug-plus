@@ -89,6 +89,7 @@ class BugPlus(Env):
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
+        self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
         return self.state, {}
 
     def step(self, action: torch):
