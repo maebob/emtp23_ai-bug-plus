@@ -155,3 +155,5 @@ src/.DS_Store
 
 #ignore rlib results
 result_data/
+result_data_coriculumn/
+result_data_no_coriculum/

@@ -145,12 +145,20 @@ def generate(directory: str, num_edges: int, low: int, high: int, all_permutatio
                         continue
                     # Add x, y, and the result in front of the config
                     result.append([x, y, config_result, *config])
+
+    # shuffle the result
+    np.random.shuffle(result)
     
+    # if the result is longer than 50_000, only take the first 50_000
+    if len(result) > 50_000:
+        result = result[:50_000]
+
     # Save the result to a CSV file as integers 
     np.savetxt(output, result, delimiter=";", fmt="%d")
     print(f"Saved {len(result)} configurations to {output}")
+    print(f"Length of each configuration: {len(result[0])}")
 
 
 
 if (__name__ == "__main__"):
-    generate(directory="src/configs", num_edges=13, low=5, high=10, all_permutations=False, output="src/train_data/all_edges_5_10_6step.csv")
+    generate(directory="src/configs", num_edges=6, low=5, high=10, all_permutations=False, output="src/train_data/all_edges_5_10_6edges.csv")
