@@ -74,7 +74,9 @@ def delete_exact_edges(array: np.ndarray, num_edges: int) -> np.ndarray:
         perm = np.copy(array)
         for index in indices:
             perm[index] = 0
-        permutations.append(perm)
+        # Check the number of 1 in perm
+        if np.count_nonzero(perm) == np.count_nonzero(array) - num_edges:
+            permutations.append(perm)
 
     # Remove duplicates
     unique_permutations = np.unique(permutations, axis=0)

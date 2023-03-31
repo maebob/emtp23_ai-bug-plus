@@ -27,7 +27,7 @@ df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
 
-def load_config(load_new: bool = False):
+def load_config(load_new: bool = False, difficulty: int = 0):
     """
     This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
     Otherwise, the last loaded configuration is returned.
@@ -37,11 +37,13 @@ def load_config(load_new: bool = False):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
+    # Filter the DF by difficulty last position in a row
+    df = DF[DF[73] == difficulty]
     if load_new:
         global INDEX
-        INDEX = np.random.randint(0, len(DF))
+        INDEX = np.random.randint(0, len(df))
     
-    vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
+    vector = np.array(df.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
     return vector
 
 
@@ -77,6 +79,7 @@ class BugPlus(Env):
         self.ep_return = 0
         self.load_new_config = True
         self.epsiode_length = 0
+        self.difficulty = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
@@ -185,3 +188,7 @@ class BugPlus(Env):
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]
+
+
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty

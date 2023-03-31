@@ -1,3 +1,4 @@
+from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 from itertools import count
 import json
 import sys
@@ -10,13 +11,13 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
-from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
-ITERATIONS = 0 # The number of iterations the engine has run
-MAX_ITERATIONS = 5 # The maximum number of iterations the engine is allowed to run
+ITERATIONS = 0  # The number of iterations the engine has run
+MAX_ITERATIONS = 5  # The maximum number of iterations the engine is allowed to run
+
 
 def stack_size2a(size=2):
     """
@@ -118,8 +119,8 @@ def get_next_bug(fromBug: int, fromPort: str) -> int:
         int -- The id of the next bug
     """
     if (memory_connections.get(f"{fromBug}_{fromPort}") is None):
-        raise ValueError(
-            f"Port {fromPort} of bug {fromBug} is not connected to anything")
+        raise ValueError({"fromBug": fromBug, "fromPort": fromPort,
+                         "text": f"Port {fromPort} of bug {fromBug} is not connected to anything"})
     return int(memory_connections[f"{fromBug}_{fromPort}"].split("_")[0])
 
 
@@ -438,10 +439,10 @@ def eval_bug(bug_id: int) -> None:
     if bug_id is None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
-    
+
     # Increment the global iteration counter
     global ITERATIONS
-    
+
     while memory_bug_types.get(bug_id) != "root" and ITERATIONS < MAX_ITERATIONS:
         ITERATIONS = ITERATIONS + 1
         if memory_bug_types.get(bug_id) == "plus":
@@ -450,11 +451,12 @@ def eval_bug(bug_id: int) -> None:
             bug_id = evaluate_nested_bug(bug_id)
         else:
             raise Exception("Unknown bug type")
-    
+
     # Stop the evaluation if it took # too long
     if ITERATIONS >= MAX_ITERATIONS:
         raise TimeoutError("Evaluation took too long")
     return memory_ports
+
 
 def main(board: Bug) -> dict:
     """The main function of the program
@@ -468,11 +470,11 @@ def main(board: Bug) -> dict:
     memory_ports.clear()
     memory_bug_types.clear()
     global ITERATIONS
-    ITERATIONS = 0  
+    ITERATIONS = 0
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
-    
+
     eval_bug(first_bug_id)
 
     return memory_ports
