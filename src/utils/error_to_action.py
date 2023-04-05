@@ -30,7 +30,7 @@ def translate(error: dict, no_bugs: int) -> np.ndarray:
             index_col = 1 + int(error['bug'])
 
         index_row = 0
-        while index_row <= (no_bugs + 1):
+        while index_row <= (no_bugs * 2 + 1):
             indices_missing_edges.append([index_col, index_row])
             index_row += 1
         
