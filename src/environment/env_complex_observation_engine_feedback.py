@@ -50,6 +50,8 @@ class BugPlus(Env):
         '''Initialize the environment.'''
         # Number of possible bugs
         self.no_bugs = 3
+        # Actions to possibly solve last error
+        self.actions = []
 
         # Observation and action space of the environment
         self.observation_space = spaces.Dict({
@@ -107,6 +109,11 @@ class BugPlus(Env):
             info {dict}
                 ep_return {int} -- The return of the episode.
         """
+        #Check if the action can be used to solve the last error
+        solving_action = False
+        if action in self.actions:
+            solving_action = True
+
         self.epsiode_length += 1
         if self.epsiode_length > 30:
             self.done = True
@@ -131,6 +138,9 @@ class BugPlus(Env):
             self.load_new_config = False
         elif reward > 0 and done:
             self.load_new_config = True
+
+        if solving_action and not done:
+                reward = 0.2
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
@@ -146,7 +156,6 @@ class BugPlus(Env):
 
         control_matrix = matrix[:split_index].reshape(self.no_bugs + 2, 2 * self.no_bugs + 1)
         data_matrix = matrix[split_index:].reshape(2 * self.no_bugs + 1, self.no_bugs + 2)
-       
 
         matrix_as_json = matrix_to_json(
             control_matrix=control_matrix,    # controlflow shape (2n+1, n+2)
@@ -158,6 +167,7 @@ class BugPlus(Env):
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
             self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
+            self.actions = []
             reward = -10 
             done = True
             return reward, done
@@ -165,19 +175,18 @@ class BugPlus(Env):
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
             # The engine feedback is translated and fed into the current state of the environment
-            actions = []
             e = dict(e.args[0])
             error = {'port': e['fromPort'],
                      'bug': e['fromBug']}
             try:
-                actions = translate_error_to_actions(error, self.no_bugs)
+                self.actions = translate_error_to_actions(error, self.no_bugs)
             except:
                 # TODO How to handle errors that are not related to missing edges?
                 pass
 
             # Create numpy array of the engine feedback
             engine_feedback = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)
-            for action in actions:
+            for action in self.actions:
                 engine_feedback[action] = 1
             
             self.state["engine_feedback"] = engine_feedback
@@ -189,7 +198,8 @@ class BugPlus(Env):
         except:
             # If there is an error other than a value error, the bug is still invalid and ththus receives a negative reward
             # Because the error can't be translated into feedback for the agent, the engine feedback is set to 0
-            self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)            
+            self.state["engine_feedback"] = np.zeros(((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)   
+            self.actions = []         
             reward = -0.1
             done = False
             return reward, done
