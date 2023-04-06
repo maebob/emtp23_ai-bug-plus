@@ -28,6 +28,7 @@ df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
 wrong_counter = 0
+episode_counter = 0
 
 def load_config(load_new: bool = False):
     """
@@ -62,6 +63,7 @@ class BugPlus(Env):
             "output": spaces.Discrete(10 * SPACE_SIZE),
             })
         
+        self.action_space = spaces.Box(low=0, high=70, shape=(1,), dtype=np.int32)
         
         self.state = {
             "matrix": np.zeros(
@@ -70,7 +72,6 @@ class BugPlus(Env):
             "down": 0,
             "output": 0,
         }
-        self.action_space = spaces.Box(low=0, high=70, shape=(1,), dtype=np.int32)
 
 
         # Flag to indicate if the episode is done
