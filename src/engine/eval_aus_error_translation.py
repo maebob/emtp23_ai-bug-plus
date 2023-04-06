@@ -18,7 +18,6 @@ memory_bug_types = {}
 ITERATIONS = 0  # The number of iterations the engine has run
 MAX_ITERATIONS = 5  # The maximum number of iterations the engine is allowed to run
 
-
 def stack_size2a(size=2):
     """
     Get stack size for caller's frame.
@@ -456,7 +455,6 @@ def eval_bug(bug_id: int) -> None:
     if ITERATIONS >= MAX_ITERATIONS:
         raise TimeoutError("Evaluation took too long")
     return memory_ports
-
 
 def main(board: Bug) -> dict:
     """The main function of the program
