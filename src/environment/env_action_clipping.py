@@ -89,9 +89,6 @@ class BugPlus(Env):
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
-        #restrict action space before returning the state
-        # clip = find_action_space(self) # find range for clipping
-        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
 
         return self.state, {} # TODO: return action_space here?
 
@@ -119,7 +116,8 @@ class BugPlus(Env):
         
         print("\n", self.action_space, "\naction before action clipping:", action_original)
         # enforce action clipping:
-        if action_original not in self.action_space:           
+        clip_range = find_action_space(self) # find range for clipping
+        if action_original not in clip_range:  #todo ###########         
             if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
                 action_original = self.action_space.low
             else:
@@ -148,13 +146,6 @@ class BugPlus(Env):
             self.load_new_config = False
         elif reward > 0 and done:
             self.load_new_config = True
-
-        # restrict action space for next step
-        clip = find_action_space(self) # find range for clipping
-        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
-        
-        #TODO: think about if this could be done at the beginning of each step instead
-        # if this is only then used to change the action
 
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
@@ -212,7 +203,7 @@ class BugPlus(Env):
         self.state["output"] = vector[2]
 
 
-def find_action_space(self) -> np.array:
+def find_action_space(self) -> int and int:
     """ Given the current state, restrict the action space for the agent.
     Missing edges are determined by the engine's evalutation of the current state..
     Possible caught errors that trigger a restriction of the action space are:
@@ -223,7 +214,8 @@ def find_action_space(self) -> np.array:
         np.array -- The range of positions to which the action space should be clipped to.
         First element is inclusive, second element is not inclusive. (see example above).  
     """
-    range_for_clipping = [0, 2 * (self.no_bugs + 2) * (2 * self.no_bugs + 1)] # default is full action space
+    range_min = 0 # default is full action space
+    range_max = 2 * (self.no_bugs + 2) * (2 * self.no_bugs + 1)
     # get current state and evaluate the matrix; catch errors and turn this into clipped state
     matrix = deepcopy(self.state.get("matrix"))
     split_index = int(len(matrix) / 2)
@@ -239,7 +231,7 @@ def find_action_space(self) -> np.array:
     try:
         result = eval_engine(matrix_as_json)
     except TimeoutError:
-        range_for_clipping = range_for_clipping # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
+        range_min, range_max = range_for_clipping # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
 
     except ValueError as e:
         # If the bug is not valid, the engine will throw an error
@@ -249,12 +241,16 @@ def find_action_space(self) -> np.array:
         error = {'port': e['fromPort'],
                     'bug': e['fromBug']}
         try:
-            range_for_clipping = translate_to_range(error, self.no_bugs)
+            range_min, range_max = translate_to_range(error, self.no_bugs)
         except:
              # any other errors: return full action space
-            range_for_clipping = range_for_clipping # use default
+            range_min = range_min # use default
+            range_max = range_max # use default
+            # pass TODO: instead?
     except: # catch everythin else?
-        range_for_clipping = range_for_clipping
+        range_min = range_min # use default
+        range_max = range_max # use default
+        # pass TODO: instead?
         wrong_counter += 1
         print('something else went wrong: ', wrong_counter)
-    return range_for_clipping
+    return range_min, range_max

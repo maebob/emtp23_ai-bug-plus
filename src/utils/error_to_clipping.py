@@ -34,7 +34,7 @@ def find_error_columns(error: dict, no_bugs: int) -> int and int:
 
 
 
-def column_to_range_transposed_matrix(control_or_data_matrix: int, no_bugs: int, index_col: int) -> np.array:
+def column_to_range_transposed_matrix(control_or_data_matrix: int, no_bugs: int, index_col: int) -> int and int:
     """
     Given the column index and the the part of a matrix (0 for controlflow, 1 for dataflow),
     this function calculates the range of positions of the transposed matrix of our environment.
@@ -44,7 +44,7 @@ def column_to_range_transposed_matrix(control_or_data_matrix: int, no_bugs: int,
         no_bugs {int} -- The number of bugs on the board.
         index_col {int} -- The column index of the positions to be calculated.
     Returns:
-        np.array -- The range of corresponding positions in the transposed matrix, i.e. min (inclusive) and max (not inclusive).
+        int and int -- The range of corresponding positions in the transposed matrix, i.e. min (inclusive) and max (not inclusive).
     """
     size_matrix = (no_bugs * 2 + 1) * (no_bugs + 2)
     range_from = 0
@@ -59,7 +59,7 @@ def column_to_range_transposed_matrix(control_or_data_matrix: int, no_bugs: int,
         # DATA FLOW
         range_from = index_col * (2 * no_bugs + 1) + size_matrix
         range_to = range_from + (2 * no_bugs + 1)
-    return [range_from, range_to]
+    return range_from, range_to
 
 
 def translate_to_range(error: dict, no_bugs: int) -> np.ndarray:
@@ -78,5 +78,5 @@ def translate_to_range(error: dict, no_bugs: int) -> np.ndarray:
         First element is inclusive, second element is not inclusive. (see example above).
     """
     control_or_data_matrix, index_col = find_error_columns(error, no_bugs)
-    range_for_clipping = column_to_range_transposed_matrix(control_or_data_matrix, no_bugs, index_col)
-    return range_for_clipping
+    range_from, range_to = column_to_range_transposed_matrix(control_or_data_matrix, no_bugs, index_col)
+    return range_from, range_to
