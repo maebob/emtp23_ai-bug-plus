@@ -116,12 +116,13 @@ class BugPlus(Env):
         
         print("\n", self.action_space, "\naction before action clipping:", action_original)
         # enforce action clipping:
-        clip_range = find_action_space(self) # find range for clipping
-        if action_original not in clip_range:  #todo ###########         
-            if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
-                action_original = self.action_space.low
+        clip_from, clip_to = find_action_space(self) # find range for clipping
+        if action_original not in range(clip_from, clip_to):  #todo ###########         
+            if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
+                action_original = clip_from
             else:
-                action_original = self.action_space.high # if action chosen by agent is too high, use maximum action in action space
+                action_original = clip_to   # this would be the default case when using gymnasium.wrapper.ClipActionWrapper
+                                            # if action chosen by agent is too high, use maximum action in action space
         
         # translate action to the position corresponding in the transposed matrix
         action = translate_action(self.no_bugs, action_original) # translate action to the position corresponding in transposed matrix
@@ -231,7 +232,10 @@ def find_action_space(self) -> int and int:
     try:
         result = eval_engine(matrix_as_json)
     except TimeoutError:
-        range_min, range_max = range_for_clipping # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
+        # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
+        range_min = range_min # use default
+        range_max = range_max # use default
+        # pass/continue TODO: instead?
 
     except ValueError as e:
         # If the bug is not valid, the engine will throw an error
@@ -246,11 +250,11 @@ def find_action_space(self) -> int and int:
              # any other errors: return full action space
             range_min = range_min # use default
             range_max = range_max # use default
-            # pass TODO: instead?
+            # pass/continue TODO: instead?
     except: # catch everythin else?
         range_min = range_min # use default
         range_max = range_max # use default
-        # pass TODO: instead?
+        # pass/continue TODO: instead?
         wrong_counter += 1
         print('something else went wrong: ', wrong_counter)
     return range_min, range_max
