@@ -27,6 +27,7 @@ df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
+wrong_counter = 0
 
 def load_config(load_new: bool = False):
     """
@@ -149,6 +150,7 @@ class BugPlus(Env):
         # restrict action space for next step
         clip = find_action_space(self) # find range for clipping
         self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
+        
         #TODO: think about if this could be done at the beginning of each step instead
         # if this is only then used to change the action
 
@@ -249,4 +251,9 @@ def find_action_space(self) -> np.array:
         except:
              # any other errors: return full action space
             range_for_clipping = range_for_clipping # use default
+    except: # catch everythin else?
+        range_for_clipping = range_for_clipping
+        wrong_counter += 1
+        print('something else went wrong: ', wrong_counter)
+    print('clipping range: ', range_for_clipping)
     return range_for_clipping
