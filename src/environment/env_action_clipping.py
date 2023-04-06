@@ -89,8 +89,8 @@ class BugPlus(Env):
         self.set_matrix_state(vector)
         self.epsiode_length = 0
         #restrict action space before returning the state
-        clip = find_action_space(self) # find range for clipping
-        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
+        # clip = find_action_space(self) # find range for clipping
+        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
 
         return self.state, {} # TODO: return action_space here?
 
