@@ -114,7 +114,7 @@ class BugPlus(Env):
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
         
-        print("\n", self.action_space, "\naction before action clipping:", action_original)
+        print("\nclip (", clip_from,", ",clip_to, ") \naction before action clipping:", action_original)
         # enforce action clipping:
         clip_from, clip_to = find_action_space(self) # find range for clipping
         if action_original not in range(clip_from, clip_to):  #todo ###########         
