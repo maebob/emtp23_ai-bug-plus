@@ -88,10 +88,11 @@ class BugPlus(Env):
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
-        # clip = find_action_space(self) # find range for clipping
-        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
+        #restrict action space before returning the state
+        clip = find_action_space(self) # find range for clipping
+        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
 
-        return self.state, {}
+        return self.state, {} # TODO: return action_space here?
 
     def step(self, action_original: torch):
         """
@@ -115,7 +116,7 @@ class BugPlus(Env):
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
         
-        # print("\n", self.action_space, "\naction before action clipping:", action_original)
+        print("\n", self.action_space, "\naction before action clipping:", action_original)
         # enforce action clipping:
         if action_original not in self.action_space:           
             if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
@@ -125,7 +126,7 @@ class BugPlus(Env):
         
         # translate action to the position corresponding in the transposed matrix
         action = translate_action(self.no_bugs, action_original) # translate action to the position corresponding in transposed matrix
-        # print("action after clipping:", action_original, "translated action:", action, "\n", self.state.get("matrix"), "\n")
+        print("action after clipping:", action_original, "translated action:", action, "\n", self.state.get("matrix"), "\n")
 
 
         if self.state.get("matrix")[action] == 1:
@@ -255,5 +256,4 @@ def find_action_space(self) -> np.array:
         range_for_clipping = range_for_clipping
         wrong_counter += 1
         print('something else went wrong: ', wrong_counter)
-    print('clipping range: ', range_for_clipping)
     return range_for_clipping
