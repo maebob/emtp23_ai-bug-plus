@@ -42,7 +42,6 @@ def load_config(load_new: bool = False):
         INDEX = np.random.randint(0, len(DF))
     
     vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
-    vector = vector
     return vector
 
 

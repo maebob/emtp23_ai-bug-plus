@@ -163,4 +163,4 @@ def generate(directory: str, num_edges: int, low: int, high: int, all_permutatio
 
 
 if (__name__ == "__main__"):
-    generate(directory="src/configs", num_edges=6, low=5, high=10, all_permutations=False, output="src/train_data/all_edges_5_10_6edges.csv")
+    generate(directory="src/configs", num_edges=4, low=5, high=10, all_permutations=False, output="src/train_data/all_edges_5_10_4edges.csv")
