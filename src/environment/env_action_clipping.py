@@ -114,9 +114,9 @@ class BugPlus(Env):
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
         
-        print("\nclip (", clip_from,", ",clip_to, ") \naction before action clipping:", action_original)
         # enforce action clipping:
         clip_from, clip_to = find_action_space(self) # find range for clipping
+        print("\nclip (", clip_from,", ",clip_to, ") \naction before action clipping:", action_original)
         if action_original not in range(clip_from, clip_to):  #todo ###########         
             if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
                 action_original = clip_from
