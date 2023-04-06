@@ -118,11 +118,11 @@ class BugPlus(Env):
         
         # print("\n", self.action_space, "\naction before action clipping:", action_original)
         # enforce action clipping:
-        # if action_original not in self.action_space:           
-        #     if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
-        #         action_original = self.action_space.low
-        #     else:
-        #         action_original = self.action_space.high # if action chosen by agent is too high, use maximum action in action space
+        if action_original not in self.action_space:           
+            if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
+                action_original = self.action_space.low
+            else:
+                action_original = self.action_space.high # if action chosen by agent is too high, use maximum action in action space
         
         # translate action to the position corresponding in the transposed matrix
         action = translate_action(self.no_bugs, action_original) # translate action to the position corresponding in transposed matrix
