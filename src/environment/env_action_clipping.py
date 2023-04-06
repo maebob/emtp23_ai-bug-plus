@@ -13,8 +13,7 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.translation.matrix_to_json import main as matrix_to_json
-from src.utils.error_to_clipping import *
-from src.engine.eval import main as eval_engine
+from src.engine.eval_aus_error_translation import main as eval_engine
 from src.utils.translate_action import translate_action # translate actions into the format of a transposed matrix
 from src.utils.error_to_clipping import translate_to_range # translate the error into a range for clipping
 
@@ -71,8 +70,7 @@ class BugPlus(Env):
             "output": 0,
         }
         self.action_space = spaces.Box(low=0, high=70, shape=(1,), dtype=np.int32)
-        # clip = find_action_space(self) # find range for clipping
-        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32)
+
 
         # Flag to indicate if the episode is done
         self.done = False
@@ -149,8 +147,8 @@ class BugPlus(Env):
             self.load_new_config = True
 
         # restrict action space for next step
-        # clip = find_action_space(self) # find range for clipping
-        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
+        clip = find_action_space(self) # find range for clipping
+        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
         #TODO: think about if this could be done at the beginning of each step instead
         # if this is only then used to change the action
 
