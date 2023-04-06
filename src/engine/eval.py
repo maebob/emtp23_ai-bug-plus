@@ -133,7 +133,7 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
     """
     if memory_bug_types.get(bug_id) != "plus" and memory_ports.get(f"{bug_id}_{PortType.Left.value}") is None and memory_ports.get(f"{bug_id}_{PortType.Right.value}") is None:
         # This is a nested bug that has not been evaluated yet -> return the first bug in the nested bug
-        return int(memory_connections[f"{bug_id}_{PortType.In.value}"].split("_")[0])
+        return int(memory_connections.get(f"{bug_id}{PortType.In.value}").split("")[0])
 
     if memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1:
         # The left control out port is active
