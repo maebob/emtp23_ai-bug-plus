@@ -26,8 +26,6 @@ ray.init()
 # 'parameter_name': tune.grid_search([True, False])
 
 
-difficulty = 0
-
 
 tune.run("PPO", 
         config={"env": BugPlus, 
@@ -38,20 +36,9 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             "num_cpus_per_worker": 1,
             "lr": tune.grid_search([0.01, 0.001, 0.0001]), # Specify different learning rates
-            "log_level": "DEBUG", # Set the log level to DEBUG
         },
          local_dir="/home/aaron/BugPlusEngine/checkpoint_test",
-         verbose=1,
-         checkpoint_freq=5,
-         checkpoint_at_end=True,
-         keep_checkpoints_num=5,
-         stop={"episode_reward_mean": 97.1},
-         #resume=True,
-         )
-# Warning message from run:
-# Current log_level is WARN.
-# For more information, set 'log_level': 'INFO' / 'DEBUG' or use the -v and -vv flags.
-callbacks=[
+         callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
@@ -59,4 +46,13 @@ callbacks=[
                  job_type="train",
                  entity="bugplus",
              )
-         ]
+         ],
+         verbose=1,
+         checkpoint_freq=5,
+         checkpoint_at_end=True,
+         stop={"episode_reward_mean": 97.1},
+         #resume=True,
+         )
+# Warning message from run:
+# Current log_level is WARN.
+# For more information, set 'log_level': 'INFO' / 'DEBUG' or use the -v and -vv flags.

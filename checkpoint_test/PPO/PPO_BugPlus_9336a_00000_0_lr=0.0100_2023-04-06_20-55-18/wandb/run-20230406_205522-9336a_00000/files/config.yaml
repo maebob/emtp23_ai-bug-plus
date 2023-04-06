@@ -1,0 +1,49 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.10
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.9.12
+    start_time: 1680807322.4959
+    t:
+      1:
+      - 1
+      - 30
+      - 55
+      3:
+      - 13
+      - 14
+      - 16
+      - 23
+      4: 3.9.12
+      5: 0.13.10
+      8:
+      - 8
+env:
+  desc: null
+  value: src.environment.env_complex_observation.BugPlus
+framework:
+  desc: null
+  value: torch
+lr:
+  desc: null
+  value: 0.01
+num_cpus_per_worker:
+  desc: null
+  value: 1
+num_envs_per_worker:
+  desc: null
+  value: 10
+num_gpus:
+  desc: null
+  value: 0
+num_workers:
+  desc: null
+  value: 20
+seed:
+  desc: null
+  value: 42069
