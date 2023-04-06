@@ -153,3 +153,9 @@ config.json
 src/.DS_Store
 .DS_Store
 result_data/
+/Users/mayte/GitHub/BugPlusEngine/result_data_no_coriculum
+result_data_no_coriculum/PPO/
+result_data_no_coriculum/
+results_DQL/
+result_data_no_coriculum/PPO/PPO_BugPlus_c89d3_00000_0_2023-04-01_23-25-54/wandb/run-20230401_232559-c89d3_00000/run-c89d3_00000.wandb
+result_data_no_coriculum/PPO/PPO_BugPlus_c89d3_00000_0_2023-04-01_23-25-54/events.out.tfevents.1680384354.Maytes-MacBook-Pro.local
