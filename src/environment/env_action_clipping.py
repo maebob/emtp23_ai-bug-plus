@@ -70,8 +70,9 @@ class BugPlus(Env):
             "down": 0,
             "output": 0,
         }
-        clip = find_action_space(self) # find range for clipping
-        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32)
+        self.action_space = spaces.Box(low=0, high=70, shape=(1,), dtype=np.int32)
+        # clip = find_action_space(self) # find range for clipping
+        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32)
 
         # Flag to indicate if the episode is done
         self.done = False
@@ -88,8 +89,8 @@ class BugPlus(Env):
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
-        clip = find_action_space(self) # find range for clipping
-        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
+        # clip = find_action_space(self) # find range for clipping
+        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
 
         return self.state, {}
 
@@ -117,11 +118,13 @@ class BugPlus(Env):
         
         # print("\n", self.action_space, "\naction before action clipping:", action_original)
         # enforce action clipping:
-        if action_original not in self.action_space:           
-            if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
-                action_original = self.action_space.low
-            else:
-                action_original = self.action_space.high # if action chosen by agent is too high, use maximum action in action space
+        # if action_original not in self.action_space:           
+        #     if action_original < self.action_space.low: # if action chosen by agent is too low, use minimum action in action space
+        #         action_original = self.action_space.low
+        #     else:
+        #         action_original = self.action_space.high # if action chosen by agent is too high, use maximum action in action space
+        
+        # translate action to the position corresponding in the transposed matrix
         action = translate_action(self.no_bugs, action_original) # translate action to the position corresponding in transposed matrix
         # print("action after clipping:", action_original, "translated action:", action, "\n", self.state.get("matrix"), "\n")
 
@@ -146,8 +149,8 @@ class BugPlus(Env):
             self.load_new_config = True
 
         # restrict action space for next step
-        clip = find_action_space(self) # find range for clipping
-        self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
+        # clip = find_action_space(self) # find range for clipping
+        # self.action_space = spaces.Box(low=clip[0], high=clip[1], shape=(1,), dtype=np.int32) # restricting the action space
         #TODO: think about if this could be done at the beginning of each step instead
         # if this is only then used to change the action
 

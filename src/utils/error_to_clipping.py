@@ -19,6 +19,7 @@ def find_error_columns(error: dict, no_bugs: int) -> int and int:
         # errors or missing edges for board 0 are not caught, therefore we only need to take care of errors for bugs 1 to no_bugs
         control_or_data_matrix = 1
         index_col = 1 + int(error['bug'])
+
     else:
         # CONTROL FLOW
         control_or_data_matrix = 0
