@@ -22,6 +22,7 @@ release = '0.1'
 extensions = ["sphinx.ext.viewcode", "sphinx.ext.todo", "sphinx.ext.autodoc"]
 
 templates_path = ['_templates']
+html_theme = ['sphinx_rtd_theme']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 language = 'python'
@@ -30,4 +31,4 @@ language = 'python'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'alabaster'
-html_static_path = ['_static']
+html_static_path = ['static']
