@@ -1,4 +1,3 @@
-from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 from itertools import count
 import json
 import sys
@@ -10,6 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
+from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 
 memory_ports = {}
