@@ -112,6 +112,7 @@ def initialize_connection_memory(edges: Edge) -> None:
 def get_next_bug(fromBug: int, fromPort: str) -> int:
     """
     Get the next bug in the chain based on the fromPort and fromBug
+
     Arguments:
         fromBug {int} -- The id of the bug to get the next bug from
         fromPort {str} -- The port to get the next bug from
@@ -125,7 +126,8 @@ def get_next_bug(fromBug: int, fromPort: str) -> int:
 
 
 def get_next_bug_to_evaluate(bug_id: int) -> int:
-    """Get the next bug to evaluate based on the control port value
+    """
+    Get the next bug to evaluate based on the control port value
 
     Arguments:
         bug_id {int} -- The id of the bug to evaluate
@@ -169,7 +171,8 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
 
 
 def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
-    """Evaluate the plus bug using the rules of bugsplus
+    """
+    Evaluate the plus bug using the rules of bugsplus
 
     Arguments:
         up {int or None} -- The value of the upper input data port
@@ -195,7 +198,8 @@ def calculate_plus_bug(up: int or None, down: int or None) -> int and int:
 
 
 def write_to_memory(bug_id: int, port: str, value: int) -> None:
-    """Write a value to a port in memory
+    """
+    Write a value to a port in memory
 
     Arguments:
         bug_id {int} -- The id of the bug
@@ -206,7 +210,8 @@ def write_to_memory(bug_id: int, port: str, value: int) -> None:
 
 
 def wirte_data_to_memory(ports: list, data_value: int) -> None:
-    """Write the data value to the data ports in memory
+    """
+    Write the data value to the data ports in memory
 
     Arguments:
         ports {list} -- The list of ports to write to
@@ -219,7 +224,8 @@ def wirte_data_to_memory(ports: list, data_value: int) -> None:
 
 
 def read_from_memory(bug_id: int, port: str) -> int:
-    """Read a value from a port in memory
+    """
+    Read a value from a port in memory
 
     Arguments:
         bug_id {int} -- The id of the bug
@@ -231,7 +237,8 @@ def read_from_memory(bug_id: int, port: str) -> int:
 
 
 def set_control_value(bug_id: int, control_value: int) -> int:
-    """Set the value of the control flow in memory and return the next port to evaluate
+    """
+    Set the value of the control flow in memory and return the next port to evaluate
 
     Arguments:
         bug_id {int} -- The id of the bug
@@ -277,7 +284,8 @@ def initialize_bug_memory(bug: Bug) -> None:
 
 
 def initialize_board_memory(board: Bug) -> int:
-    """Initialize the memory of the board
+    """
+    Initialize the memory of the board
 
     Arguments:
         board {Bug} -- The board to initialize the memory for
@@ -323,7 +331,8 @@ def initialize_board_memory(board: Bug) -> int:
 
 
 def write_control_to_parent_bug(bug_id: int) -> None:
-    """Write the control value to the parent bug
+    """
+    Write the control value to the parent bug
 
     Arguments:
         bug_id {int} -- The id of the bug to write the control value to
@@ -341,7 +350,8 @@ def write_control_to_parent_bug(bug_id: int) -> None:
 
 
 def evaluate_plus_bug(bug_id: int) -> int:
-    """Evaluate a plus bug
+    """
+    Evaluate a plus bug
 
     Arguments:
         bug_id {int} -- The id of the bug to evaluate
@@ -375,7 +385,9 @@ def evaluate_plus_bug(bug_id: int) -> int:
 
 
 def evaluate_nested_bug(bug_id: int, parent_bug_id: int = None) -> None:
-    """Evaluate a nested bug
+    """
+    Evaluate a nested bug
+    
     Arguments:
         bug_id {int} -- The id of the bug to evaluate
         parent_bug_id {int} -- The id of the parent bug
@@ -435,7 +447,9 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id: int = None) -> None:
 
 
 def eval_bug(bug_id: int) -> None:
-    """Evaluate the main bug that was selected by the user
+    """
+    Evaluate the main bug that was selected by the user
+    
     Arguments:
         bug_id {int} -- The id of the bug to evaluate
     """
@@ -462,7 +476,9 @@ def eval_bug(bug_id: int) -> None:
 
 
 def main(board: Bug) -> dict:
-    """The main function of the program
+    """
+    The main function of the program
+    
     Arguments:
         board {Bug} -- The root bug with all the nested bugs
     Returns:
@@ -484,7 +500,9 @@ def main(board: Bug) -> dict:
 
 
 if __name__ == "__main__":
-    """This function is only used for testing purposes"""
+    """
+    This function is only used for testing purposes
+    """
     # TODO pseudo parallel only works on first itreation
     example_file = open(
         "config_test2.json", "r").read()

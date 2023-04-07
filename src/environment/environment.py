@@ -10,7 +10,9 @@ from src.utils.valid_matrix import is_valid_matrix
 
 class BugPlus(Env):
     def __init__(self):
-        '''Initialize the environment.'''
+        """
+        Initialize the environment.
+        """
         super(BugPlus, self).__init__()
 
         # Number of possible bugs
@@ -32,7 +34,9 @@ class BugPlus(Env):
         self.expected_output = None
 
     def reset(self):
-        '''Reset the environment to its original state.'''
+        """
+        Reset the environment to its original state.
+        """
         self.observation_space = np.array([np.zeros(((2 + self.no_bugs), (1 + 2 * self.no_bugs)), dtype=int), np.zeros(((1 + 2 * self.no_bugs), (2 + self.no_bugs)), dtype=int) ], dtype=object)
         self.done = False
         self.ep_return = 0
@@ -40,10 +44,12 @@ class BugPlus(Env):
         return self.observation_space
 
     def step(self, action):
-        print("Action: ", action)
-        '''Perform an action on the environment and reward/punish said action.
+        """
+        Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
-        the control flow matrix or the data flow matrix.'''
+        the control flow matrix or the data flow matrix.
+        """
+        print("Action: ", action)
         # Decide wether the new edge is added to the control flow or data flow matrix
         flow_matrix = 0 if action < (self.observation_space[0][0].size * self.observation_space[1][0].size) else 1
         
@@ -87,7 +93,9 @@ class BugPlus(Env):
         return reward, self.observation_space, self.ep_return, self.done, {}
 
     def checkBugValidity(self):
-        '''Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.'''
+        """
+        Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
+        """
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
@@ -109,23 +117,31 @@ class BugPlus(Env):
         return -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
 
     def initializeStartingBoardSetup(self, bugs):
-        '''Set the starting state of the environment in order to have control over the
-         complexity of the problem class.'''
+        """
+        Set the starting state of the environment in order to have control over the
+        complexity of the problem class.
+        """
         self.no_bugs = bugs
 
     def initializeInputValues(self, up, down):
-        '''Set the input values the bug bpard is supposed to process in order to have control over the
-         complexity of the problem class.'''
+        """
+        Set the input values the bug bpard is supposed to process in order to have control over the
+        complexity of the problem class.
+        """
         self.input_Up = up
         self.input_Down = down
 
     def initializeExpectedOutput(self, expected_out):
-        '''Set the expected output of the bug board in order to check wether the created board
-        evaluates correctly.'''
+        """
+        Set the expected output of the bug board in order to check wether the created board
+        evaluates correctly.
+        """
         self.expected_output = expected_out
 
     def createStartingBoardSetup(self):
-        '''Create an incrementor with on edge removed'''
+        """
+        Create an incrementor with on edge removed
+        """
         # Create the control flow matrix
         control_matrix = np.zeros((5, 7), dtype=int)
         control_matrix[0][5] = control_matrix[1][6] = control_matrix[2][0] = control_matrix[3][1] = control_matrix[4][4]  = 1
@@ -141,10 +157,12 @@ class BugPlus(Env):
             data_matrix[np.random.randint(0, 7)][np.random.randint(0, 5)] = 0
         
     def setVectorAsObservationSpace(self, vector):
-        '''Change format of the input vector to the format the environment expects and intialize the observation space with the result.
+        """
+        Change format of the input vector to the format the environment expects and intialize the observation space with the result.
 
         Vector format: [input_up, input_down, expected_output, control_matrix, data_matrix]
-        Target format: [[control_matrix], [data_matrix]]'''
+        Target format: [[control_matrix], [data_matrix]]
+        """
 
         # Remove the input and expected output from the vector
         vector = np.delete(vector, [0, 1, 2])
@@ -156,7 +174,9 @@ class BugPlus(Env):
         self.observation_space = np.array([control_matrix, data_matrix], dtype=object)
 
     def setInputAndOutputValuesFromVector(self, vector):
-        '''Set the input and output values of the environment.'''
+        """
+        Set the input and output values of the environment.
+        """
 
         self.input_up = vector[0]
         self.input_down = vector[1]

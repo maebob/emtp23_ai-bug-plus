@@ -38,7 +38,7 @@ from src.utils.matrix import number_bugs, array_to_matrices
 
 
 # Create data frame out of configs.csv
-config_name = 'configs_4x+4y'
+config_name = '/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/configs_4x+4y'
 config = f"{config_name}.csv"
 df_full = pd.read_csv(config, sep=";")
 df  = df_full[:]
@@ -237,7 +237,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 5_000_000
+    num_episodes = 5
  
 
 
