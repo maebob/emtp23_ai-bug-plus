@@ -1,3 +1,4 @@
+from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 from itertools import count
 import json
 import sys
@@ -10,13 +11,13 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
-from src.engine.boardTypes import EdgeType, PortType, Bug, Edge
 
 memory_ports = {}
 memory_connections = {}
 memory_bug_types = {}
-ITERATIONS = 0 # The number of iterations the engine has run
-MAX_ITERATIONS = 5 # The maximum number of iterations the engine is allowed to run
+ITERATIONS = 0  # The number of iterations the engine has run
+MAX_ITERATIONS = 5  # The maximum number of iterations the engine is allowed to run
+
 
 def stack_size2a(size=2):
     """
@@ -117,10 +118,10 @@ def get_next_bug(fromBug: int, fromPort: str) -> int:
     Returns:
         int -- The id of the next bug
     """
-    if (memory_connections.get(f"{fromBug}_{fromPort}") is None):
-        raise ValueError(
-            f"Port {fromPort} of bug {fromBug} is not connected to anything")
-    return int(memory_connections[f"{fromBug}_{fromPort}"].split("_")[0])
+    if memory_connections.get(f"{fromBug}_{fromPort}") is None:
+        raise ValueError({"fromBug": fromBug, "fromPort": fromPort, "text":
+                          f"Port {fromPort} of bug {fromBug} is not connected to anything"})
+    return int(memory_connections.get(f"{fromBug}_{fromPort}").split("_")[0])
 
 
 def get_next_bug_to_evaluate(bug_id: int) -> int:
@@ -133,6 +134,9 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
     """
     if memory_bug_types.get(bug_id) != "plus" and memory_ports.get(f"{bug_id}_{PortType.Left.value}") is None and memory_ports.get(f"{bug_id}_{PortType.Right.value}") is None:
         # This is a nested bug that has not been evaluated yet -> return the first bug in the nested bug
+        if memory_connections.get(f"{bug_id}_{PortType.In.value}") is None:
+            raise ValueError(
+                f"Bug {bug_id} is not connected to anything")
         return int(memory_connections[f"{bug_id}_{PortType.In.value}"].split("_")[0])
 
     if memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1:
@@ -309,7 +313,7 @@ def initialize_board_memory(board: Bug) -> int:
     if (memory_connections.get(f"{board.get('id')}_{PortType.Up.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
             f"{board.get('id')}_{PortType.Up.value}"), board.get("xValue"))
-    #write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
+    # write_to_memory(upper_data_to_node_id, upper_data_to_port, up)
     # Write the data to the lower child bug
     if (memory_connections.get(f"{board.get('id')}_{PortType.Down.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
@@ -376,7 +380,7 @@ def evaluate_nested_bug(bug_id: int, parent_bug_id: int = None) -> None:
         bug_id {int} -- The id of the bug to evaluate
         parent_bug_id {int} -- The id of the parent bug
     """
-    #print(stack_size2a(), bug_id, parent_bug_id)
+    # print(stack_size2a(), bug_id, parent_bug_id)
     # Write data to the nested bug ports
     if (memory_ports.get(f"{bug_id}_{PortType.Up.value}") is not None):
         wirte_data_to_memory(memory_connections.get(
@@ -438,10 +442,10 @@ def eval_bug(bug_id: int) -> None:
     if bug_id is None:
         raise Exception(
             "No bug selected therefore no evaluation possible -> Problem in configuration")
-    
+
     # Increment the global iteration counter
     global ITERATIONS
-    
+
     while memory_bug_types.get(bug_id) != "root" and ITERATIONS < MAX_ITERATIONS:
         ITERATIONS = ITERATIONS + 1
         if memory_bug_types.get(bug_id) == "plus":
@@ -450,11 +454,12 @@ def eval_bug(bug_id: int) -> None:
             bug_id = evaluate_nested_bug(bug_id)
         else:
             raise Exception("Unknown bug type")
-    
+
     # Stop the evaluation if it took # too long
     if ITERATIONS >= MAX_ITERATIONS:
         raise TimeoutError("Evaluation took too long")
     return memory_ports
+
 
 def main(board: Bug) -> dict:
     """The main function of the program
@@ -468,11 +473,11 @@ def main(board: Bug) -> dict:
     memory_ports.clear()
     memory_bug_types.clear()
     global ITERATIONS
-    ITERATIONS = 0  
+    ITERATIONS = 0
 
     # Initialize the memory of the root bug and get the first bug to evaluate
     first_bug_id = initialize_board_memory(board)
-    
+
     eval_bug(first_bug_id)
 
     return memory_ports

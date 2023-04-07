@@ -1,7 +1,15 @@
 import json
 import random
+import os
 import sys
-from engine import eval
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
+from src.engine import eval
+
 # Non-Nested
 INCREMENTOR_PATH = "Configurations/incrementor.json"
 DECREMENTOR_PATH = "Configurations/decrementor.json"
