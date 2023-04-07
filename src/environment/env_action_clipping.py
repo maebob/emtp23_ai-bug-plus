@@ -27,8 +27,7 @@ df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
-wrong_counter = 0
-episode_counter = 0
+
 
 def load_config(load_new: bool = False):
     """
@@ -236,7 +235,6 @@ def find_action_space(self) -> int and int:
         range_min = range_min # use default
         range_max = range_max # use default
         # pass/continue TODO: instead?
-
     except ValueError as e:
         # If the bug is not valid, the engine will throw an error
         # something in the control flow is not connected (but not a loop), execution cannot terminate
@@ -255,6 +253,4 @@ def find_action_space(self) -> int and int:
         range_min = range_min # use default
         range_max = range_max # use default
         # pass/continue TODO: instead?
-        wrong_counter += 1
-        print('something else went wrong: ', wrong_counter)
     return range_min, range_max
