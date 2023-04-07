@@ -13,7 +13,7 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.translation.matrix_to_json import main as matrix_to_json
-from src.engine.eval_aus_error_translation import main as eval_engine
+from src.engine.eval import main as eval_engine
 from src.utils.translate_action import translate_action # translate actions into the format of a transposed matrix
 from src.utils.error_to_clipping import translate_to_range # translate the error into a range for clipping
 
@@ -120,7 +120,7 @@ class BugPlus(Env):
             if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
                 action_original = clip_from
             else:
-                action_original = clip_to   # this would be the default case when using gymnasium.wrapper.ClipActionWrapper
+                action_original = clip_to - 1  # this would be the default case when using gymnasium.wrapper.ClipActionWrapper
                                             # if action chosen by agent is too high, use maximum action in action space
         
         # translate action to the position corresponding in the transposed matrix
@@ -232,9 +232,7 @@ def find_action_space(self) -> int and int:
         result = eval_engine(matrix_as_json)
     except TimeoutError:
         # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
-        range_min = range_min # use default
-        range_max = range_max # use default
-        # pass/continue TODO: instead?
+        return range_min, range_max
     except ValueError as e:
         # If the bug is not valid, the engine will throw an error
         # something in the control flow is not connected (but not a loop), execution cannot terminate
@@ -245,12 +243,9 @@ def find_action_space(self) -> int and int:
         try:
             range_min, range_max = translate_to_range(error, self.no_bugs)
         except:
-             # any other errors: return full action space
-            range_min = range_min # use default
-            range_max = range_max # use default
-            # pass/continue TODO: instead?
+            # any other errors: return full action space
+            return range_min, range_max
     except: # catch everythin else?
-        range_min = range_min # use default
-        range_max = range_max # use default
-        # pass/continue TODO: instead?
+        # any other errors: return full action space
+        return range_min, range_max
     return range_min, range_max
