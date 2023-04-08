@@ -111,7 +111,8 @@ class BugPlus(Env):
         if self.epsiode_length > 15:
             self.done = True
             truncated = True
-            return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
+            reward = -1
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         # enforce action clipping:
         clip_from, clip_to = find_action_space(self) # find range for clipping
@@ -131,23 +132,23 @@ class BugPlus(Env):
         if self.state.get("matrix")[action] == 1:
             # The action was already performed, punish the agent
             reward = -0.2
-            done = False
+            self.done = False
             truncated = False
-            return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         self.state["matrix"][action] = 1
-        reward, done = self.check_bug_validity()
-        if done:
+        reward, self.done = self.check_bug_validity()
+        if self.done:
             truncated = True
         else:
             truncated = False
 
-        if reward <= 0 and done:
+        if reward <= 0 and self.done:
             self.load_new_config = False
-        elif reward > 0 and done:
+        elif reward > 0 and self.done:
             self.load_new_config = True
 
-        return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+        return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
         """
