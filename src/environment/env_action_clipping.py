@@ -106,6 +106,8 @@ class BugPlus(Env):
             info {dict}
                 ep_return {int} -- The return of the episode.
         """
+        size_matrix = (self.no_bugs * 2 + 1) * (self.no_bugs + 2)
+        reward_action_clipping = 0
         self.epsiode_length += 1
         # if maximum episode length is reached, end the episode
         if self.epsiode_length > 15:
@@ -115,18 +117,24 @@ class BugPlus(Env):
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         # enforce action clipping:
-        clip_from, clip_to = find_action_space(self) # find range for clipping
-        # print("\nclip (", clip_from,", ",clip_to, ") \naction before action clipping:", action_original)
-        if action_original not in range(clip_from, clip_to):       
-            if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
-                action_original = clip_from
-            else:
-                action_original = clip_to - 1  # this would be the default case when using gymnasium.wrapper.ClipActionWrapper
-                                            # if action chosen by agent is too high, use maximum action in action space
-        
+        clip_from, clip_to, next_action = find_action_space(self) # find range for clipping
+        print("\nclip (", clip_from,", ",clip_to, ") \naction before action clipping:", action_original)
+        if action_original in range(clip_from, clip_to): # selected action is within the suggested range by the engine's feedback
+            reward_action_clipping = 0.1    # reward the agent for choosing an action within the range
+                                            # makes reward 0 if agent picks a position where there previously was no edge and which does not lead to a loop
+        else: # action is outside the clipped range
+            if action_original < size_matrix:# action is in controlflow matrix:
+                action = next_action 
+            else: # action is in dataflow matrix:      
+                if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
+                    action_original = clip_from
+                else:
+                    action_original = clip_to - 1  # this would be the default case when using gymnasium.wrapper.ClipActionWrapper
+                                                # if action chosen by agent is too high, use maximum action in action space
+            
         # translate action to the position corresponding in the transposed matrix
         action = translate_action(self.no_bugs, action_original) # translate action to the position corresponding in transposed matrix
-        # print("action after clipping:", action_original, "translated action:", action, "\n", self.state.get("matrix"), "\n")
+        print("action after clipping:", action_original, "translated action:", action, "\n", self.state.get("matrix"), "\n")
 
 
         if self.state.get("matrix")[action] == 1:
@@ -134,6 +142,7 @@ class BugPlus(Env):
             reward = -0.2
             self.done = False
             truncated = False
+            reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         self.state["matrix"][action] = 1
@@ -147,7 +156,7 @@ class BugPlus(Env):
             self.load_new_config = False
         elif reward > 0 and self.done:
             self.load_new_config = True
-
+        reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
@@ -233,7 +242,7 @@ def find_action_space(self) -> int and int:
         result = eval_engine(matrix_as_json)
     except TimeoutError:
         # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
-        return range_min, range_max
+        return range_min, range_max, None
     except ValueError as e:
         # If the bug is not valid, the engine will throw an error
         # something in the control flow is not connected (but not a loop), execution cannot terminate
@@ -242,11 +251,11 @@ def find_action_space(self) -> int and int:
         error = {'port': e['fromPort'],
                     'bug': e['fromBug']}
         try:
-            range_min, range_max = translate_to_range(error, self.no_bugs)
+            range_min, range_max, next_bug_id = translate_to_range(error, self.no_bugs)
         except:
             # any other errors: return full action space
-            return range_min, range_max
+            return range_min, range_max, None
     except: # catch everythin else?
         # any other errors: return full action space
-        return range_min, range_max
-    return range_min, range_max
+        return range_min, range_max, None
+    return range_min, range_max, next_bug_id
