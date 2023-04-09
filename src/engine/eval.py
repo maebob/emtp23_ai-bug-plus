@@ -139,7 +139,7 @@ def get_next_bug_to_evaluate(bug_id: int) -> int:
         if memory_connections.get(f"{bug_id}_{PortType.In.value}") is None:
             raise ValueError(
                 f"Bug {bug_id} is not connected to anything")
-        return int(memory_connections[f"{bug_id}_{PortType.In.value}"].split("_")[0]) #TODO
+        return int(memory_connections.get(f"{bug_id}_{PortType.In.value}").split("_")[0])
 
     if memory_ports.get(f"{bug_id}_{PortType.Left.value}") == 1:
         # The left control out port is active
