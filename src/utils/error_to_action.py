@@ -21,13 +21,10 @@ def translate(error: dict, no_bugs: int) -> np.ndarray:
     indices_missing_edges = []
 
     # Check whether the passed error concerns the control flow or the data flow
-    if error['port'] == 'Up' or error['port'] == 'Down' or error['port'] == 'Out':
+    if error['port'] == 'Out':
         # DATA FLOW
         # Calculate column index
-        if error['bug'] == 0:
-            index_col = 0
-        else:
-            index_col = 1 + int(error['bug'])
+        index_col = 1 + int(error['bug'])
 
         index_row = 0
         while index_row <= (no_bugs * 2 + 1):
