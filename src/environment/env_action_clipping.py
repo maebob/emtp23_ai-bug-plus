@@ -123,9 +123,9 @@ class BugPlus(Env):
             reward_action_clipping = 0.1    # reward the agent for choosing an action within the range
                                             # makes reward 0 if agent picks a position where there previously was no edge and which does not lead to a loop
         else: # action is outside the clipped range
-            if action_original < size_matrix:# action is in controlflow matrix:
+            if clip_from < size_matrix: # error is in controlflow matrix:
                 action = next_action 
-            else: # action is in dataflow matrix:      
+            else: # error is in dataflow matrix:      
                 if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
                     action_original = clip_from
                 else:
@@ -226,6 +226,7 @@ def find_action_space(self) -> int and int:
     """
     range_min = 0 # default is full action space
     range_max = 2 * (self.no_bugs + 2) * (2 * self.no_bugs + 1)
+    next_bug_id = None
     # get current state and evaluate the matrix; catch errors and turn this into clipped state
     matrix = deepcopy(self.state.get("matrix"))
     split_index = int(len(matrix) / 2)

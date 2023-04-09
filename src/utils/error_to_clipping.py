@@ -62,23 +62,23 @@ def column_to_range_transposed_matrix(control_or_data_matrix: int, no_bugs: int,
         range_to = range_from + (2 * no_bugs + 1)
     return range_from, range_to
 
-def connecting_row(control_or_data_matrix: int, index_col: int, bug_id:int, no_bugs ) -> int:
-    """ 
-    Given the part of a matrix (0 for controlflow, 1 for dataflow), the column index and the bug id,
-    find the row where an edge is missing. This can then be used to determine the exact position, the next edge should be placed.
-    Args:
-        control_or_data_matrix {int} -- 0: controlflow matrix , 1 dataflow matrix
-        index_col {int} -- The column index of the positions to be calculated.
-        bug_id {int} -- The id of the bug where the error occurred.
-    Returns:
-        int -- The row where an edge is missing.
-    """
-    if control_or_data_matrix == 0:
-        # CONTROL FLOW
-        next_row = (bug_id + 2) % (no_bugs+1) # the next row is the bug id + 2; for the last bug, the next row is 0 (note: could also be 1 or depend on L /R; adjust if needed)
-    elif control_or_data_matrix == 1:
-        next_row = None
-    return next_row
+# def connecting_row(control_or_data_matrix: int, index_col: int, bug_id:int, no_bugs ) -> int:
+#     """ 
+#     Given the part of a matrix (0 for controlflow, 1 for dataflow), the column index and the bug id,
+#     find the row where an edge is missing. This can then be used to determine the exact position, the next edge should be placed.
+#     Args:
+#         control_or_data_matrix {int} -- 0: controlflow matrix , 1 dataflow matrix
+#         index_col {int} -- The column index of the positions to be calculated.
+#         bug_id {int} -- The id of the bug where the error occurred.
+#     Returns:
+#         int -- The row where an edge is missing.
+#     """
+#     if control_or_data_matrix == 0:
+#         # CONTROL FLOW
+#         next_row = (bug_id + 2) % (no_bugs+1) # the next row is the bug id + 2; for the last bug, the next row is 0 (note: could also be 1 or depend on L /R; adjust if needed)
+#     elif control_or_data_matrix == 1:
+#         next_row = None
+#     return next_row
 
 def select_new_position(control_or_data_matrix: int, range_from: int, bug_id:int, no_bugs ) -> int:
     """ 
@@ -92,7 +92,11 @@ def select_new_position(control_or_data_matrix: int, range_from: int, bug_id:int
         int -- The position where a new edge should be placed.
     """
     if control_or_data_matrix == 0: # error is in the control flow
-        next_row = (bug_id + 2) % (no_bugs+2) # connect the control flow to the next bug or the last bug to the mother board
+        if bug_id == no_bugs: # if the error is in the last bug, connect the last bug to the mother board on right port (change if wanted)
+            next_row = 1
+        else:
+            next_row = (bug_id + 2) % (no_bugs+2) # connect the control flow to the next bug or the last bug to the mother board
+            print("next row: ", next_row)
         next_position = range_from + next_row # the next position is the range from + the next row
     else:
         next_position = None
@@ -117,3 +121,4 @@ def translate_to_range(error: dict, no_bugs: int) -> np.ndarray:
     range_from, range_to = column_to_range_transposed_matrix(control_or_data_matrix, no_bugs, index_col)
     next_action = select_new_position(control_or_data_matrix, range_from, bug_id, no_bugs)
     return range_from, range_to, next_action
+

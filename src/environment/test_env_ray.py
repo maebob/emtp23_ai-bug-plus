@@ -1,8 +1,8 @@
-"""
+
 import ray
 from ray.rllib.utils import check_env
-import environment_ray
+import env_action_clipping as env
 
 
-check_env(environment_ray.BugPlus()) # checks the custom environment for errors
-"""
+check_env(env.BugPlus()) # checks the custom environment for errors
+
