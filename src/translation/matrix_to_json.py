@@ -13,7 +13,8 @@ from src.api.boardTypes import EdgeType, Edge, PortAdress, PortType
 
 
 def translate_matrix(matrix_to_translate: np.array, type: EdgeType) -> tuple[list[Edge], list[int]]:
-    """Translate the matrix to a json.
+    """
+    Translate the matrix to a json.
     Arguments:
         matrix_to_translate {np.Array} -- The matrix to translate
         type {EdgeType} -- The type of the port
@@ -98,7 +99,8 @@ def translate_matrix(matrix_to_translate: np.array, type: EdgeType) -> tuple[lis
     return return_edges
 
 def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_down: int) -> dict:
-    """Translate the matrix to a json.
+    """
+    Translate the matrix to a json.
     Arguments:
         control_matrix {np.Array} -- The control matrix to translate
         data_matrix {np.Array} -- The data matrix to translate

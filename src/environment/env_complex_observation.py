@@ -13,7 +13,6 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.translation.matrix_to_json import main as matrix_to_json
-from src.utils.valid_matrix import is_valid_matrix
 from src.engine.eval import main as eval_engine
 
 SPACE_SIZE = 1_000
@@ -76,7 +75,7 @@ class BugPlus(Env):
         # Episode return
         self.ep_return = 0
         self.load_new_config = True
-        self.epsiode_length = 0
+        self.episode_length = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
@@ -85,7 +84,7 @@ class BugPlus(Env):
         vector = load_config(self.load_new_config)
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
-        self.epsiode_length = 0
+        self.episode_length = 0
         return self.state, {}
 
     def step(self, action: torch):
@@ -103,8 +102,8 @@ class BugPlus(Env):
             info {dict}
                 ep_return {int} -- The return of the episode.
         """
-        self.epsiode_length += 1
-        if self.epsiode_length > 30:
+        self.episode_length += 1
+        if self.episode_length > 20:
             self.done = True
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}

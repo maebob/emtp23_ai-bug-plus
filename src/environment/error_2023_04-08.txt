@@ -1,0 +1,98 @@
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/tune/trainable/trainable.py", line 368, in train
+    raise skipped from exception_cause(skipped)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/tune/trainable/trainable.py", line 365, in train
+    result = self.step()
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/algorithms/algorithm.py", line 782, in step
+    results, train_iter_ctx = self._run_one_training_iteration()
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/algorithms/algorithm.py", line 2713, in _run_one_training_iteration
+    results = self.training_step()
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/algorithms/ppo/ppo.py", line 358, in training_step
+    train_batch = synchronous_parallel_sample(
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/execution/rollout_ops.py", line 85, in synchronous_parallel_sample
+    sample_batches = worker_set.foreach_worker(
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/worker_set.py", line 701, in foreach_worker
+    handle_remote_call_result_errors(remote_results, self._ignore_worker_failures)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/worker_set.py", line 74, in handle_remote_call_result_errors
+    raise r.get()
+ray.exceptions.RayTaskError(ValueError): ray::RolloutWorker.apply() (pid=78783, ip=127.0.0.1, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x33cfc66b0>)
+  File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 497, in main
+    eval_bug(first_bug_id)
+  File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 468, in eval_bug
+    bug_id = evaluate_nested_bug(bug_id)
+  File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 409, in evaluate_nested_bug
+    next_bug_id = get_next_bug_to_evaluate(bug_id)
+  File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 140, in get_next_bug_to_evaluate
+    raise ValueError(
+ValueError: Bug 3 is not connected to anything
+
+During handling of the above exception, another exception occurred:
+
+ray::RolloutWorker.apply() (pid=78783, ip=127.0.0.1, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x33cfc66b0>)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/actor_manager.py", line 183, in apply
+    raise e
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/actor_manager.py", line 174, in apply
+    return func(self, *args, **kwargs)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/execution/rollout_ops.py", line 86, in <lambda>
+    lambda w: w.sample(), local_worker=False, healthy_only=True
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/rollout_worker.py", line 914, in sample
+    batches = [self.input_reader.next()]
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/sampler.py", line 92, in next
+    batches = [self.get_data()]
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/sampler.py", line 277, in get_data
+    item = next(self._env_runner)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/env_runner_v2.py", line 323, in run
+    outputs = self.step()
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/env_runner_v2.py", line 379, in step
+    self._base_env.send_actions(actions_to_send)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/env/vector_env.py", line 464, in send_actions
+    ) = self.vector_env.vector_step(action_vector)
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/env/vector_env.py", line 360, in vector_step
+    raise e
+  File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/env/vector_env.py", line 353, in vector_step
+    results = self.envs[i].step(actions[i])
+  File "/Users/mayte/GitHub/BugPlusEngine/src/environment/env_action_clipping.py", line 119, in step
+    clip_from, clip_to, control_or_data_matrix, next_action = find_action_space(self) # find range for clipping
+  File "/Users/mayte/GitHub/BugPlusEngine/src/environment/env_action_clipping.py", line 251, in find_action_space
+    e = dict(e.args[0])
+ValueError: dictionary update sequence element #0 has length 1; 2 is required
+(PPO pid=78747) 2023-04-09 03:18:46,435 ERROR actor_manager.py:496 -- Ray error, taking actor 2 out of service. ray::RolloutWorker.apply() (pid=78783, ip=127.0.0.1, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x33cfc66b0>)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 497, in main
+(PPO pid=78747)     eval_bug(first_bug_id)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 468, in eval_bug
+(PPO pid=78747)     bug_id = evaluate_nested_bug(bug_id)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 409, in evaluate_nested_bug
+(PPO pid=78747)     next_bug_id = get_next_bug_to_evaluate(bug_id)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/src/engine/eval.py", line 140, in get_next_bug_to_evaluate
+(PPO pid=78747)     raise ValueError(
+(PPO pid=78747) ValueError: Bug 3 is not connected to anything
+(PPO pid=78747) 
+(PPO pid=78747) During handling of the above exception, another exception occurred:
+(PPO pid=78747) 
+(PPO pid=78747) ray::RolloutWorker.apply() (pid=78783, ip=127.0.0.1, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x33cfc66b0>)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/actor_manager.py", line 183, in apply
+(PPO pid=78747)     raise e
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/utils/actor_manager.py", line 174, in apply
+(PPO pid=78747)     return func(self, *args, **kwargs)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/execution/rollout_ops.py", line 86, in <lambda>
+(PPO pid=78747)     lambda w: w.sample(), local_worker=False, healthy_only=True
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/rollout_worker.py", line 914, in sample
+(PPO pid=78747)     batches = [self.input_reader.next()]
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/sampler.py", line 92, in next
+(PPO pid=78747)     batches = [self.get_data()]
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/sampler.py", line 277, in get_data
+(PPO pid=78747)     item = next(self._env_runner)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/env_runner_v2.py", line 323, in run
+(PPO pid=78747)     outputs = self.step()
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/evaluation/env_runner_v2.py", line 379, in step
+(PPO pid=78747)     self._base_env.send_actions(actions_to_send)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/env/vector_env.py", line 464, in send_actions
+(PPO pid=78747)     ) = self.vector_env.vector_step(action_vector)
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/env/vector_env.py", line 360, in vector_step
+(PPO pid=78747)     raise e
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/venv/lib/python3.10/site-packages/ray/rllib/env/vector_env.py", line 353, in vector_step
+(PPO pid=78747)     results = self.envs[i].step(actions[i])
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/src/environment/env_action_clipping.py", line 119, in step
+(PPO pid=78747)     clip_from, clip_to, control_or_data_matrix, next_action = find_action_space(self) # find range for clipping
+(PPO pid=78747)   File "/Users/mayte/GitHub/BugPlusEngine/src/environment/env_action_clipping.py", line 251, in find_action_space
+(PPO pid=78747)     e = dict(e.args[0])
+(PPO pid=78747) ValueError: dictionary update sequence element #0 has length 1; 2 is required

@@ -18,7 +18,9 @@ from src.translation.matrix_to_json import main as matrix_to_json
 
 
 def load_config() -> np.array:
-    '''Load a random configuration from the csv file.'''
+    """
+    Load a random configuration from the csv file.
+    """
     df = pd.read_csv("configs_4x+4y.csv", sep=';') # TODO: check if this works for everyone
     index = np.random.randint(0, len(df))
     vector = np.array(df.iloc[index])
@@ -27,7 +29,9 @@ def load_config() -> np.array:
 
 class BugPlus(Env):
     def __init__(self, render_mode=None):
-        '''Initialize the environment.'''
+        """
+        Initialize the environment.
+        """
 
         # Number of possible bugs
         self.n_bugs = 3
@@ -58,7 +62,9 @@ class BugPlus(Env):
 
 
     def reset(self, *, seed=None, options=None):
-        '''Resets the environment to the initial state given by the vector.''' 
+        """
+        Resets the environment to the initial state given by the vector.
+        """ 
         vector = load_config() # load config
         self.state ={
             "matrix": self.set_vector_as_state(vector),
@@ -84,7 +90,7 @@ class BugPlus(Env):
             done {bool} -- Flag to indicate if the episode is done.
             truncated {bool} -- Flag to indicate if the episode was truncated.
             info {dict} -- Additional information about the episode:
-                ep_return {int} -- The return of the episode.
+            ep_return {int} -- The return of the episode.
         """
         #TODO: discuss if we need a step counter?
 
@@ -152,21 +158,21 @@ class BugPlus(Env):
         return reward, done
 
     def set_vector_as_state(self, vector):
-        '''
+        """
         Set the state of the environment using the vector representation.
-        '''
+        """
         vector[3:]  #TODO: muss das returnen, wenn wir nicht mehr direkt self.state setzen?
 
     def set_vector_as_input(self, vector):
-        '''
+        """
         Set the input and output values of the environment.
-        '''
+        """
         np.array(vector[0], vector[1]) #TODO: type: list or array?
 
     def set_vector_as_output(self, vector):
-        '''
+        """
         Set the output value of the environment.
-        '''
+        """
         vector[2] #TODO
 
 
