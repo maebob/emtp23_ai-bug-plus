@@ -106,7 +106,6 @@ class BugPlus(Env):
             info {dict}
                 ep_return {int} -- The return of the episode.
         """
-        size_matrix = (self.no_bugs * 2 + 1) * (self.no_bugs + 2)
         reward_action_clipping = 0
         self.epsiode_length += 1
         # if maximum episode length is reached, end the episode
@@ -117,14 +116,13 @@ class BugPlus(Env):
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         # enforce action clipping:
-        clip_from, clip_to, next_action = find_action_space(self) # find range for clipping
-        print("\nclip (", clip_from,", ",clip_to, ") \naction before action clipping:", action_original)
+        clip_from, clip_to, control_or_data_matrix, next_action = find_action_space(self) # find range for clipping
         if action_original in range(clip_from, clip_to): # selected action is within the suggested range by the engine's feedback
             reward_action_clipping = 0.1    # reward the agent for choosing an action within the range
                                             # makes reward 0 if agent picks a position where there previously was no edge and which does not lead to a loop
         else: # action is outside the clipped range
-            if clip_from < size_matrix: # error is in controlflow matrix:
-                action = next_action 
+            if control_or_data_matrix == 0: # error is in controlflow matrix:
+                action_original = next_action 
             else: # error is in dataflow matrix:      
                 if action_original < clip_from: # if action chosen by agent is too low, use minimum action in action space
                     action_original = clip_from
@@ -134,7 +132,7 @@ class BugPlus(Env):
             
         # translate action to the position corresponding in the transposed matrix
         action = translate_action(self.no_bugs, action_original) # translate action to the position corresponding in transposed matrix
-        print("action after clipping:", action_original, "translated action:", action, "\n", self.state.get("matrix"), "\n")
+
 
 
         if self.state.get("matrix")[action] == 1:
@@ -226,7 +224,9 @@ def find_action_space(self) -> int and int:
     """
     range_min = 0 # default is full action space
     range_max = 2 * (self.no_bugs + 2) * (2 * self.no_bugs + 1)
-    next_bug_id = None
+    control_or_data_matrix = None # dummy values which could be returned if no error is caught
+    next_action = None # dummy values which could be returned if no error is caught
+
     # get current state and evaluate the matrix; catch errors and turn this into clipped state
     matrix = deepcopy(self.state.get("matrix"))
     split_index = int(len(matrix) / 2)
@@ -243,7 +243,7 @@ def find_action_space(self) -> int and int:
         result = eval_engine(matrix_as_json)
     except TimeoutError:
         # for time out error, the action space is not clipped, the step function takes care of it (e.g. by ending the episode)
-        return range_min, range_max, None
+        return range_min, range_max, None, None
     except ValueError as e:
         # If the bug is not valid, the engine will throw an error
         # something in the control flow is not connected (but not a loop), execution cannot terminate
@@ -252,11 +252,11 @@ def find_action_space(self) -> int and int:
         error = {'port': e['fromPort'],
                     'bug': e['fromBug']}
         try:
-            range_min, range_max, next_bug_id = translate_to_range(error, self.no_bugs)
+            range_min, range_max, control_or_data_matrix, next_action = translate_to_range(error, self.no_bugs)
         except:
             # any other errors: return full action space
             return range_min, range_max, None
     except: # catch everythin else?
         # any other errors: return full action space
-        return range_min, range_max, None
-    return range_min, range_max, next_bug_id
+        return range_min, range_max, None, None
+    return range_min, range_max, control_or_data_matrix, next_action

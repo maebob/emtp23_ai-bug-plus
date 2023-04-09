@@ -39,7 +39,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="action_clipping_test",
+                 group="PPO_all_edges_all_configs_4_edges",
                  job_type="train",
                  entity="bugplus",
              ),
