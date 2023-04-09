@@ -24,7 +24,6 @@ def find_error_columns(error: dict, no_bugs: int) -> int and int and int:
     else:
         # CONTROL FLOW
         control_or_data_matrix = 0
-        print("CONTROLFLOW")
         # Calculate column index
         if error['bug'] == 0:
             index_col = 0
