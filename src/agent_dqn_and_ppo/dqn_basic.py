@@ -30,11 +30,8 @@ from src.environment import environment_tensor as environment
 
 from src.utils.determine_number_of_bugs import number_bugs, array_to_matrices
 
-#TODO: implement method to apply the strategies
-# choose between two modi:
-# config_strategy = 'priority' # 'random' or 'priority'
-# problem_solving_strategy = 'reload' # 'reload' or 'new'
-#TODO MD: priority_new
+
+
 
 
 # Create data frame out of configs.csv
@@ -91,8 +88,7 @@ torch.manual_seed(42)
 # Initialize the environment with the vector
 env = environment.BugPlus()
 env.setVectorAsObservationSpace(vector)
-env.setInputAndOutputValuesFromVector(vector) # TODO: change input for learner;  returns NONE atm; OR: ignore and delete this line? (also subsequent occurences)
-
+env.setInputAndOutputValuesFromVector(vector) 
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -149,7 +145,7 @@ LR = 1e-4
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+observation_space = env.observation_space 
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
 n_observations = state.size
 
