@@ -1,0 +1,52 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.10
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.9.12
+    start_time: 1681077138.770104
+    t:
+      1:
+      - 1
+      - 30
+      - 55
+      2:
+      - 1
+      - 30
+      - 55
+      3:
+      - 2
+      - 13
+      - 14
+      - 16
+      - 19
+      - 23
+      4: 3.9.12
+      5: 0.13.10
+      8:
+      - 8
+env:
+  desc: null
+  value: src.environment.env_complex_observation.BugPlus
+framework:
+  desc: null
+  value: torch
+num_envs_per_worker:
+  desc: null
+  value: 10
+num_gpus:
+  desc: null
+  value: 0
+num_workers:
+  desc: null
+  value: 20
+seed:
+  desc: null
+  value: 42069
+trial_log_path:
+  desc: null
+  value: /home/aaron/BugPlusEngine/result_cor/PPO/PPO_BugPlus_c988b_00000_0_2023-04-09_23-52-13

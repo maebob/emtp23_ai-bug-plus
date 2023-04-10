@@ -1,0 +1,71 @@
+Failure # 1 (occurred at 2023-04-09_23-52-27)
+Traceback (most recent call last):
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/tune/execution/ray_trial_executor.py", line 1276, in get_next_executor_event
+    future_result = ray.get(ready_future)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/_private/client_mode_hook.py", line 105, in wrapper
+    return func(*args, **kwargs)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/_private/worker.py", line 2382, in get
+    raise value
+ray.exceptions.RayActorError: The actor died because of an error raised in its creation task, [36mray::PPO.__init__()[39m (pid=1036346, ip=172.17.0.6, repr=PPO)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/evaluation/worker_set.py", line 240, in _setup
+    self.add_workers(
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/evaluation/worker_set.py", line 614, in add_workers
+    raise result.get()
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/actor_manager.py", line 477, in __fetch_result
+    result = ray.get(r)
+ray.exceptions.RayActorError: The actor died because of an error raised in its creation task, [36mray::RolloutWorker.__init__()[39m (pid=1037373, ip=172.17.0.6, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x7efe6f02d580>)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/pre_checks/env.py", line 213, in check_gym_environments
+    raise ValueError(
+ValueError: The observation collected from env.reset() was not contained within your env's observation space. It is possible that there was a type mismatch, or that one of the sub-observations was out of bounds:
+ path: 'matrix'
+ (sub-)obs: [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+ 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0] (int8)
+ (sub-)observation space: MultiBinary(70) (int8)
+
+During handling of the above exception, another exception occurred:
+
+[36mray::RolloutWorker.__init__()[39m (pid=1037373, ip=172.17.0.6, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x7efe6f02d580>)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/evaluation/rollout_worker.py", line 614, in __init__
+    check_env(self.env)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/pre_checks/env.py", line 93, in check_env
+    raise ValueError(
+ValueError: Traceback (most recent call last):
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
+    check_gym_environments(env)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/pre_checks/env.py", line 213, in check_gym_environments
+    raise ValueError(
+ValueError: The observation collected from env.reset() was not contained within your env's observation space. It is possible that there was a type mismatch, or that one of the sub-observations was out of bounds:
+ path: 'matrix'
+ (sub-)obs: [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+ 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0] (int8)
+ (sub-)observation space: MultiBinary(70) (int8)
+
+The above error has been found in your environment! We've added a module for checking your custom environments. It may cause your experiment to fail if your environment is not set up correctly. You can disable this behavior via calling `config.environment(disable_env_checking=True)`. You can run the environment checking module standalone by calling ray.rllib.utils.check_env([your env]).
+
+During handling of the above exception, another exception occurred:
+
+[36mray::PPO.__init__()[39m (pid=1036346, ip=172.17.0.6, repr=PPO)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/algorithms/algorithm.py", line 445, in __init__
+    super().__init__(
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/tune/trainable/trainable.py", line 169, in __init__
+    self.setup(copy.deepcopy(self.config))
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/algorithms/algorithm.py", line 571, in setup
+    self.workers = WorkerSet(
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/evaluation/worker_set.py", line 192, in __init__
+    raise e.args[0].args[2]
+ValueError: Traceback (most recent call last):
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/pre_checks/env.py", line 82, in check_env
+    check_gym_environments(env)
+  File "/home/aaron/BugPlusEngine/env/lib/python3.9/site-packages/ray/rllib/utils/pre_checks/env.py", line 213, in check_gym_environments
+    raise ValueError(
+ValueError: The observation collected from env.reset() was not contained within your env's observation space. It is possible that there was a type mismatch, or that one of the sub-observations was out of bounds:
+ path: 'matrix'
+ (sub-)obs: [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+ 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0] (int8)
+ (sub-)observation space: MultiBinary(70) (int8)
+
+The above error has been found in your environment! We've added a module for checking your custom environments. It may cause your experiment to fail if your environment is not set up correctly. You can disable this behavior via calling `config.environment(disable_env_checking=True)`. You can run the environment checking module standalone by calling ray.rllib.utils.check_env([your env]).
+

@@ -1,0 +1,8 @@
+{
+  "env": "<class 'src.environment.env_complex_observation.BugPlus'>",
+  "framework": "torch",
+  "num_envs_per_worker": 10,
+  "num_gpus": 0,
+  "num_workers": 20,
+  "seed": 42069
+}

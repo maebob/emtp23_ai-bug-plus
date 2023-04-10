@@ -34,10 +34,8 @@ tune.run("PPO",
             "num_workers": 20, # TODO: anpassen
             "num_gpus": 0,
             "num_envs_per_worker": 10,
-            "num_cpus_per_worker": 1,
-            "lr": tune.grid_search([0.01, 0.001, 0.0001]), # Specify different learning rates
         },
-         local_dir="/home/aaron/BugPlusEngine/checkpoint_test",
+         local_dir="result_cor/",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
@@ -47,12 +45,13 @@ tune.run("PPO",
                  entity="bugplus",
              )
          ],
-         verbose=1,
-         checkpoint_freq=5,
-         checkpoint_at_end=True,
-         stop={"episode_reward_mean": 97.1},
+        verbose=0,
+        checkpoint_freq=10,
+        checkpoint_at_end=True,
+        keep_checkpoints_num=5,
+        stop={"episode_reward_mean": 97.1},
          #resume=True,
-         )
+        )
 # Warning message from run:
 # Current log_level is WARN.
 # For more information, set 'log_level': 'INFO' / 'DEBUG' or use the -v and -vv flags.
