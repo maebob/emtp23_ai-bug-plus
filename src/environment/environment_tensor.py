@@ -78,15 +78,14 @@ class BugPlus(Env):
             edge_to = adjusted_action % self.observation_space[1][0].size
 
         # Add the new edge to the corresponding matrix
-        if self.observation_space[flow_matrix][edge_from][edge_to] == 1: #TODO: rework to make consistent
+        if self.observation_space[flow_matrix][edge_from][edge_to] == 1:
             done = True
             reward = torch.tensor([-100])
             self.ep_return += 1
             return reward, self.observation_space, self.ep_return, self.done, {}
 
         else:
-            self.observation_space[flow_matrix][edge_from][edge_to] = 1 #TODO: later: make flip (from 1 to 0 and vice versa) possible
-
+            self.observation_space[flow_matrix][edge_from][edge_to] = 1
         # Inrement the episode return
         self.ep_return += 1
 
@@ -106,12 +105,6 @@ class BugPlus(Env):
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
         
-        # # Check if the bug is valid, i.e. if it adheres to the rules of the BugPlus language #TODO: put as extra function
-        # if is_valid_matrix(self.observation_space[0]) == False:
-        #     reward = torch.tensor([-100]), True
-        #     return reward
-
-
         # Run the bug through the engine and check if it produces the correct output
         try:
             result = eval_engine(matrix_as_json)
@@ -192,6 +185,3 @@ class BugPlus(Env):
         self.input_up = vector[0]
         self.input_down = vector[1]
         self.expected_output = vector[2]
-        
-        
-        

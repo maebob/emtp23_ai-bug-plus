@@ -28,7 +28,7 @@ sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.environment import environment_tensor as environment
 
-from src.utils.matrix import number_bugs, array_to_matrices
+from src.utils.determine_number_of_bugs import number_bugs, array_to_matrices
 
 #TODO: implement method to apply the strategies
 # choose between two modi:

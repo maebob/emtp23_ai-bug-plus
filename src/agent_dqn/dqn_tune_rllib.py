@@ -12,7 +12,7 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 # from src.environment import environment_ray as environment
 from src.environment.environment_ray import BugPlus
-from src.utils.matrix import number_bugs, array_to_matrices
+from src.utils.determine_number_of_bugs import number_bugs, array_to_matrices
 
 import ray
 from ray import tune

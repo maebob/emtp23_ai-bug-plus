@@ -28,10 +28,13 @@ def number_bugs(matrix_or_array) -> int:
 # Define how many positions are taken up in the matrix/array for the learner
 # at the beginning and end.
 
-EXTRAS_START = 3
+EXTRAS_START = 3 
 EXTRAS_END = 0
 
-def array_to_matrices(array) -> tuple:
+def array_to_matrices(array) -> np.array:
+    """ 
+    Given the flattened array of the matrix, returns the controlflow and dataflow matrices as well as the input for the agent.
+    """
 
     #reshape the array into controlflow and dataflow matrices in the shape as needed for the environment
     #n = number of bugs, #X = number of X
@@ -59,9 +62,8 @@ def array_to_matrices(array) -> tuple:
     controlflow = array[EXTRAS_START : EXTRAS_START +(no_bugs + 2) * (2 * no_bugs + 1)].reshape(no_bugs + 2, 2 * no_bugs + 1)
     dataflow = array[EXTRAS_START +(no_bugs + 2) * (2 * no_bugs + 1) : EXTRAS_START + 2 * ((no_bugs + 2) * (2 * no_bugs + 1))].reshape(2 * no_bugs + 1, no_bugs + 2)
     learner_input = array[0:EXTRAS_START]
-    missing_positions = array[-EXTRAS_END:]
-    #tuple = np.array([controlflow, dataflow], dtype=object)
-    return controlflow
+    missing_positions = array[-EXTRAS_END:] # should the array contain the positions of the missing fields, this is where they are stored
+    return controlflow, dataflow, learner_input
 
 """
 def main():
@@ -84,8 +86,10 @@ def main():
 
     12])
 
-    array_to_tuple = array_to_matrices(test_array_with_extras)
-    print(array_to_tuple)
+    control, data, input_output_pair = array_to_matrices(test_array_with_extras)
+    print('controlflow matrix:\n', control)
+    print('dataflow matrix:\n', data)
+    print('input_output_pair:\n', input_output_pair)
 
 
     test_array_with_extras = np.array( [ 7,  4, 11,  0,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,

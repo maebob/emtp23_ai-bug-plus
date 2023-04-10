@@ -175,12 +175,14 @@ class BugPlus(Env):
 
     def set_matrix_state(self, vector):
         '''
-        TODO: write documentation
+        Set the matrix state of the environment to the given vector, starting with position 3.
         '''
         self.state["matrix"] = vector[3:]
  
     def set_input_output_state(self, vector):
-        '''Set the input and output values of the environment.'''
+        '''
+        Set the input and output values of the environment.
+        '''
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]
