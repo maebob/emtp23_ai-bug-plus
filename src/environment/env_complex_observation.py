@@ -20,8 +20,9 @@ INDEX = 0
 
 
 # load config file and do some simple preprocessing
-config_path = os.environ.get('config_path')
-df = pd.read_csv(config_path, sep=";", header=None)
+# config_path = os.environ.get('config_path') 
+
+df = pd.read_csv('/Users/mayte/GitHub/BugPlusEngine/src/train_data/all_edges_5_10_4edges.csv', sep=";", header=None) #TODO: change back!
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
@@ -103,7 +104,7 @@ class BugPlus(Env):
                 ep_return {int} -- The return of the episode.
         """
         self.episode_length += 1
-        if self.episode_length > 20:
+        if self.episode_length > 15:
             self.done = True
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
