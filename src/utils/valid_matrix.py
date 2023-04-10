@@ -30,7 +30,16 @@ def is_valid_matrix(matrix) -> bool:
     return True
 
 
-def forbidden_positions(matrix) -> np.ndarray:
+def forbidden_positions(matrix: np.array) -> np.array:
+    """
+    Returns a numpy array with the positions that are forbidden in the control flow matrix.
+    These are the positions where a bug would connect the control flow to itself.
+    For 3 bugs, the forbidden positions are: 0, 7, 15, 16, 24, 25, 33, 34.
+
+    Arguments:
+        matrix {np.ndarray} -- The control flow matrix that is being checked.
+    
+    """
     n = number_bugs(matrix)
     forbidden_list = []
 
@@ -47,3 +56,16 @@ def forbidden_positions(matrix) -> np.ndarray:
  
     forbidden_index = np.asarray(forbidden_list)
     return forbidden_index
+
+# Test
+""" 
+
+test_array_with_extras = np.array([3, 5, 8,
+    0, 1, 0, 0, 1, 0, 1, 
+    0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 
+    0, 1, 0, 0, 0, 0, 1])
+pos = forbidden_positions(test_array_with_extras)
+print(pos)
+"""

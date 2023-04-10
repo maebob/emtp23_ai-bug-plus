@@ -29,7 +29,6 @@ def number_bugs(matrix_or_array) -> int:
 # at the beginning and end.
 
 EXTRAS_START = 3 
-EXTRAS_END = 0
 
 def array_to_matrices(array) -> np.array:
     """ 
@@ -53,7 +52,7 @@ def array_to_matrices(array) -> np.array:
     #    end position:  EXTRAS_START + 2* ((n+2)*(2n+1))
     
     # workaround to determine the number of bugs by finding the first matrix:
-    no_extra_array = np.array(array[EXTRAS_START : -EXTRAS_END])
+    no_extra_array = np.array(array[EXTRAS_START : ])
     no_fields = no_extra_array.size
     first_matrix_flatten = no_extra_array[0 : int(no_fields/2)]
 
@@ -62,9 +61,9 @@ def array_to_matrices(array) -> np.array:
     controlflow = array[EXTRAS_START : EXTRAS_START +(no_bugs + 2) * (2 * no_bugs + 1)].reshape(no_bugs + 2, 2 * no_bugs + 1)
     dataflow = array[EXTRAS_START +(no_bugs + 2) * (2 * no_bugs + 1) : EXTRAS_START + 2 * ((no_bugs + 2) * (2 * no_bugs + 1))].reshape(2 * no_bugs + 1, no_bugs + 2)
     learner_input = array[0:EXTRAS_START]
-    missing_positions = array[-EXTRAS_END:] # should the array contain the positions of the missing fields, this is where they are stored
     return controlflow, dataflow, learner_input
 
+# Testing
 """
 def main():
     test_array_with_extras = np.array(
@@ -85,6 +84,13 @@ def main():
     0, 0, 0, 0, 1,
 
     12])
+    test_array_with_extras = np.array( [ 7,  4, 11,  1,  0,  0,  0,  0,  1,  1,  2,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0,  0,  0,  0,
+  4,  0,  0,  0,  0,  0,  0,  5,  0,  0,  0,  1,  0,  0,  6,  0,  0,  0,  1,  7,  0,  0,  0,  0,
+  8,  0,  0,  1,  0,  9,  0,  1,  0,  0,  10,  0,  0,  0,  0,  11,  0,  0,  1,  0,  12,  0,  0,  0,
+  0])
+    # print(test_array_with_extras)
+    # array = test_array_with_extras[3 :]
+    # print(array)
 
     control, data, input_output_pair = array_to_matrices(test_array_with_extras)
     print('controlflow matrix:\n', control)
@@ -92,10 +98,6 @@ def main():
     print('input_output_pair:\n', input_output_pair)
 
 
-    test_array_with_extras = np.array( [ 7,  4, 11,  0,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  0,  0,
-  0])
 
 
 if __name__ == "__main__":

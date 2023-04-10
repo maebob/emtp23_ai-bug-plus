@@ -31,7 +31,10 @@ def translate_action(n: int, action: int) -> int:
     return new_action
 
 
-if __name__ == '__main__':
-    n = 3
-    action = 66
-    print(translate_action(n, action))
+# Testing:
+"""
+# if __name__ == '__main__':
+#     n = 3
+#     action = 66
+#     print(translate_action(n, action))
+"""
