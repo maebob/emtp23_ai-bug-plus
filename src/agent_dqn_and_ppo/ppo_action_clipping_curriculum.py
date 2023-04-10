@@ -34,7 +34,7 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
         },
-         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_data/PPO/PPO_BugPlus_8a1d2_00000_0_2023-04-10_08-40-10", # adjust path of run to be reloaded
+         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_data/PPO/PPO_BugPlus_8a1d2_00000_0_2023-04-10_08-40-10/checkpoint_001223", # adjust path of run to be reloaded
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
