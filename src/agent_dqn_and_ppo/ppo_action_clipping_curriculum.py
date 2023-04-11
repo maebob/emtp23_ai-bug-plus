@@ -34,12 +34,12 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
         },
-         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_data/PPO/PPO_BugPlus_8a1d2_00000_0_2023-04-10_08-40-10/checkpoint_001223", # adjust path of run to be reloaded
+         local_dir="reload_test",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="PPO_all_edges_all_configs_8_edges",
+                 group="test_reloading_8",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -50,5 +50,4 @@ tune.run("PPO",
     keep_checkpoints_num=5,
     stop = {
     "episode_reward_mean": 90,},
-resume=True
 )
