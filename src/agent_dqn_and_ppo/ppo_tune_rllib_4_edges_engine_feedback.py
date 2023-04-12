@@ -38,7 +38,7 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             "num_cpus_per_worker": 1,
         },
-         local_dir="mae_engine_feedback",
+         local_dir="engine_feedback",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
@@ -52,4 +52,5 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
+    stop={"episode_reward_mean": 95},
 )

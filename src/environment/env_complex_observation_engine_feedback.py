@@ -115,7 +115,7 @@ class BugPlus(Env):
             solving_action = True
 
         self.epsiode_length += 1
-        if self.epsiode_length > 30:
+        if self.epsiode_length > 15:
             self.done = True
             truncated = True
             return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
