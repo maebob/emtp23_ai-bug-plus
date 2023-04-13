@@ -28,9 +28,15 @@ df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 DF = DF.dropna(axis=0, how='all') # drop empty rows again (just to be sure)
 
-index_unsolved_problems =[]
-index_loaded = []
 
+# Logfile:
+""" 
+First entry: index of the the problem
+Second entry:
+    0: not solved
+    1: solved
+Third entry (optional): loop, max. episode length
+"""
 
 def load_config(load_new: bool = False):
     """
@@ -47,11 +53,11 @@ def load_config(load_new: bool = False):
         INDEX = np.random.randint(0, len(DF))
     
     index_original = DF.iloc[INDEX][0]
-    index_string = str(index_original)+"\n"
+    string_index= "\n"+str(index_original)+";"
     vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
-    index_loaded.append(index_original)
-    f = open("demofile3.txt", "a")
-    f.write(index_string)
+
+    f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
+    f.write(string_index)
     f.close()
     return vector
 
@@ -122,6 +128,9 @@ class BugPlus(Env):
             self.done = True
             truncated = True
             reward = -1
+            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
+            f.write("0;ep_length")
+            f.close()
             
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
@@ -161,7 +170,17 @@ class BugPlus(Env):
             truncated = False
 
         if reward <= 0 and self.done:
-            self.load_new_config = False
+            self.load_new_config = False #TODO: check what happens there!
+
+            # check what kind of error occured:
+            if reward <= -10:
+                string_error = "loop"
+            else:
+                string_error = ""
+            string_failed_action = "0;" + string_error
+            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
+            f.write(string_failed_action)
+            f.close()
         elif reward > 0 and self.done:
             self.load_new_config = True
         reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
