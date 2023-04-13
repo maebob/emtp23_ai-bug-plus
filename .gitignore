@@ -174,3 +174,4 @@ result_test_logging_15/
 result_logging_1/
 result_logging/test_log_index_PPO_action_clipping.csv
 result_logging/test_result_PPO_4_edges_action_clipping_2.csv
+test_result_logging/

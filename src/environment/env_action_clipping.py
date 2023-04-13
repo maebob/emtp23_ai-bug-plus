@@ -20,18 +20,15 @@ from src.utils.error_to_clipping import translate_to_range # translate the error
 SPACE_SIZE = 1_000
 INDEX = 0
 
-# Create Train- and Test-Data
-
-
-# load config file and do some simple preprocessing
-config_path = os.environ.get('config_path')
-df = pd.read_csv(config_path, sep=";", header=None)
-# add a column with index to train data
-df = df.rename_axis('index1').reset_index()
-
+# load log path from .env file
+log_path = os.environ.get('log_path')
 
 #>Use this part for training:
 ####################################################
+#load config file and do some simple preprocessing
+config_path = os.environ.get('config_path')
+df = pd.read_csv(config_path, sep=";", header=None)
+df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
 # Split into train and test data
 train_data = df.sample(frac=0.9, random_state=42069)
 test_data = df.drop(train_data.index)
@@ -45,8 +42,9 @@ DF = train_data
 
 #> Use this part for testing:
 ###################################################
-# load test as df; change in .env file!
-# DF = df(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
+# # load test as df
+# test_path = os.environ.get('test_path')
+# DF = pd.read_csv(test_path, sep=";", header=None)
 # counter = 0
 ####################################################
 #<
@@ -63,14 +61,16 @@ def load_config(load_new: bool = False):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
-    #### TRAINING
+    #####>  TRAINING
     if load_new:
         global INDEX
-        INDEX = np.random.randint(0, len(DF))        
+        INDEX = np.random.randint(0, len(DF)) 
+    #####<       
     
-    ###### TESTING
+    # #####> TESTING
     # counter =+ 1
     # INDEX = counter % len(DF)
+    # #####<
 
     config_for_vector = np.array(DF.iloc[INDEX])
     vector = config_for_vector[1:]
@@ -152,7 +152,7 @@ class BugPlus(Env):
             truncated = True
             reward = -1
             loop_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
-            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_log.csv", "a")
+            f = open(log_path, "a")
             f.write(loop_string)
             f.close()
             
@@ -195,12 +195,16 @@ class BugPlus(Env):
 
         if reward <= 0 and self.done:
             error_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
-            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_log.csv", "a")
+            f = open(log_path, "a")
             f.write(error_string)
             f.close()
             self.load_new_config = True #changed;  #TODO: check what happens there!
         elif reward > 0 and self.done:
             self.load_new_config = True
+            solved_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
+            f = open(log_path, "a")
+            f.write(solved_string)
+            f.close()
         reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
 
