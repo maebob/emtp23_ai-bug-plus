@@ -26,7 +26,10 @@ config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
+DF = DF.dropna(axis=0, how='all') # drop empty rows again (just to be sure)
 
+index_unsolved_problems =[]
+index_loaded = []
 
 
 def load_config(load_new: bool = False):
@@ -43,7 +46,13 @@ def load_config(load_new: bool = False):
         global INDEX
         INDEX = np.random.randint(0, len(DF))
     
+    index_original = DF.iloc[INDEX][0]
+    index_string = str(index_original)+"\n"
     vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
+    index_loaded.append(index_original)
+    f = open("demofile3.txt", "a")
+    f.write(index_string)
+    f.close()
     return vector
 
 
@@ -113,6 +122,7 @@ class BugPlus(Env):
             self.done = True
             truncated = True
             reward = -1
+            
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         # enforce action clipping:

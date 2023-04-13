@@ -34,12 +34,12 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
         },
-         local_dir="result_data/",
+         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_test_logging_6",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="PPO_all_edges_all_configs_8_edges",
+                 group="test_logging",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -49,5 +49,6 @@ tune.run("PPO",
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
     stop = {
-    "episode_reward_mean": 90,}
+    "episode_reward_mean": 40,},
+    resume=True
 )
