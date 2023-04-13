@@ -1,6 +1,5 @@
 # from ray.tune.integration.wandb import WandbLoggerCallback
 from ray.air.integrations.wandb import WandbLoggerCallback
-from ray.tune.stopper import CombinedStopper, ExperimentPlateauStopper, MaximumIterationStopper
 import ray.rllib.algorithms.dqn
 import ray.rllib.algorithms.ppo
 import pandas as pd
@@ -34,12 +33,12 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
         },
-         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_test_logging_9",
+         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_test_logging_14",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="test_logging",
+                 group="test_reloading",
                  job_type="train",
                  entity="bugplus",
              ),
