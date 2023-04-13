@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path')) #TODO: adjust path for project
-from src.environment.env_complex_observation_engine_feedback import BugPlus
+from src.environment.env_engine_feedback import BugPlus
 
 
 # clear the terminal

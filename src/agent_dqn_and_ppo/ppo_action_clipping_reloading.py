@@ -1,6 +1,5 @@
 # from ray.tune.integration.wandb import WandbLoggerCallback
 from ray.air.integrations.wandb import WandbLoggerCallback
-from ray.tune.stopper import CombinedStopper, ExperimentPlateauStopper, MaximumIterationStopper
 import ray.rllib.algorithms.dqn
 import ray.rllib.algorithms.ppo
 import pandas as pd
@@ -17,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
-from src.environment.env_action_clipping import BugPlus
+from src.environment.env_log_action_clipping_with_train_test_split import BugPlus
 
 
 # clear the terminal
@@ -34,12 +33,12 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
         },
-         local_dir="/Users/mayte/GitHub/BugPlusEngine/reloading_test4",
+         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_PPO_4_edges_action_clipping",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="test_reloading_4",
+                 group="logging_action_clipping",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -48,6 +47,7 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
-    stop = {
-    "episode_reward_mean": 90,},
+    # stop = {
+    # "episode_reward_mean": 40,},
+    # resume=True
 )
