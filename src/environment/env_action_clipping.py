@@ -20,23 +20,38 @@ from src.utils.error_to_clipping import translate_to_range # translate the error
 SPACE_SIZE = 1_000
 INDEX = 0
 
+# Create Train- and Test-Data
+
 
 # load config file and do some simple preprocessing
 config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
-df = df.dropna(axis=0, how='all') # drop empty rows
-DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
-DF = DF.dropna(axis=0, how='all') # drop empty rows again (just to be sure)
+# add a column with index to train data
+df = df.rename_axis('index1').reset_index()
 
 
-# Logfile:
-""" 
-First entry: index of the the problem
-Second entry:
-    0: not solved
-    1: solved
-Third entry (optional): loop, max. episode length
-"""
+#>Use this part for training:
+####################################################
+# Split into train and test data
+train_data = df.sample(frac=0.9, random_state=42069)
+test_data = df.drop(train_data.index)
+# write test data to file
+train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+# add a column with index to train data
+DF = train_data
+####################################################
+#<
+
+#> Use this part for testing:
+###################################################
+# load test as df; change in .env file!
+# DF = df(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
+# counter = 0
+####################################################
+#<
+
+
 
 def load_config(load_new: bool = False):
     """
@@ -48,22 +63,24 @@ def load_config(load_new: bool = False):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
+    #### TRAINING
     if load_new:
         global INDEX
-        INDEX = np.random.randint(0, len(DF))
-    else:
-        f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
-        f.write(";reload;")
-        f.close()
+        INDEX = np.random.randint(0, len(DF))        
     
-    index_original = DF.iloc[INDEX][0]
-    string_index= "\n"+str(index_original)+";"
-    vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
+    ###### TESTING
+    # counter =+ 1
+    # INDEX = counter % len(DF)
 
-    f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
-    f.write(string_index)
-    f.close()
+    config_for_vector = np.array(DF.iloc[INDEX])
+    vector = config_for_vector[1:]
+    # define global varibles for logging:
+    global LOG_INDEX, CONFIG
+    LOG_INDEX = config_for_vector[0]
+    CONFIG = config_for_vector[1:]
+
     return vector
+
 
 
 class BugPlus(Env):
@@ -100,15 +117,17 @@ class BugPlus(Env):
         self.epsiode_length = 0
 
     def reset(self, *, seed=None, options=None):
-        '''Reset the environment to its original state.'''      
+        '''
+        Reset the environment to its original state.
+        '''      
         self.done = False
         self.ep_return = 0
-        vector = load_config(self.load_new_config)
+        vector = load_config(True) # changed
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
 
-        return self.state, {} # TODO: return action_space here?
+        return self.state, {}
 
     def step(self, action_original: torch):
         """
@@ -132,8 +151,9 @@ class BugPlus(Env):
             self.done = True
             truncated = True
             reward = -1
-            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
-            f.write("0;ep_length")
+            loop_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
+            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_log.csv", "a")
+            f.write(loop_string)
             f.close()
             
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
@@ -174,21 +194,12 @@ class BugPlus(Env):
             truncated = False
 
         if reward <= 0 and self.done:
-            self.load_new_config = False #TODO: check what happens there!
-
-            # check what kind of error occured:
-            if reward <= -10:
-                string_error = "loop;"
-            else:
-                string_error = "other;"
-            string_failed_action = "0;" + string_error
-            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
-            f.write(string_failed_action)
+            error_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
+            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_log.csv", "a")
+            f.write(error_string)
             f.close()
+            self.load_new_config = True #changed;  #TODO: check what happens there!
         elif reward > 0 and self.done:
-            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
-            f.write("1;")
-            f.close()
             self.load_new_config = True
         reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
