@@ -51,6 +51,10 @@ def load_config(load_new: bool = False):
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(DF))
+    else:
+        f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
+        f.write(";reload;")
+        f.close()
     
     index_original = DF.iloc[INDEX][0]
     string_index= "\n"+str(index_original)+";"
@@ -174,14 +178,17 @@ class BugPlus(Env):
 
             # check what kind of error occured:
             if reward <= -10:
-                string_error = "loop"
+                string_error = "loop;"
             else:
-                string_error = ""
+                string_error = "other;"
             string_failed_action = "0;" + string_error
             f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
             f.write(string_failed_action)
             f.close()
         elif reward > 0 and self.done:
+            f = open("/Users/mayte/GitHub/BugPlusEngine/result_logging/test_result_PPO_4_edges_action_clipping.csv", "a")
+            f.write("1;")
+            f.close()
             self.load_new_config = True
         reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
