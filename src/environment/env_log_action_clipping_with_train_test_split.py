@@ -28,15 +28,15 @@ log_path = os.environ.get('log_path')
 #load config file and do some simple preprocessing
 config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
-# df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
-# # Split into train and test data
-# train_data = df.sample(frac=0.9, random_state=42069)
-# test_data = df.drop(train_data.index)
-# # write test data to file
-# train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
-# test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
-# # add a column with index to train data
-DF = df # use the data from previous run
+df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
+# Split into train and test data
+train_data = df.sample(frac=0.9, random_state=42069)
+test_data = df.drop(train_data.index)
+# write test data to file
+train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+# add a column with index to train data
+DF = train_data
 ####################################################
 #<
 
@@ -49,21 +49,10 @@ DF = df # use the data from previous run
 ####################################################
 #<
 
-
-# create log file:
-"""
-    1. problem_id
-    2. status: last reward given (100, -10, -1) corresponding to solved problem, loop, other error respectively
-    3. reward: sum of rewards for this problem until end of this episode #TODO: check term!
-    4. up: value of up parameter
-    5. down: value of down parameter
-    6. out: value of out parameter
-    7. config: the configuration (with missing edges)
-"""
+# create log file: track problem id, reward, up, down, out, config
 f = open(log_path, "a")
-f.write("problem_id;status;reward;up;down;out;config")
+f.write("problem_id;reward;up;down;out;config")
 f.close()
-
 
 def load_config(load_new: bool = True):
     """
@@ -75,16 +64,11 @@ def load_config(load_new: bool = True):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
-    #####>  TRAINING
+
     if load_new:
         global INDEX
         INDEX = np.random.randint(0, len(DF)) 
-    #####<       
-    
-    # #####> TESTING
-    # counter =+ 1
-    # INDEX = counter % len(DF)
-    # #####<
+
 
     config_for_vector = np.array(DF.iloc[INDEX])
     vector = config_for_vector[1:]
@@ -94,7 +78,7 @@ def load_config(load_new: bool = True):
     UP = config_for_vector[1]
     DOWN = config_for_vector[2]
     OUT = config_for_vector[3]
-    CONFIG = config_for_vector[4:]
+    CONFIG = config_for_vector[3:]
 
     return vector
 
@@ -209,20 +193,19 @@ class BugPlus(Env):
         else:
             truncated = False
 
-
         if reward <= 0 and self.done:
-            error_string = str(PROBLEM_ID) + ";" + str(reward)  + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+            error_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(error_string)
             f.close()
             self.load_new_config = True
         elif reward > 0 and self.done:
             self.load_new_config = True
-            solved_string = str(PROBLEM_ID) + ";" + str(reward)  + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+            solved_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(solved_string)
             f.close()
-        reward = reward + reward_action_clipping # changed position # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
+        reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
