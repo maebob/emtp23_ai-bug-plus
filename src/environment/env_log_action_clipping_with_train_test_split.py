@@ -28,15 +28,15 @@ log_path = os.environ.get('log_path')
 #load config file and do some simple preprocessing
 config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
-df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
-# Split into train and test data
-train_data = df.sample(frac=0.9, random_state=42069)
-test_data = df.drop(train_data.index)
-# write test data to file
-train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
-test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
-# add a column with index to train data
-DF = train_data
+# df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
+# # Split into train and test data
+# train_data = df.sample(frac=0.9, random_state=42069)
+# test_data = df.drop(train_data.index)
+# # write test data to file
+# train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+# test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+# # add a column with index to train data
+DF = df # use the data from previous run
 ####################################################
 #<
 
@@ -214,7 +214,6 @@ class BugPlus(Env):
             truncated = False
 
         # update reward:
-        reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         self.sum_rewards += reward
 
         if reward <= 0 and self.done:
@@ -229,6 +228,7 @@ class BugPlus(Env):
             f = open(log_path, "a")
             f.write(solved_string)
             f.close()
+        reward = reward + reward_action_clipping # changed position # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):

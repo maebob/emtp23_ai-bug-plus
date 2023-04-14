@@ -33,12 +33,12 @@ tune.run("PPO",
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
         },
-         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_PPO_4_edges_action_clipping",
+         local_dir="/Users/mayte/GitHub/BugPlusEngine/result_data_train_test_PPO_4_edges_action_clipping",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="logging_action_clipping",
+                 group="logging_action_clipping_2",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -47,5 +47,5 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
-    # resume=True
+    # resume=True,
 )
