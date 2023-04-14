@@ -132,7 +132,6 @@ class BugPlus(Env):
         self.ep_return = 0
         self.load_new_config = True
         self.epsiode_length = 0
-        self.sum_rewards = 0
 
     def reset(self, *, seed=None, options=None):
         '''
@@ -144,7 +143,6 @@ class BugPlus(Env):
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
-        self.sum_rewards = 0
 
         return self.state, {}
 
@@ -170,8 +168,7 @@ class BugPlus(Env):
             self.done = True
             truncated = True
             reward = -1
-            self.sum_rewards += reward
-            loop_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(self.sum_rewards) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+            loop_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(loop_string)
             f.close()
@@ -203,7 +200,6 @@ class BugPlus(Env):
             self.done = False
             truncated = False
             reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
-            self.sum_rewards += reward
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         self.state["matrix"][action] = 1
@@ -213,18 +209,16 @@ class BugPlus(Env):
         else:
             truncated = False
 
-        # update reward:
-        self.sum_rewards += reward
 
         if reward <= 0 and self.done:
-            error_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(self.sum_rewards) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+            error_string = str(PROBLEM_ID) + ";" + str(reward)  + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(error_string)
             f.close()
             self.load_new_config = True
         elif reward > 0 and self.done:
             self.load_new_config = True
-            solved_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(self.sum_rewards) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+            solved_string = str(PROBLEM_ID) + ";" + str(reward)  + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(solved_string)
             f.close()
