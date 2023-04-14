@@ -47,7 +47,5 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
-    # stop = {
-    # "episode_reward_mean": 40,},
     # resume=True
 )

@@ -50,6 +50,20 @@ DF = train_data
 #<
 
 
+# create log file:
+"""
+    1. problem_id
+    2. status: last reward given (100, -10, -1) corresponding to solved problem, loop, other error respectively
+    3. reward: sum of rewards for this problem until end of this episode #TODO: check term!
+    4. up: value of up parameter
+    5. down: value of down parameter
+    6. out: value of out parameter
+    7. config: the configuration (with missing edges)
+"""
+f = open(log_path, "a")
+f.write("problem_id;status;reward;up;down;out;config")
+f.close()
+
 
 def load_config(load_new: bool = True):
     """
@@ -75,9 +89,12 @@ def load_config(load_new: bool = True):
     config_for_vector = np.array(DF.iloc[INDEX])
     vector = config_for_vector[1:]
     # define global varibles for logging:
-    global LOG_INDEX, CONFIG
-    LOG_INDEX = config_for_vector[0]
-    CONFIG = config_for_vector[1:]
+    global PROBLEM_ID, UP, DOWN, OUT, CONFIG
+    PROBLEM_ID = config_for_vector[0]
+    UP = config_for_vector[1]
+    DOWN = config_for_vector[2]
+    OUT = config_for_vector[3]
+    CONFIG = config_for_vector[4:]
 
     return vector
 
@@ -115,6 +132,7 @@ class BugPlus(Env):
         self.ep_return = 0
         self.load_new_config = True
         self.epsiode_length = 0
+        self.sum_rewards = 0
 
     def reset(self, *, seed=None, options=None):
         '''
@@ -126,6 +144,7 @@ class BugPlus(Env):
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
+        self.sum_rewards = 0
 
         return self.state, {}
 
@@ -151,7 +170,8 @@ class BugPlus(Env):
             self.done = True
             truncated = True
             reward = -1
-            loop_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
+            self.sum_rewards += reward
+            loop_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(self.sum_rewards) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(loop_string)
             f.close()
@@ -183,6 +203,7 @@ class BugPlus(Env):
             self.done = False
             truncated = False
             reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
+            self.sum_rewards += reward
             return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         self.state["matrix"][action] = 1
@@ -192,19 +213,22 @@ class BugPlus(Env):
         else:
             truncated = False
 
+        # update reward:
+        reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
+        self.sum_rewards += reward
+
         if reward <= 0 and self.done:
-            error_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
+            error_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(self.sum_rewards) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(error_string)
             f.close()
             self.load_new_config = True
         elif reward > 0 and self.done:
             self.load_new_config = True
-            solved_string = str(LOG_INDEX) + ";" + str(reward) + ";"+str(CONFIG)+"\n"
+            solved_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(self.sum_rewards) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(solved_string)
             f.close()
-        reward = reward + reward_action_clipping # add reward for choosing an action within the the clipped range (+0.1), otherwise additional reward is 0
         return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
