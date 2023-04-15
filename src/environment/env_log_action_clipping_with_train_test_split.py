@@ -25,27 +25,27 @@ log_path = os.environ.get('log_path')
 
 #>Use this part for training:
 ####################################################
-#load config file and do some simple preprocessing
-config_path = os.environ.get('config_path')
-df = pd.read_csv(config_path, sep=";", header=None)
-df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
-# Split into train and test data
-train_data = df.sample(frac=0.9, random_state=42069)
-test_data = df.drop(train_data.index)
-# write test data to file
-train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
-test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
-# add a column with index to train data
-DF = train_data
+# #load config file and do some simple preprocessing
+# config_path = os.environ.get('config_path')
+# df = pd.read_csv(config_path, sep=";", header=None)
+# df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging)
+# # Split into train and test data
+# train_data = df.sample(frac=0.9, random_state=42069)
+# test_data = df.drop(train_data.index)
+# # write test data to file
+# train_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/train_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+# test_data.to_csv("/Users/mayte/GitHub/BugPlusEngine/src/train_data/test_all_edges_5_10_4edges.csv", sep=";", header=None, index=False)
+# # add a column with index to train data
+# DF = train_data
 ####################################################
 #<
 
 #> Use this part for testing:
 ###################################################
-# # load test as df
-# test_path = os.environ.get('test_path')
-# DF = pd.read_csv(test_path, sep=";", header=None)
-# counter = 0
+# load test as df
+test_path = os.environ.get('test_path')
+DF = pd.read_csv(test_path, sep=";", header=None)
+
 ####################################################
 #<
 
