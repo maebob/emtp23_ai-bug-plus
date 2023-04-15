@@ -42,7 +42,7 @@ log_path = os.environ.get('log_path')
 
 #> Use this part for testing:
 ###################################################
-# load test as df
+# load test as df & make sure to delete any whitespace at the end of the file beforehand
 test_path = os.environ.get('test_path')
 DF = pd.read_csv(test_path, sep=";", header=None)
 
