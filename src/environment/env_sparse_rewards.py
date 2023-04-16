@@ -193,7 +193,7 @@ class BugPlus(Env):
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
-            reward = 1
+            reward = 100
             done = True
             return reward, done
         # Engine evaluated but result was not correct
