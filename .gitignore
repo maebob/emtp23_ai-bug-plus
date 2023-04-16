@@ -186,3 +186,4 @@ result_data_train_test_PPO_4_edges_action_clipping/
 result_data_train_test_split/
 result_PPO_train_test_split_4_edges/
 result_data_test_reloading/
+result_logging/test_log.csv
