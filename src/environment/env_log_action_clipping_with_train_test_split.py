@@ -78,7 +78,7 @@ def load_config(load_new: bool = True):
     UP = config_for_vector[1]
     DOWN = config_for_vector[2]
     OUT = config_for_vector[3]
-    CONFIG = config_for_vector[3:]
+    CONFIG = config_for_vector[4:]
 
     return vector
 
