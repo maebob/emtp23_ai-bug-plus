@@ -1,4 +1,3 @@
-
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
@@ -13,25 +12,29 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.translation.matrix_to_json import main as matrix_to_json
-from src.utils.valid_matrix import is_valid_matrix
 from src.engine.eval import main as eval_engine
+from src.utils.translate_action import translate_action # translate actions into the format of a transposed matrix
+from src.utils.error_to_clipping import translate_to_range # translate the error into a range for clipping
 
 SPACE_SIZE = 1_000
 INDEX = 0
 
 # load log path from .env file
 log_path = os.environ.get('log_path')
+
+
+#load config file and do some simple preprocessing
+config_path = os.environ.get('config_path')
+df = pd.read_csv(config_path, sep=";", header=None)
+df = df.rename_axis('index1').reset_index() # add a column with index to train data (helps later when logging
+DF = df
+
 # create log file: track problem id, reward, up, down, out, config
 f = open(log_path, "a")
 f.write("problem_id;reward;up;down;out;config")
 f.close()
 
-# load config file and do some simple preprocessing
-config_path = os.environ.get('config_path')
-DF = pd.read_csv(config_path, sep=";", header=None)
-
-
-def load_config(load_new: bool = False):
+def load_config(load_new: bool = True):
     """
     This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
     Otherwise, the last loaded configuration is returned.
@@ -41,14 +44,14 @@ def load_config(load_new: bool = False):
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
+
     if load_new:
         global INDEX
-        INDEX = np.random.randint(0, len(DF))
+        INDEX = np.random.randint(0, len(DF)) 
 
-    # define global varibles for logging:  
+
     config_for_vector = np.array(DF.iloc[INDEX])
     vector = config_for_vector[1:]
-
     # define global varibles for logging:
     global PROBLEM_ID, UP, DOWN, OUT, CONFIG
     PROBLEM_ID = config_for_vector[0]
@@ -58,6 +61,7 @@ def load_config(load_new: bool = False):
     CONFIG = config_for_vector[4:]
 
     return vector
+
 
 
 class BugPlus(Env):
@@ -75,8 +79,7 @@ class BugPlus(Env):
             "output": spaces.Discrete(10 * SPACE_SIZE),
             })
         
-        self.action_space = spaces.Discrete(
-            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
+        self.action_space = spaces.Box(low=0, high=70, shape=(1,), dtype=np.int32)
         
         self.state = {
             "matrix": np.zeros(
@@ -85,7 +88,8 @@ class BugPlus(Env):
             "down": 0,
             "output": 0,
         }
-        
+
+
         # Flag to indicate if the episode is done
         self.done = False
         # Episode return
@@ -94,14 +98,18 @@ class BugPlus(Env):
         self.epsiode_length = 0
 
     def reset(self, *, seed=None, options=None):
-        '''Reset the environment to its original state.'''      
+        '''
+        Reset the environment to its original state.
+        '''      
         self.done = False
         self.ep_return = 0
-        vector = load_config(self.load_new_config)
+        vector = load_config(True) # changed
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.epsiode_length = 0
+
         return self.state, {}
+    
 
     def step(self, action: torch):
         """
@@ -118,44 +126,47 @@ class BugPlus(Env):
             info {dict}
                 ep_return {int} -- The return of the episode.
         """
-        self.epsiode_length += 1
-        if self.epsiode_length > 15:
+        self.episode_length += 1
+        if self.episode_length > 15:
             self.done = True
             truncated = True
-            reward = 0
-            loop_string = str(PROBLEM_ID) + ";" + "-10" + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+            loop_string = str(PROBLEM_ID) + ";" + "-1" + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(loop_string)
             f.close()
-            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
+            return self.state, 0, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
             # The action was already performed, punish the agent
-            reward = 0
-            done = False
+            reward = -0.2
+            self.done = False
             truncated = False
-            return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         self.state["matrix"][action] = 1
-        reward, done = self.check_bug_validity()
-        if done:
+        reward, self.done = self.check_bug_validity() # keep reward for logging
+        if self.done:
             truncated = True
         else:
             truncated = False
 
-        if reward <= 0 and done:
-            self.load_new_config = False
-            error_string = str(PROBLEM_ID) + ";" + "-1" + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
+        if reward <= 0 and self.done:
+            self.load_new_config = True
+            error_string = str(PROBLEM_ID) + ";" + str(reward) + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG) + "\n"
             f = open(log_path, "a")
             f.write(error_string)
             f.close()
-        elif reward > 0 and done:
+            reward = 0 # set reward to zero (for sparse reward system)
+        elif reward > 0 and self.done: # todo
             self.load_new_config = True
             solved_string = str(PROBLEM_ID) + ";" + "100" + ";" + str(UP) + ";" + str(DOWN) + ";" + str(OUT) + ";" + str(CONFIG)+"\n"
             f = open(log_path, "a")
             f.write(solved_string)
             f.close()
-        return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+            reward = 1 # set reward to one (for sparse reward system)
+        
+        return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
+
 
     def check_bug_validity(self):
         """
@@ -181,34 +192,35 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            reward = 0
+            reward = -10 
             done = True
             return reward, done
         except:
             # If the bug is not valid, the engine will throw an error
             # something in the control flow is not connected (but not a loop), execution cannot terminate
-            reward = 0
-            done = False
-            
+            reward = -0.1
+            done = False          
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
-            reward = 1
+            reward = 100
             done = True
             return reward, done
         # Engine evaluated but result was not correct
-        reward = 0
+        reward = -0.1
         done = False
         return reward, done
 
     def set_matrix_state(self, vector):
         '''
-        TODO: write documentation
+        Set matrix state of the environment as given by the vector (position 3 onwards).
         '''
         self.state["matrix"] = vector[3:]
  
     def set_input_output_state(self, vector):
-        '''Set the input and output values of the environment.'''
+        '''
+        Set the input and output values of the environment.
+        '''
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]
