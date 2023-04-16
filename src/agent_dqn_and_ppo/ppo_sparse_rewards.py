@@ -37,7 +37,7 @@ tune.run("PPO",
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-#                  group="test_PPO_all_edges_all_configs_4_edges_sparse_rewards",
+                 group="PPO_all_edges_all_configs_4_edges_sparse_rewards",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -46,7 +46,7 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
-    # stop = {
-    # "episode_reward_mean": 40,},
+    stop = {
+    "episode_reward_mean": 0.98,},
     # resume=True
 )
