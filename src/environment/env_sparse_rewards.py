@@ -95,7 +95,7 @@ class BugPlus(Env):
         # Episode return
         self.ep_return = 0
         self.load_new_config = True
-        self.epsiode_length = 0
+        self.episode_length = 0
 
     def reset(self, *, seed=None, options=None):
         '''
@@ -106,7 +106,7 @@ class BugPlus(Env):
         vector = load_config(True) # changed
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
-        self.epsiode_length = 0
+        self.episode_length = 0
 
         return self.state, {}
     
