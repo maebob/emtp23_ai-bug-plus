@@ -5,6 +5,7 @@ import pandas as pd
 import ray
 from ray import tune
 
+
 import sys
 import os
 from dotenv import load_dotenv
@@ -21,12 +22,6 @@ from src.environment.env_sparse_rewards import BugPlus
 os.system('clear')
 ray.init()
 
-# implement erarly stopping based on the mean reward
-stop = {
-    "episode_reward_mean": 100,
-    "timesteps_total": 100000,
-}
-
 
 tune.run("PPO", 
         config={"env": BugPlus, 
@@ -35,14 +30,14 @@ tune.run("PPO",
             "num_workers": 2, 
             "num_gpus": 0,
             "num_envs_per_worker": 10,
-            "num_cpus_per_worker": 1,
+            # "num_cpus_per_worker": 1,
         },
          local_dir="result_data/",
          callbacks=[
              WandbLoggerCallback(
                  api_key=os.environ.get('WANDB_API_KEY'),
                  project="BugsPlus",
-                 group="PPO_all_edges_all_configs_4_edges_sparse_rewards",
+#                  group="test_PPO_all_edges_all_configs_4_edges_sparse_rewards",
                  job_type="train",
                  entity="bugplus",
              ),
@@ -51,4 +46,7 @@ tune.run("PPO",
     checkpoint_freq=10,
     checkpoint_at_end=True,
     keep_checkpoints_num=5,
+    # stop = {
+    # "episode_reward_mean": 40,},
+    # resume=True
 )
