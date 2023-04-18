@@ -1,10 +1,20 @@
+"""
+This modules contains the function to translate a matrix to a json.
+This is needed as the agent works with matrices and the engine works with jsons.
+"""
+
 import math
 import json
 import numpy as np
 import sys
-sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-# sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+import os
+
+from dotenv import load_dotenv
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
 from src.api.boardTypes import EdgeType, Edge, PortAdress, PortType
 
 
@@ -131,25 +141,25 @@ def main(control_matrix: np.array, data_matrix: np.array, data_up: int, data_dow
 
     return json
 
-# if __name__ == "__main__":
-#     control_matrix_incrementor = np.array([
-#         [0, 0, 1, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0, 0, 0],
-#         [1, 0, 0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0, 0, 0]
-#         ])
-#     data_matrix_incrementor = np.array([
-#         [0, 0, 1, 0, 0],
-#         [1, 0, 0, 0, 0],
-#         [0, 1, 0, 0, 0],
-#         [0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0],
-#         [0, 0, 0, 0, 0]
-#     ])
-#     config = main(control_matrix=control_matrix_incrementor, data_matrix=data_matrix_incrementor, data_up=1, data_down=1)
-#     # write config to json file
-#     with open('config_test2.json', 'w') as outfile:
-#         json.dump(config, outfile, indent=4)
+if __name__ == "__main__":
+    control_matrix_incrementor = np.array([
+        [0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]
+        ])
+    data_matrix_incrementor = np.array([
+        [0, 0, 1, 0, 0],
+        [1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ])
+    config = main(control_matrix=control_matrix_incrementor, data_matrix=data_matrix_incrementor, data_up=1, data_down=1)
+    # write config to json file
+    with open('config_test2.json', 'w') as outfile:
+        json.dump(config, outfile, indent=4)
     
