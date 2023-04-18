@@ -31,7 +31,7 @@ tune.run("PPO",
             "num_gpus": 0,
             "num_envs_per_worker": 10,
             # "num_cpus_per_worker": 1,
-        },
+        }, 
          local_dir="result_data/",
          callbacks=[
              WandbLoggerCallback(
