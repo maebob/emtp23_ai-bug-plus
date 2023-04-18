@@ -1,9 +1,13 @@
 from gym import Env, spaces
 import numpy as np
+import os
 import sys
-# sys.path.append('/Users/mayte/github/bugplusengine') # Mayte
-sys.path.append('C:/Users/D073576/Documents/GitHub/BugPlusEngine/') # Mae
-# sys.path.append('/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/') # Aaron
+from dotenv import load_dotenv
+from copy import deepcopy
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.engine.eval import main as eval_engine
 from src.utils.valid_matrix import is_valid_matrix

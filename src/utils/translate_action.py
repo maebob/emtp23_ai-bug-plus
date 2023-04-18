@@ -8,7 +8,7 @@ load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
 sys.path.append(os.environ.get('absolute_project_path'))
 
-from src.utils.matrix import number_bugs
+from src.utils.determine_number_of_bugs import number_bugs
 
 def translate_action(n: int, action: int) -> int:
     """Returns the translated action that would correspond to the matrix being in transposed form.
@@ -31,7 +31,10 @@ def translate_action(n: int, action: int) -> int:
     return new_action
 
 
-if __name__ == '__main__':
-    n = 3
-    action = 66
-    print(translate_action(n, action))
+# Testing:
+"""
+# if __name__ == '__main__':
+#     n = 3
+#     action = 66
+#     print(translate_action(n, action))
+"""
