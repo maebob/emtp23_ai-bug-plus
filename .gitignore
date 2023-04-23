@@ -188,5 +188,6 @@ result_PPO_train_test_split_4_edges/
 result_data_test_reloading/
 result_logging/test_log.csv
 result_logging/train_log_sparse.csv
+find_archived_branches.txt
 
 .DS_Store
