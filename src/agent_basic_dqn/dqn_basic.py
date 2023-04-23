@@ -33,7 +33,7 @@ from src.environment import environment_basic_dqn as environment
 
 # Create data frame out of configs.csv
 # load config file and do some simple preprocessing
-config_path = os.environ.get('config_path') #TODO: add used config: '4x+4y.csv'
+config_path = os.environ.get('config_path') # config used: 'congifs_4x+4y.csv'
 df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 df = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
