@@ -252,7 +252,9 @@ class BugPlus(Env):
         return reward, done
 
     def set_matrix_state(self, vector):
-        '''Set matrix state of the environment as given by the vector (position 3 onwards).'''
+        '''
+        Set matrix state of the environment as given by the vector (position 3 onwards).
+        '''
         self.state["matrix"] = vector[3:]
  
     def set_input_output_state(self, vector):

@@ -220,7 +220,7 @@ class BugPlus(Env):
 
     def set_matrix_state(self, vector):
         '''
-        TODO: write documentation
+        Set matrix state of the environment as given by the vector (position 3 onwards).
         '''
         self.state["matrix"] = vector[3:]
  

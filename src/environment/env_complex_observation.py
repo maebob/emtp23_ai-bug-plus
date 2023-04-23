@@ -20,9 +20,10 @@ INDEX = 0
 
 
 # load config file and do some simple preprocessing
-# config_path = os.environ.get('config_path') 
+config_path = os.environ.get('config_path') 
 
-df = pd.read_csv('/Users/mayte/GitHub/BugPlusEngine/src/train_data/all_edges_5_10_4edges.csv', sep=";", header=None) #TODO: change back!
+# load config file and do some simple preprocessing
+df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
