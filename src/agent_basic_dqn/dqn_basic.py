@@ -27,13 +27,15 @@ sys.path.append(os.environ.get('absolute_project_path'))
 from src.environment import environment_basic_dqn as environment
 
 
-
+config_name = 'configs_4x+4y.csv' 
 
 
 
 # Create data frame out of configs.csv
 # load config file and do some simple preprocessing
-config_path = os.environ.get('config_path') # config used: 'congifs_4x+4y.csv'
+config_path = os.environ.get('config_path') # config used: 'configs_4x+4y.csv'
+config_name = 'configs_4x+4y.csv'  # change name of config file here for saving the graphs with the correct file name
+
 df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 df = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
@@ -409,4 +411,4 @@ plt.savefig(plot_name)
 plt.show()
 
 
-# source of tutorial: https://github.com/pytorch/tutorials/blob/main/intermediate_source/reinforcement_q_learning.py
+# source of basis for this code: https://github.com/pytorch/tutorials/blob/main/intermediate_source/reinforcement_q_learning.py

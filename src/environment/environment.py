@@ -82,16 +82,13 @@ class BugPlus(Env):
         reward = self.check_bug_validity() 
 
         # Close the episode if the board contains a valid bug
-        #self.done = True if reward == 10 else False
         if reward == 50:
             self.done = True
-            print("done :)")
         elif reward == -100:
             self.done = True
-            print("done :(")
         else:
             self.done = False
-            print('continue')
+
 
 
         return reward, self.observation_space, self.ep_return, self.done, {}
@@ -118,8 +115,8 @@ class BugPlus(Env):
             reward = 50
             return reward
         
-        return -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
-
+        return -1 
+    
     def initialize_starting_board_setup(self, bugs):
         """
         Set the starting state of the environment in order to have control over the
@@ -181,7 +178,6 @@ class BugPlus(Env):
         """
         Set the input and output values of the environment.
         """
-
         self.input_up = vector[0]
         self.input_down = vector[1]
         self.expected_output = vector[2]
