@@ -1,4 +1,6 @@
-# from ray.tune.integration.wandb import WandbLoggerCallback
+"""
+This file contains the script to run the PPO agent with the action restriction environment.
+"""
 from ray.air.integrations.wandb import WandbLoggerCallback
 import ray.rllib.algorithms.dqn
 import ray.rllib.algorithms.ppo

@@ -1,4 +1,8 @@
-
+"""
+This file defines a custom environment for BugPlus.
+It is based on env_complex_obseration.py 
+It enables the agent to remove edges from the board.
+"""
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd

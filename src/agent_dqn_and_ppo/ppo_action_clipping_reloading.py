@@ -1,4 +1,6 @@
-# from ray.tune.integration.wandb import WandbLoggerCallback
+"""
+This file contains the script to run the PPO agent with the action restriction environment and reload for the train-test split.
+"""
 from ray.air.integrations.wandb import WandbLoggerCallback
 import ray.rllib.algorithms.ppo
 import pandas as pd

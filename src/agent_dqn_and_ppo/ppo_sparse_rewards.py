@@ -1,3 +1,6 @@
+"""
+This file contains the script to run the PPO agent within the environment with sparse rewards.
+"""
 from ray.air.integrations.wandb import WandbLoggerCallback
 import ray.rllib.algorithms.dqn
 import ray.rllib.algorithms.ppo

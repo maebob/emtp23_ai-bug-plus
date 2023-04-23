@@ -1,3 +1,7 @@
+"""
+This file defines a custom environment for BugPlus.
+It is based on environment.py and adapted to be used with a DQN agent (self-built version).
+"""
 from gym import Env, spaces
 import numpy as np
 import sys

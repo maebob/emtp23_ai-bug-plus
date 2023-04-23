@@ -1,3 +1,7 @@
+""" 
+This file contains functions to determine the number of bugs used to form a matrix as well as a function to convert
+a vector (e.g. from a config file) into the controlflow and dataflow matrices as well as the input and output values for the agent.
+"""
 import numpy as np
 
 def number_bugs(matrix_or_array) -> int:

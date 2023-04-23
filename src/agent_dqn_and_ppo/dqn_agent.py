@@ -1,3 +1,7 @@
+"""
+This file contains the script to run the PPO agent.
+"""
+
 from ray.air.integrations.wandb import WandbLoggerCallback
 import ray.rllib.algorithms.dqn
 import pandas as pd

@@ -1,6 +1,6 @@
 """
 This function checks custom gymnasium environments for errors.
-Load changed environments as env and run script.
+Load changed environments as .env and run script.
 """
 import ray
 from ray.rllib.utils import check_env

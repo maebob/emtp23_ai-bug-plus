@@ -1,4 +1,8 @@
-
+"""
+This file defines a custom environment for BugPlus.
+This is the basic environment for running the PPO agent and is the basis for most of the other environments.
+The observation space consists of the matrix as given in the config file as well as input and output values.
+"""
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd

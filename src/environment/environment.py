@@ -1,3 +1,6 @@
+"""
+This file defines a custom environment for BugPlus.
+"""
 from gym import Env, spaces
 import numpy as np
 import os

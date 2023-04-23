@@ -1,4 +1,8 @@
-
+"""
+This file defines a custom environment for BugPlus.
+It is based on env_action_clipping.py.
+It includes a train/test split and logging.
+"""
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd

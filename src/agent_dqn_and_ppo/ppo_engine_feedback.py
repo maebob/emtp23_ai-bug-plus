@@ -1,4 +1,6 @@
-# from ray.tune.integration.wandb import WandbLoggerCallback
+"""
+This file contains the script to run the PPO agent within the environment that receives feedback from the engine.
+"""
 from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.tune.stopper import CombinedStopper, ExperimentPlateauStopper, MaximumIterationStopper
 import ray.rllib.algorithms.dqn

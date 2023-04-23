@@ -1,3 +1,9 @@
+"""
+This file defines a custom environment for BugPlus.
+It is based on env_complex_obseration.py 
+The observation space is extended to include the engine's feedback in the form of a matrix.
+"""
+
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd

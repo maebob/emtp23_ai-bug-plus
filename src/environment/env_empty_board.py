@@ -1,4 +1,8 @@
-
+"""
+This file defines a custom environment for BugPlus.
+It is based on env_complex_obseration.py.
+A new episode starts with an empty board (i.e. empty matrix), regardless of the information given in the config.
+"""
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
