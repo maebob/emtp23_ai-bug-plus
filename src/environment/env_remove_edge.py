@@ -13,38 +13,29 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.translation.matrix_to_json import main as matrix_to_json
+from src.utils.valid_matrix import is_valid_matrix
 from src.engine.eval import main as eval_engine
 
 SPACE_SIZE = 1_000
 INDEX = 0
 
-
 # load config file and do some simple preprocessing
-config_path = os.environ.get('config_path') 
-
-# load config file and do some simple preprocessing
+config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
 
-def load_config(load_new: bool = False):
+def load_config():
     """
-    This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
-    Otherwise, the last loaded configuration is returned.
-
-    Arugments:
-        load_new {bool} -- If True, a new random configuration is loaded. Otherwise, the last loaded configuration is returned. (default: {False})
+    This function loads a random configuration from the config file.
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
-    if load_new:
-        global INDEX
-        INDEX = np.random.randint(0, len(DF))
-    
+    global INDEX
+    INDEX = np.random.randint(0, len(DF))
     vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
     return vector
-
 
 class BugPlus(Env):
     def __init__(self, render_mode=None):
@@ -63,7 +54,7 @@ class BugPlus(Env):
         
         self.action_space = spaces.Discrete(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
-        
+
         self.state = {
             "matrix": np.zeros(
             (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2)),
@@ -76,14 +67,15 @@ class BugPlus(Env):
         self.done = False
         # Episode return
         self.ep_return = 0
-        self.load_new_config = True
         self.episode_length = 0
+        # number of deleted edges
+        self.deleted_edges = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config(self.load_new_config)
+        vector = load_config()
         self.set_input_output_state(vector)
         self.set_matrix_state(vector)
         self.episode_length = 0
@@ -105,30 +97,29 @@ class BugPlus(Env):
                 ep_return {int} -- The return of the episode.
         """
         self.episode_length += 1
-        if self.episode_length > 15:
+        if self.episode_length > 30:
+            reward = -1
             self.done = True
             truncated = True
-            return self.state, -1, self.done, truncated, {'ep_return': self.ep_return}
+            return self.state, reward, self.done, truncated, {'ep_return': self.ep_return}
         
         if self.state.get("matrix")[action] == 1:
-            # The action was already performed, punish the agent
-            reward = -0.2
-            done = False
-            truncated = False
-            return self.state, reward, done, truncated, {'ep_return': self.ep_return}
-        
-        self.state["matrix"][action] = 1
+            self.state.get("matrix")[action] = 0 # remove the edge in the matrix
+            self.deleted_edges += 1
+            if (self.deleted_edges % 1_000) == 0:
+                print("Deleted edges: ", self.deleted_edges)
+            
+        else:        
+            self.state.get("matrix")[action] = 1 # set a new edge in the matrix
+
         reward, done = self.check_bug_validity()
+
         if done:
             truncated = True
         else:
             truncated = False
 
-        if reward <= 0 and done:
-            self.load_new_config = False # load the same config again until agent is able to solve it
-        elif reward > 0 and done:
-            self.load_new_config = True # load a new config
-        return self.state, reward, done, truncated, {'ep_return': self.ep_return}
+        return self.state, reward, done, truncated, {'deleted_edges': self.deleted_edges, 'ep_return': self.ep_return}
 
     def check_bug_validity(self):
         """
@@ -154,7 +145,7 @@ class BugPlus(Env):
             result = eval_engine(matrix_as_json)
         except TimeoutError:
             # The engine timed out, the bug is invalid likely a loop
-            reward = -10 
+            reward = -10
             done = True
             return reward, done
         except:
@@ -166,6 +157,7 @@ class BugPlus(Env):
             return reward, done
         if result.get("0_Out") == self.state.get("output"):
             # If the result is correct, the reward is 100
+
             reward = 100
             done = True
             return reward, done
@@ -174,16 +166,14 @@ class BugPlus(Env):
         done = False
         return reward, done
 
-    def set_matrix_state(self, vector):
+    def set_matrix_state(self, vector):  # TODO: rename
         '''
-        Set the matrix state of the environment to the given vector, starting with position 3.
+        TODO: write documentation
         '''
         self.state["matrix"] = vector[3:]
- 
+
     def set_input_output_state(self, vector):
-        '''
-        Set the input and output values of the environment.
-        '''
+        '''Set the input and output values of the environment.'''
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]

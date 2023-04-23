@@ -13,6 +13,7 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 from src.translation.matrix_to_json import main as matrix_to_json
+from src.utils.valid_matrix import is_valid_matrix
 from src.engine.eval import main as eval_engine
 
 SPACE_SIZE = 1_000
@@ -20,9 +21,7 @@ INDEX = 0
 
 
 # load config file and do some simple preprocessing
-config_path = os.environ.get('config_path') 
-
-# load config file and do some simple preprocessing
+config_path = os.environ.get('config_path')
 df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
@@ -30,18 +29,12 @@ DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep in
 
 def load_config(load_new: bool = False):
     """
-    This function loads a random configuration from the config file. If load_new is set to True, a new random configuration is loaded.
-    Otherwise, the last loaded configuration is returned.
-
-    Arugments:
-        load_new {bool} -- If True, a new random configuration is loaded. Otherwise, the last loaded configuration is returned. (default: {False})
+    This function loads a random configuration from the config file.
     Returns:
         vector {np.array} -- The vector containing the configuration.
     """
-    if load_new:
-        global INDEX
-        INDEX = np.random.randint(0, len(DF))
-    
+    global INDEX
+    INDEX = np.random.randint(0, len(DF))
     vector = np.array(DF.iloc[INDEX][1:]) # get the vector without the index from the configs in the DF
     return vector
 
@@ -76,16 +69,16 @@ class BugPlus(Env):
         self.done = False
         # Episode return
         self.ep_return = 0
-        self.load_new_config = True
+
         self.episode_length = 0
 
     def reset(self, *, seed=None, options=None):
         '''Reset the environment to its original state.'''      
         self.done = False
         self.ep_return = 0
-        vector = load_config(self.load_new_config)
+        vector = load_config()
         self.set_input_output_state(vector)
-        self.set_matrix_state(vector)
+        self.set_empty_matrix_state(vector) # abändern
         self.episode_length = 0
         return self.state, {}
 
@@ -124,10 +117,6 @@ class BugPlus(Env):
         else:
             truncated = False
 
-        if reward <= 0 and done:
-            self.load_new_config = False # load the same config again until agent is able to solve it
-        elif reward > 0 and done:
-            self.load_new_config = True # load a new config
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):
@@ -176,14 +165,17 @@ class BugPlus(Env):
 
     def set_matrix_state(self, vector):
         '''
-        Set the matrix state of the environment to the given vector, starting with position 3.
+        TODO: write documentation
         '''
         self.state["matrix"] = vector[3:]
+
+    def set_empty_matrix_state(self, vector):
+        ''' Set the matrix state to an empty matrix.''' 
+        self.state["matrix"] = np.zeros(
+            (((2 + self.no_bugs) * (1 + 2 * self.no_bugs)) * 2))
  
     def set_input_output_state(self, vector):
-        '''
-        Set the input and output values of the environment.
-        '''
+        '''Set the input and output values of the environment.'''
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]
