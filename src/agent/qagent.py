@@ -36,8 +36,7 @@ def qLearningAgent():
 
     # Initialize Q-table
     observation_space = environment.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
-    # state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
-    # n_observations = state.size
+    
 
     # Size of action space
     n_actions = environment.action_space.n
@@ -72,30 +71,14 @@ def qLearningAgent():
     # Train agent
     for episode in range(numEpisodes):
         # Reset environment and get first new observation
-        #state = environment.reset()
         environment.reset()
-        # config_solved = True
-        # # Initialize matrices with config from configs_4x+4y.csv
-        # if config_solved == False:
-        #     environment.setVectorAsObservationSpace(vector)
-        #     environment.setInputAndOutputValuesFromVector(vector)
-        # else:
-        #     # Choose new random config from configs_4x+4y.csv
-        #     state = np.random.randint(0, len(df))
-        #     vector = np.array(df.iloc[state])
-        #     environment.setVectorAsObservationSpace(vector)
-        #     environment.setInputAndOutputValuesFromVector(vector)
-        #     config_solved = False
 
         vector, index = chooseNewConfig(df, 2, difficulty)
         environment.setVectorAsObservationSpace(vector)
         environment.setInputAndOutputValuesFromVector(vector)
 
         # Upodate state of the environment
-        # state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0)
         training_done = False
-        # environment.setVectorAsObservationSpace(vector)
-        # environment.setInputAndOutputValuesFromVector(vector)
         
         # The Q-Table learning algorithm
         for step in range(maxSteps):
@@ -110,8 +93,6 @@ def qLearningAgent():
 
             # Get new state and reward from environment
             step_reward, new_state, ep_return, done, list = environment.step(action)
-            # reward = step_reward         
-            #state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0)
 
             # Update Q-Table with new knowledge
             Q[state, action] = Q[state, action] + learningRate * (step_reward + discountRate * np.max(Q[state, :]) - Q[state, action])
@@ -253,9 +234,8 @@ def chooseNewConfig(df, strategy, difs):
         maxId = np.argmax(difs)
         candidate = np.array(df.iloc[maxId])
 
-    # return the first column of the dataframe (the vector)
+    # Return the first column of the dataframe (the vector)
     return candidate, maxId
     
 if __name__ == "__main__":
-    # wandb.init(project="BugPlus Q-Learning", entity="bugplus")
     qLearningAgent()
