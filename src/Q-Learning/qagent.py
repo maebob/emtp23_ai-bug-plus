@@ -1,3 +1,7 @@
+'''This file contains a Q-Learning agent that interacts with a simple BugPlus environment.
+The agent is trained on a set of configurations and tries to learn to solve them, however it is restricted to one step per episode,
+and thus can only be used to solve configurations missing one edge.'''
+
 import numpy as np
 import random
 import gym

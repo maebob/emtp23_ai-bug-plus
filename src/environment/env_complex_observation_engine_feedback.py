@@ -1,3 +1,7 @@
+'''This file contains a version of the environment that uses a more complex observation space including the board matrix, 
+the engine feedback matrix, input values as well as the expected output value. This environments adapts the reward function
+based on wether or not a performed action solves the last error.'''
+
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
@@ -219,13 +223,18 @@ class BugPlus(Env):
         return reward, done
 
     def set_matrix_state(self, vector):
-        '''
-        TODO: write documentation
-        '''
+        '''This function sets the matrix state of the environment, given a vector representation of a board matrix.
+        
+        Arguments:
+            vector {np.array} -- The vector representation of the board matrix.'''
         self.state["matrix"] = vector[3:]
  
     def set_input_output_state(self, vector):
-        '''Set the input and output values of the environment.'''
+        '''This function sets the input and output values of the environment, given a vector representation of a config.
+        
+        Argiments:
+            vector {np.array} -- The vector representation of the config.'''
+        
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]
