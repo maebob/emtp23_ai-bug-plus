@@ -1,3 +1,5 @@
+'''This file contains a simple environment for the BugPlus language. The Observation space only includes a vector representation
+of a configured board.'''
 from src.translation.matrix_to_json import main as matrix_to_json
 from src.utils.valid_matrix import is_valid_matrix
 from src.engine.eval import main as eval_engine
@@ -15,6 +17,12 @@ sys.path.append(os.environ.get('absolute_project_path'))
 
 
 def load_config():
+    """
+    This function loads a random configuration from the config file. 
+
+    A Returns:
+        vector {np.array} -- The vector containing the configuration.
+    """
     config_path = os.environ.get('config_path')
     df = pd.read_csv(config_path, sep=";", header=None)
     index = np.random.randint(0, len(df))
@@ -61,10 +69,9 @@ class BugPlus(Env):
 
     def step(self, action: torch):
         """
-        #TODO: rewrite documentation
-        Perform an action on the environment and reward/punish said action.
-        Each action corresponds to a specific edge between two bugs being added to either
-        the control flow matrix or the data flow matrix.
+        Perform an action on the environment by adding an edge to the control flow matrix or the data flow matrix.
+        The resulting matrix is then evaluated by the engine.
+
         Arguments:
             action {int} -- The action to be performed on the environment.
         Returns:
@@ -73,7 +80,7 @@ class BugPlus(Env):
             ep_return {int} -- The return of the episode.
             done {bool} -- Flag to indicate if the episode is done.
         """
-        self.state[action] = 1  # TODO: later: think about flipping the value
+        self.state[action] = 1  
         reward, done = self.checkBugValidity()
         truncated = True
         # geändert nach Call: self.observation_space -> self.state
@@ -123,13 +130,18 @@ class BugPlus(Env):
         return reward, done
 
     def setVectorAsObservationSpace(self, vector):  # TODO: rename
-        '''
-        TODO: write documentation
-        '''
+        '''This function sets the state of the environment, given a vector representation of a board matrix.
+        
+        Arguments:
+            vector {np.array} -- The vector representation of the board matrix.'''
+        
         self.state = vector[3:]
 
     def setInputAndOutputValuesFromVector(self, vector):
-        '''Set the input and output values of the environment.'''
+        '''This function sets the input and output values of the environment, given a vector representation of a config.
+        
+        Arguments:
+            vector {np.array} -- The vector representation of the config.'''
         self.input_up = vector[0]
         self.input_down = vector[1]
         self.expected_output = vector[2]
