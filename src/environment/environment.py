@@ -1,3 +1,6 @@
+'''This file contains a simple environment for the BugPlus language. The Observation space only includes a vector representation
+of a configured board.'''
+
 from gym import Env, spaces
 import numpy as np
 import sys
@@ -48,6 +51,11 @@ class BugPlus(Env):
         Perform an action on the environment and reward/punish said action.
         Each action corresponds to a specific edge between two bugs being added to either
         the control flow matrix or the data flow matrix.
+
+        Arguments:
+            action {int}: The action to be performed on the environment.
+        Returns:
+            reward {int}: The reward for the current action.
         """
         print("Action: ", action)
         # Decide wether the new edge is added to the control flow or data flow matrix
@@ -95,6 +103,9 @@ class BugPlus(Env):
     def checkBugValidity(self):
         """
         Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
+
+        Returns:
+            reward {int}: The reward for the current action.
         """
         # Translate the matrix representation to a JSON representation
         matrix_as_json = matrix_to_json(control_matrix=self.observation_space[0], data_matrix=self.observation_space[1], data_up=self.input_up, data_down=self.input_down)
@@ -114,12 +125,15 @@ class BugPlus(Env):
             reward = 50
             return reward
         
-        return -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
+        return -1
 
     def initializeStartingBoardSetup(self, bugs):
         """
         Set the starting state of the environment in order to have control over the
         complexity of the problem class.
+
+        Arguments:
+            bugs {int}: The number of bugs the environment is supposed to contain.
         """
         self.no_bugs = bugs
 
@@ -127,6 +141,10 @@ class BugPlus(Env):
         """
         Set the input values the bug bpard is supposed to process in order to have control over the
         complexity of the problem class.
+
+        Arguments:
+            up {int}: The first (x) value the bug board is supposed to process as an input.
+            down {int}: The second (y) value the bug board is supposed to process as an input.
         """
         self.input_Up = up
         self.input_Down = down
@@ -135,6 +153,9 @@ class BugPlus(Env):
         """
         Set the expected output of the bug board in order to check wether the created board
         evaluates correctly.
+
+        Arguments:
+            expected_out {int}: The expected output of the bug board.
         """
         self.expected_output = expected_out
 
