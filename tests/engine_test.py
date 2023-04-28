@@ -30,7 +30,9 @@ MULTIPLY_PATH = "Configurations/multiply.json"
 
 
 def test_incrementor():
-    """Test the incrementor function."""
+    """
+    Test the incrementor function.
+    """
     example_file = open(INCREMENTOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -48,7 +50,9 @@ def test_incrementor():
 
 
 def test_decrementor():
-    """Test the decrementor function."""
+    """
+    Test the decrementor function.
+    """
     example_file = open(DECREMENTOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -59,7 +63,9 @@ def test_decrementor():
 
 
 def test_is_zero():
-    """Test the is_zero function."""
+    """
+    Test the is_zero function.
+    """
     example_file = open(IS_ZERO_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -79,7 +85,9 @@ def test_is_zero():
 
 
 def test_incrementor_iterator():
-    """Test the incrementor iterator function."""
+    """
+    Test the incrementor iterator function.
+    """
     example_file = open(INCREMENTOR_ITERATOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -90,7 +98,9 @@ def test_incrementor_iterator():
 
 
 def test_decrementor_iterator():
-    """Test the decrementor iterator function."""
+    """
+    Test the decrementor iterator function.
+    """
     example_file = open(DECREMENTOR_ITERATOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -101,7 +111,9 @@ def test_decrementor_iterator():
 
 
 def test_asignment():
-    """Test the asignment function."""
+    """
+    Test the asignment function.
+    """
     example_file = open(ASIGNMENT, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -114,7 +126,9 @@ def test_asignment():
 
 
 def test_nested_incrementor():
-    """Test the nested incrementor function."""
+    """
+    Test the nested incrementor function.
+    """
     example_file = open(NESTED_INCREMENTOR_PATH, "r").read()
     example = json.loads(example_file)
     for i in range(10000):
@@ -125,7 +139,9 @@ def test_nested_incrementor():
 
 
 def test_pseudo_parallel():
-    """Test the pseudo parallel function."""
+    """
+    Test the pseudo parallel function.
+    """
     example_file = open(PSEUDO_PARALLEL, "r").read()
     example = json.loads(example_file)
     assert eval(example).get("0_Left") == 1
@@ -133,7 +149,9 @@ def test_pseudo_parallel():
 
 
 def test_is_positive():
-    """Test the is_positive function."""
+    """
+    Test the is_positive function.
+    """
     example_file = open(IS_POSITIVE_PATH, "r").read()
     example = json.loads(example_file)
 
@@ -158,7 +176,9 @@ def test_is_positive():
             assert result.get("0_Right") == None
 
 def test_change_sign():
-    """Test change sign config"""
+    """
+    Test change sign config
+    """
     example_file = open(CHANGE_SIGN_PATH, "r").read()
     example = json.loads(example_file)
 
@@ -170,7 +190,9 @@ def test_change_sign():
         assert result.get("0_Out") == random_number_1 * -1
     
 def test_minus():
-    """Test minus operation"""
+    """
+    Test minus operation
+    """
     example_file = open(MINUS_PATH, "r").read()
     example = json.loads(example_file)
 
@@ -184,7 +206,9 @@ def test_minus():
 
 
 def test_equal_operation():
-    """Test equal operation"""
+    """
+    Test equal operation
+    """
     example_file = open(EQUAL_PATH, "r").read()
     example = json.loads(example_file)
 
@@ -203,7 +227,8 @@ def test_equal_operation():
 
 
 def test_is_larger():
-    """Test isLarger operation
+    """
+    Test isLarger operation
     Note: If they are equal, it will return false
     """
     example_file = open(IS_LARGER_Path, "r").read()
@@ -223,7 +248,9 @@ def test_is_larger():
             assert result.get("0_Right") == None
 
 def test_multiply():
-    """Test multiply operation"""
+    """
+    Test multiply operation
+    """
     example_file = open(MULTIPLY_PATH, "r").read()
     example = json.loads(example_file)
 
