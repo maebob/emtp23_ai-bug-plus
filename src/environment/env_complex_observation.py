@@ -1,4 +1,8 @@
-
+"""
+This file defines a custom environment for BugPlus.
+This is the basic environment for running the PPO agent and is the basis for most of the other environments.
+The observation space consists of the matrix as given in the config file as well as input and output values.
+"""
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd
@@ -20,9 +24,10 @@ INDEX = 0
 
 
 # load config file and do some simple preprocessing
-# config_path = os.environ.get('config_path') 
+config_path = os.environ.get('config_path') 
 
-df = pd.read_csv('/Users/mayte/GitHub/BugPlusEngine/src/train_data/all_edges_5_10_4edges.csv', sep=";", header=None) #TODO: change back!
+# load config file and do some simple preprocessing
+df = pd.read_csv(config_path, sep=";", header=None)
 df = df.dropna(axis=0, how='all') # drop empty rows
 DF = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
@@ -124,9 +129,9 @@ class BugPlus(Env):
             truncated = False
 
         if reward <= 0 and done:
-            self.load_new_config = False
+            self.load_new_config = False # load the same config again until agent is able to solve it
         elif reward > 0 and done:
-            self.load_new_config = True
+            self.load_new_config = True # load a new config
         return self.state, reward, done, truncated, {'ep_return': self.ep_return}
 
     def check_bug_validity(self):

@@ -1,8 +1,6 @@
-import gym
 import math
 import random
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 
 from collections import namedtuple, deque
@@ -26,19 +24,21 @@ load_dotenv()
 sys.path.append(os.environ.get('absolute_project_path'))
 
 
-from src.environment import environment_tensor as environment
-
-from src.utils.determine_number_of_bugs import number_bugs, array_to_matrices
+from src.environment import environment_basic_dqn as environment
 
 
+config_name = 'configs_4x+4y.csv' 
 
 
 
 # Create data frame out of configs.csv
-config_name = '/Users/aaronsteiner/Documents/GitHub/BugPlusEngine/configs_4x+4y'
-config = f"{config_name}.csv"
-df_full = pd.read_csv(config, sep=";")
-df  = df_full[:]
+# load config file and do some simple preprocessing
+config_path = os.environ.get('config_path') # config used: 'configs_4x+4y.csv'
+config_name = 'configs_4x+4y.csv'  # change name of config file here for saving the graphs with the correct file name
+
+df = pd.read_csv(config_path, sep=";", header=None)
+df = df.dropna(axis=0, how='all') # drop empty rows
+df = df.sample(frac=1, random_state=42069).reset_index() # shuffle rows, keep index
 
 # set up a way to select the configurations which have been solved the least
 
@@ -80,15 +80,16 @@ def select_config(index):
 # Create a numpy vector out of any config in the data frame
 index = 0
 config_first_loaded[index] = 0 # first configuration is always loaded first
-vector = np.array(df.iloc[index]) # first vector is initialized with any of the configuration (in order to set up the environment)
+vector = np.array(df.iloc[index][1:]) # first vector is initialized with any of the configuration (in order to set up the environment)
+
 
 # set seed
 torch.manual_seed(42)
 
 # Initialize the environment with the vector
 env = environment.BugPlus()
-env.setVectorAsObservationSpace(vector)
-env.setInputAndOutputValuesFromVector(vector) 
+env.set_vector_as_observation_space(vector)
+env.set_input_and_output_values_from_vector(vector) 
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -145,7 +146,7 @@ LR = 1e-4
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-observation_space = env.observation_space 
+observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
 state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
 n_observations = state.size
 
@@ -233,7 +234,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 5
+    num_episodes = 5_000_000
  
 
 
@@ -246,8 +247,8 @@ number_of_vectors = 1
 proportion_old = 0
 
 # count how often which action was chosen:
-# action_count = [0] * 70
-# j = 0
+action_count = [0] * 70
+j = 0
 
 
 # in order to visualize the leaning process, we set up the following lists:
@@ -265,10 +266,10 @@ for i_episode in range(num_episodes):
     #     vector = np.array(df.iloc[index])
 
     env.reset()
-    env.setVectorAsObservationSpace(vector)
-    env.setInputAndOutputValuesFromVector(vector) 
+    env.set_vector_as_observation_space(vector)
+    env.set_input_and_output_values_from_vector(vector) 
     
-    observation_space = env.observation_space # from documentation (https://www.gymlibrary.dev/api/core/#gym.Env.reset) returns observation space
+    observation_space = env.observation_space 
     state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0) # flattened matrices concatenated into one array
 
 
@@ -276,7 +277,7 @@ for i_episode in range(num_episodes):
 
     # The index in the observation space that should be updated
     action = select_action(state)
-    # action_count[action] += 1
+    action_count[action] += 1
 
 
 
@@ -297,7 +298,7 @@ for i_episode in range(num_episodes):
         this loads new problems only when the current problem is solved successfully
         """
         # index = select_config(index) # select new configuration by first  finding index of lowest count
-        # vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+        # vector = np.array(df.iloc[index][1:]) # set new vector with freshly selected configuration 
 
 
         if config_first_solved[index] == -1: # write episode of first successful solution
@@ -314,7 +315,7 @@ for i_episode in range(num_episodes):
     This loads a new problem every episode
     """
     index = select_config(index) # select new configuration by first  finding index of lowest count
-    vector = np.array(df.iloc[index]) # set new vector with freshly selected configuration 
+    vector = np.array(df.iloc[index][1:]) # set new vector with freshly selected configuration 
 
 
     if (i_episode > 0) & (i_episode % 5000 == 0):
@@ -364,7 +365,7 @@ config_summary.append(config_priority)
 config_summary.append(config_first_loaded)
 config_summary.append(config_first_solved)
 config_summary.append(config_solution)
-# ugly workaround: configs to list, then add, then convert the whole new list to df
+# configs to list, then add, then convert the whole new list to df
 configs_list = df.values.tolist()
 config_summary.append(configs_list)
 
@@ -408,3 +409,6 @@ fig.suptitle('Learning progress of DQN learner', fontsize=16)
 plot_name = f"plot_{config_name}_{num_episodes}_priority_new.png"
 plt.savefig(plot_name)
 plt.show()
+
+
+# source of basis for this code: https://github.com/pytorch/tutorials/blob/main/intermediate_source/reinforcement_q_learning.py

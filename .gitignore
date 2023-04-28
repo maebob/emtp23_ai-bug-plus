@@ -187,5 +187,8 @@ result_data_train_test_split/
 result_PPO_train_test_split_4_edges/
 result_data_test_reloading/
 result_logging/test_log.csv
+result_logging/train_log_sparse.csv
+find_archived_branches.txt
+result_logging/analysis_train_log_cd32a_0000_500steps.ipynb
 
 .DS_Store

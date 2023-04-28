@@ -89,7 +89,7 @@ def qLearningAgent():
 
         vector, index = chooseNewConfig(df, 2, difficulty)
         environment.setVectorAsObservationSpace(vector)
-        environment.setInputAndOutputValuesFromVector(vector)
+        environment.set_input_and_output_values_from_vector(vector)
 
         # Upodate state of the environment
         # state = np.concatenate((observation_space[0].flatten(),observation_space[1].flatten()), axis=0)
@@ -160,7 +160,7 @@ def testAgent(df, Q):
     for i in range(100):
         environment.reset()
         environment.setVectorAsObservationSpace(np.array(df.iloc[state]))
-        environment.setInputAndOutputValuesFromVector(np.array(df.iloc[state]))
+        environment.set_input_and_output_values_from_vector(np.array(df.iloc[state]))
         
         action = np.argmax(Q[state, :])
         step_reward, observation_space, ep_return, done, list = environment.step(action)

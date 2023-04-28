@@ -1,4 +1,8 @@
-
+"""
+This file defines a custom environment for BugPlus.
+It is based on env_complex_obseration.py 
+Rewards are only given, if the agent solves a config.
+"""
 from gymnasium import Env, spaces
 import numpy as np
 import pandas as pd

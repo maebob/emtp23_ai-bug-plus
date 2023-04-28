@@ -1,3 +1,6 @@
+"""
+This file contains functions to check if a controlflow matrix is valid, i.e. does not have any loops within a single bug.
+"""
 import numpy as np
 import sys
 import os

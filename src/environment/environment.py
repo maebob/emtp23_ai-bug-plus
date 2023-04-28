@@ -1,9 +1,12 @@
+"""
+This file defines a custom environment for BugPlus.
+"""
 from gym import Env, spaces
 import numpy as np
 import os
 import sys
 from dotenv import load_dotenv
-from copy import deepcopy
+
 # load the .env file
 load_dotenv()
 # append the absolute_project_path from .env variable to the sys.path
@@ -79,24 +82,21 @@ class BugPlus(Env):
 
         # Check if the board evalutes correctly, is an invalid configuation or is still incomplete
         # The amount of the reward is definded in the called function
-        reward = self.checkBugValidity() 
+        reward = self.check_bug_validity() 
 
         # Close the episode if the board contains a valid bug
-        #self.done = True if reward == 10 else False
         if reward == 50:
             self.done = True
-            print("done :)")
         elif reward == -100:
             self.done = True
-            print("done :(")
         else:
             self.done = False
-            print('continue')
+
 
 
         return reward, self.observation_space, self.ep_return, self.done, {}
 
-    def checkBugValidity(self):
+    def check_bug_validity(self):
         """
         Check if the bug is valid, i.e. if it is a valid control flow graph and data flow graph.
         """
@@ -118,16 +118,16 @@ class BugPlus(Env):
             reward = 50
             return reward
         
-        return -1 # We end up quite often here... (tell me whyyyy? - ain't nothing but a heartache, tell me whyyyy? - ain't nothing but a mistake)
-
-    def initializeStartingBoardSetup(self, bugs):
+        return -1 
+    
+    def initialize_starting_board_setup(self, bugs):
         """
         Set the starting state of the environment in order to have control over the
         complexity of the problem class.
         """
         self.no_bugs = bugs
 
-    def initializeInputValues(self, up, down):
+    def initialize_input_values(self, up, down):
         """
         Set the input values the bug bpard is supposed to process in order to have control over the
         complexity of the problem class.
@@ -135,14 +135,14 @@ class BugPlus(Env):
         self.input_Up = up
         self.input_Down = down
 
-    def initializeExpectedOutput(self, expected_out):
+    def initialize_expected_output(self, expected_out):
         """
         Set the expected output of the bug board in order to check wether the created board
         evaluates correctly.
         """
         self.expected_output = expected_out
 
-    def createStartingBoardSetup(self):
+    def create_starting_board_setup(self):
         """
         Create an incrementor with on edge removed
         """
@@ -160,7 +160,7 @@ class BugPlus(Env):
         else:
             data_matrix[np.random.randint(0, 7)][np.random.randint(0, 5)] = 0
         
-    def setVectorAsObservationSpace(self, vector):
+    def set_vector_as_observation_space(self, vector):
         """
         Change format of the input vector to the format the environment expects and intialize the observation space with the result.
 
@@ -177,11 +177,10 @@ class BugPlus(Env):
 
         self.observation_space = np.array([control_matrix, data_matrix], dtype=object)
 
-    def setInputAndOutputValuesFromVector(self, vector):
+    def set_input_and_output_values_from_vector(self, vector):
         """
         Set the input and output values of the environment.
         """
-
         self.input_up = vector[0]
         self.input_down = vector[1]
         self.expected_output = vector[2]

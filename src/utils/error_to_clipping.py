@@ -1,3 +1,6 @@
+""" 
+This file contains functions to translate the engine's feedback into information on how to restrict the agent's actions.
+"""
 import numpy as np
 
 def find_error_columns(error: dict, no_bugs: int) -> int and int and int:
