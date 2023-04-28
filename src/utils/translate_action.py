@@ -11,7 +11,8 @@ sys.path.append(os.environ.get('absolute_project_path'))
 from src.utils.determine_number_of_bugs import number_bugs
 
 def translate_action(n: int, action: int) -> int:
-    """Returns the translated action that would correspond to the matrix being in transposed form.
+    """
+    Returns the translated action that would correspond to the matrix being in transposed form.
     Arguments:
         n {int} -- The number of bugs in the matrix.
         action {int} -- The action that should be translated to the position in the transposed matrix.

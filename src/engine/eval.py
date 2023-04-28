@@ -1,3 +1,8 @@
+"""
+This module contains the evaluation logic of the engine.
+"""
+
+
 from itertools import count
 import json
 import sys

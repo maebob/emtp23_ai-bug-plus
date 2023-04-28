@@ -1,3 +1,8 @@
+"""
+Test all configs in a folder.
+This is very helpful for handbuild configs that should later be used for training.
+"""
+
 import os
 import json
 import random

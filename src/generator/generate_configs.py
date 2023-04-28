@@ -1,3 +1,28 @@
+"""
+This script generates a list of configurations for a set of JSON files, representing
+different formulas. The configurations are created by deleting a specific number of
+edges from the control and data flow matrices of the input JSON files. The script
+supports generating all possible permutations of the matrices with the specified
+number of edges deleted or only those with exactly the specified number of edges deleted.
+
+To execute the script, simply run it from the command line:
+python generate_configurations.py
+
+The script will create a CSV file with the generated configurations.
+
+Functions included in this script:
+
+delete_edges: Create all permutations of an array with a the exact number and less deleted edges.
+delete_exact_edges: Create all permutations of an array with a specified number of edges deleted.
+generate: Generate a list of configurations for a set of JSON files.
+Usage:
+generate(directory: str, num_edges: int, low: int, high: int, all_permutations: bool, output: str)
+
+Example:
+generate(directory="src/configs", num_edges=4, low=5, high=10, all_permutations=False, output="src/train_data/all_edges_5_10_4edges.csv")
+
+"""
+
 import numpy as np
 from itertools import combinations
 import sys
@@ -17,12 +42,12 @@ def delete_edges(array: np.ndarray, num_edges: int) -> np.ndarray:
     """
     Create all permutations of an array with a the exact number and less deleted edges.
 
-    Args:
-    array (np.ndarray): A flat numpy array.
-    num_edges (int): The number of edges to delete.
+    Arguments:
+        array (np.ndarray): A flat numpy array.
+        num_edges (int): The number of edges to delete.
 
     Returns:
-    A numpy array of shape (n, m), where n is the number of permutations and m is the length of the input array.
+        A numpy array of shape (n, m), where n is the number of permutations and m is the length of the input array.
 
     """
     if num_edges > len(array):
@@ -51,15 +76,15 @@ def delete_exact_edges(array: np.ndarray, num_edges: int) -> np.ndarray:
     """
     Create all permutations of an array with a specified number of edges deleted.
 
-    Args:
-    array (np.ndarray): A flat numpy array.
-    num_edges (int): The number of edges to delete.
+    Arguments:
+        array (np.ndarray): A flat numpy array.
+        num_edges (int): The number of edges to delete.
 
     Returns:
-    A numpy array of shape (n, m), where n is the number of permutations and m is the length of the input array.
+        A numpy array of shape (n, m), where n is the number of permutations and m is the length of the input array.
 
     Raises:
-    ValueError: If num_edges is greater than the number of edges in the input array.
+        ValueError: If num_edges is greater than the number of edges in the input array.
     """
     edges = np.where(array == 1)[0]
     if num_edges > len(edges):
@@ -88,13 +113,13 @@ def generate(directory: str, num_edges: int, low: int, high: int, all_permutatio
     """
     Generate a list of configurations for a set of JSON files.
 
-    Args:
-    directory (str): The directory containing the JSON files.
-    num_edges (int): The number of edges to delete from each matrix.
-    low (int): The lower bound of the range of values for x and y.
-    high (int): The upper bound of the range of values for x and y.
-    all_permutations (bool): If True, generate all possible permutations of the matrices with the specified number of edges deleted. If False, generate only permutations with exactly the specified number of edges deleted.
-    output (str): The filename of the output CSV file.
+    Arguments:
+        directory (str): The directory containing the JSON files.
+        num_edges (int): The number of edges to delete from each matrix.
+        low (int): The lower bound of the range of values for x and y.
+        high (int): The upper bound of the range of values for x and y.
+        all_permutations (bool): If True, generate all possible permutations of the matrices with the specified number of edges deleted. If False, generate only permutations with exactly the specified number of edges deleted.
+        output (str): The filename of the output CSV file.
 
     Returns:
     None

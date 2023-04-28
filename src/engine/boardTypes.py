@@ -1,3 +1,7 @@
+"""
+This module contains the data types used by the engine to represent the board.
+"""
+
 from __future__ import annotations
 
 from typing import Optional

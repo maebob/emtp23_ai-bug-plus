@@ -11,22 +11,22 @@ sys.path.append(os.environ.get('absolute_project_path'))
 from src.engine.eval import main as eval
 
 # Non-Nested
-INCREMENTOR_PATH = "Configurations/incrementor.json"
-DECREMENTOR_PATH = "Configurations/decrementor.json"
-IS_ZERO_PATH = "Configurations/isZero.json"
-INCREMENTOR_ITERATOR_PATH = "Configurations/incrementIterator.json"
-DECREMENTOR_ITERATOR_PATH = "Configurations/decrementIterator.json"
-ASIGNMENT = "Configurations/asignment.json"
+INCREMENTOR_PATH = "tests/test_configs/incrementor.json"
+DECREMENTOR_PATH = "tests/test_configs/decrementor.json"
+IS_ZERO_PATH = "tests/test_configs/isZero.json"
+INCREMENTOR_ITERATOR_PATH = "tests/test_configs/incrementIterator.json"
+DECREMENTOR_ITERATOR_PATH = "tests/test_configs/decrementIterator.json"
+ASIGNMENT = "tests/test_configs/asignment.json"
 
 # Nested
-NESTED_INCREMENTOR_PATH = "Configurations/nestedIncrementor.json"
-PSEUDO_PARALLEL = "Configurations/pseudoParallel.json"
-IS_POSITIVE_PATH = "Configurations/isPositive.json"
-CHANGE_SIGN_PATH = "Configurations/changeSign.json"
-MINUS_PATH = "Configurations/minus.json"
-EQUAL_PATH = "Configurations/equalOperation.json"
-IS_LARGER_Path = "Configurations/isLarger.json"
-MULTIPLY_PATH = "Configurations/multiply.json"
+NESTED_INCREMENTOR_PATH = "tests/test_configs/nestedIncrementor.json"
+PSEUDO_PARALLEL = "tests/test_configs/pseudoParallel.json"
+IS_POSITIVE_PATH = "tests/test_configs/isPositive.json"
+CHANGE_SIGN_PATH = "tests/test_configs/changeSign.json"
+MINUS_PATH = "tests/test_configs/minus.json"
+EQUAL_PATH = "tests/test_configs/equalOperation.json"
+IS_LARGER_Path = "tests/test_configs/isLarger.json"
+MULTIPLY_PATH = "tests/test_configs/multiply.json"
 
 
 def test_incrementor():
