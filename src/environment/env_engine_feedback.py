@@ -226,12 +226,18 @@ class BugPlus(Env):
 
     def set_matrix_state(self, vector):
         '''
-        Set matrix state of the environment as given by the vector (position 3 onwards).
+        This function sets the matrix state of the environment, given a vector representation of a board matrix.
+        
+        Arguments:
+            vector {np.array} -- The vector representation of the board matrix.
         '''
         self.state["matrix"] = vector[3:]
  
     def set_input_output_state(self, vector):
-        '''Set the input and output values of the environment.'''
+        '''This function sets the input and output values of the environment, given a vector representation of a config.
+        
+        Arguments:
+            vector {np.array} -- The vector representation of the config.'''
         self.state["up"] = vector[0]
         self.state["down"] = vector[1]
         self.state["output"] = vector[2]

@@ -1,3 +1,7 @@
+'''
+This file contains a function to translate errors passed from the evaluation engine into possible actions,
+which can be used to solve that exact error.
+'''
 import numpy as np
 
 def translate(error: dict, no_bugs: int) -> np.ndarray:
@@ -6,13 +10,13 @@ def translate(error: dict, no_bugs: int) -> np.ndarray:
     The actions are used to place edges in a graph based on the error and number of bugs.
 
     Args:
-    error (dict): A dictionary containing information about the error. It has the following keys:
+    error {dict}: A dictionary containing information about the error. It has the following keys:
                     - port (str): The port where the error occurred (Up, Down, Out, Left, or Right).
                     - bug (int or str): The id of the bug where the error occurred.
-    no_bugs (int): The number of bugs allowed on the board.
+    no_bugs {int}: The number of bugs allowed on the board.
 
     Returns:
-    np.ndarray: An array containing actions used to place edges in the graph.
+    actions {np.ndarray}: An array containing actions used to place edges in the graph.
 
     """
 
