@@ -21,7 +21,7 @@ This repository contains the developed code of the AI BugPlus team project durin
 ## Weights and Biases
 
 ## BugPlus Editor
-[![Link to our BugPlus Editor](https://drive.google.com/file/d/1Ugrf3Nw0bR1bly_Q6_hcyVZiBkI-ms9M/view?usp=share_link)(https://bug-plus-web-app.vercel.app/challenges/Incrementor)
+[![Link to our BugPlus Editor(https://drive.google.com/file/d/1Ugrf3Nw0bR1bly_Q6_hcyVZiBkI-ms9M/view?usp=share_link)(https://bug-plus-web-app.vercel.app/challenges/Incrementor)
 
 ## Create the Docker Container 
 ```console
