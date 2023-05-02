@@ -18,7 +18,7 @@ This repository contains the developed code of the AI BugPlus team project durin
 
 ## Repository Structure
 | Folder | Content |
-| :-- | --: |
+| :-- | :-- |
 | docs | tbd |
 | gamification | Manual and challenges for a gamified version of BugPlus |
 | heuristics | Configs for all possible problems that can be solved using three bugs |
