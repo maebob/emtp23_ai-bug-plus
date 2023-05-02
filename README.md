@@ -42,3 +42,5 @@ foo@bar:~$ docker run -d --name bug_api -p 90:80 bugapi
 ```
 
 ## Final Presentation
+Here you can find the link to our final presentation:
+[![presentation](https://user-images.githubusercontent.com/55137042/235621089-38ac9e7b-3744-4388-a0fe-a51e18123ce5.png)](https://andcharge-my.sharepoint.com/:p:/g/personal/mayte_and-charge_me/EU85fFOKSRtMuH5Blkl4tLUBwiZEmyLFTovq31RojGA3IQ?rtime=m6VgbulK20g)
