@@ -17,6 +17,15 @@ This repository contains the developed code of the AI BugPlus team project durin
 * [Mayte Dächer](https://github.com/misssophieexplores) - M.Sc. Data Science
 
 ## Repository Structure
+| Folder | Content |
+| :-- | --: |
+| docs | tbd |
+| gamification | tbd |
+| heuristics | tbd |
+| result_logging | tbd |
+| src | tbd |
+| tests | tbd |
+| wandb | tbd |
 
 ## Weights and Biases
 
