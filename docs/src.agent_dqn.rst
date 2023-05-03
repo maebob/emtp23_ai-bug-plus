@@ -4,26 +4,10 @@ src.agent\_dqn package
 Submodules
 ----------
 
-src.agent\_dqn.dqn\_basic module
+src.agent\_dqn.dqn\_agent module
 --------------------------------
 
-.. automodule:: src.agent_dqn.dqn_basic
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-src.agent\_dqn.dqn\_rllib module
---------------------------------
-
-.. automodule:: src.agent_dqn.dqn_rllib
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-src.agent\_dqn.dqn\_tune\_rllib module
---------------------------------------
-
-.. automodule:: src.agent_dqn.dqn_tune_rllib
+.. automodule:: src.agent_dqn.dqn_agent
    :members:
    :undoc-members:
    :show-inheritance:

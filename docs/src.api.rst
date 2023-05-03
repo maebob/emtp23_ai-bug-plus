@@ -12,14 +12,6 @@ src.api.boardTypes module
    :undoc-members:
    :show-inheritance:
 
-src.api.board\_memory module
-----------------------------
-
-.. automodule:: src.api.board_memory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 src.api.main module
 -------------------
 

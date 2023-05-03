@@ -4,10 +4,34 @@ src.utils package
 Submodules
 ----------
 
-src.utils.matrix module
------------------------
+src.utils.determine\_number\_of\_bugs module
+--------------------------------------------
 
-.. automodule:: src.utils.matrix
+.. automodule:: src.utils.determine_number_of_bugs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.utils.error\_to\_action module
+----------------------------------
+
+.. automodule:: src.utils.error_to_action
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.utils.error\_to\_clipping module
+------------------------------------
+
+.. automodule:: src.utils.error_to_clipping
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.utils.translate\_action module
+----------------------------------
+
+.. automodule:: src.utils.translate_action
    :members:
    :undoc-members:
    :show-inheritance:

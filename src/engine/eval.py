@@ -277,8 +277,10 @@ def set_control_value(bug_id: int, control_value: int) -> int:
 def initialize_bug_memory(bug: Bug) -> None:
     """
     Initialize a bug in all the memory structures
+
     Arguments:
         bug {Bug} -- The bug to initialize
+        
     """
     # Set the bug type
     memory_bug_types[bug.get("id")] = bug.get("Type")

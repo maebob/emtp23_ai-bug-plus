@@ -8,9 +8,15 @@
 
 import os 
 import sys
+from dotenv import load_dotenv
+
+
+# load the .env file
+load_dotenv()
+# append the absolute_project_path from .env variable to the sys.path
+sys.path.append(os.environ.get('absolute_project_path'))
 
 sys.path.insert(0, os.path.abspath('../'))
-
 project = 'BugPlus'
 copyright = '2023, Aaron Steiner, Mae Turner and Mayte Dächer'
 author = 'Aaron Steiner, Mae Turner and Mayte Dächer'
@@ -31,4 +37,4 @@ language = 'python'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'alabaster'
-html_static_path = ['static']
+html_static_path = ['_static']
