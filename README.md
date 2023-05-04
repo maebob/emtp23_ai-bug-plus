@@ -43,8 +43,7 @@ foo@bar:~$ docker run -d --name bug_api -p 90:80 bugapi
 
 ## Final Presentation
 Here you can find the link to our final presentation:
-[![presentation](![emtp23_final_presentation_cover_slide](https://user-images.githubusercontent.com/95981851/236331696-7bac4174-7f4c-4d27-a379-66d3ff8e4cb8.png)
-)](https://github.com/maebob/emtp23_ai-bug-plus/blob/d1cc76ce80db8c0c86b2ec704cd6189c941e7d1c/emtp23_final_presentation.pdf)
+[![presentation](https://user-images.githubusercontent.com/55137042/235621089-38ac9e7b-3744-4388-a0fe-a51e18123ce5.png)](https://github.com/maebob/emtp23_ai-bug-plus/blob/d1cc76ce80db8c0c86b2ec704cd6189c941e7d1c/emtp23_final_presentation.pdf)
 
 ## Setting Environment Variables
 
