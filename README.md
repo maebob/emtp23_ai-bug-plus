@@ -8,7 +8,7 @@ This repository contains the developed code of the AI BugPlus team project durin
 ### Babeș-Bolyai University
 
 * [Radu Tarean](https://github.com/2XG-DEV) - B.Sc. Computer Science
-* [Rares Martisan](https://github.com/RalucaChis) - B.Sc. Computer Science
+* [Rares Martisan](https://github.com/rares9991) - B.Sc. Computer Science
 
 ### University of Mannheim
 
