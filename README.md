@@ -50,7 +50,7 @@ foo@bar:~$ docker run -d --name bug_api -p 90:80 bugapi
 
 ## Final Presentation
 Here you can find the link to our final presentation:
-[![emtp23_final_presentation_cover_slide](https://user-images.githubusercontent.com/55137042/236400140-666e5edc-3548-47e6-9ea0-45d920a7cca4.png)](https://github.com/maebob/emtp23_ai-bug-plus/blob/d1cc76ce80db8c0c86b2ec704cd6189c941e7d1c/emtp23_final_presentation.pdf)
+[![emtp23_final_presentation_cover_slide](https://doku.missing-ones-marbles.de/emtp23_final_presentation_cover_slide.png)](https://doku.missing-ones-marbles.de/emtp23_final_presentation.pdf)
 
 ## Setting Environment Variables
 
