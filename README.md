@@ -26,13 +26,13 @@ In order to build out problems and possible configurations in BugPlus, we discov
 ## Repository Structure
 | Folder | Content |
 | :-- | :-- |
-| docs | Folder to generate the documentation |
-| gamification | Manual and challenges for a gamified version of BugPlus |
-| heuristics | Configs for all possible problems that can be solved using three bugs |
-| result_logging | Analysis of train logs |
-| src | Environment, agents, evaluation engine and generator for training data |
-| tests | Tests for the evaluation engine |
-| wandb | Run information for Weights & Biases |
+| docs/ | Folder to generate the documentation |
+| gamification/ | Manual and challenges for a gamified version of BugPlus |
+| heuristics/ | Configs for all possible problems that can be solved using three bugs |
+| result_logging/ | Analysis of train logs |
+| src/ | Environment, agents, evaluation engine and generator for training data |
+| tests/ | Tests for the evaluation engine |
+| wandb/ | Run information for Weights & Biases |
 
 ## Weights and Biases
 
