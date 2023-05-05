@@ -1,7 +1,14 @@
 # European Master Team Project: AI BugPlus
-This repository contains the developed code of the AI BugPlus team project during the fall semester 2022 and the spring semester 2023.
+> This repository contains the developed code of the AI BugPlus team project during the fall semester 2022 and the spring semester 2023.
+> The project was supervised by [Dr. Christian Bartelt](https://www.uni-mannheim.de/en/ines/about-us/researchers/dr-christian-bartelt/) and [Jannik Brinkmann](https://www.linkedin.com/in/brinkmann-jannik/) at the [University of Mannheim](https://www.uni-mannheim.de/), Germany and took place in cooperation with [Babeș-Bolyai University](https://www.ubbcluj.ro/en/) in Cluj Napoca, Romania.
 
 ## Introduction
+
+The language BugPlus can be used to solve logical Problems by placing and connection so called Bugs on a board. Because BugPlus is Turing complete, technically any mathematical function can be solved. This means that teaching an agent how to solve given problems using BugPlus is comparable to teaching an agent how to write code given a problem specification.
+
+Using the approach described above, we used Reinforcement Learning techniques to train agents to solve a restricted class of problems in BugPlus. To do so an abstracted version of a BugPlus board has been used as a training environment.
+
+In order to build out problems and possible configurations in BugPlus, we discovered a need for a visual editor. This is why we also created a publicly accessible editor for BugPlus.
 
 ## Participants
 
