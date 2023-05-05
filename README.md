@@ -35,6 +35,7 @@ In order to build out problems and possible configurations in BugPlus, we discov
 | wandb/ | Run information for Weights & Biases |
 
 ## Weights and Biases
+We tracked all our training results using Weights & Biases. [Here](https://wandb.ai/bugplus/BugsPlus?workspace=user-aaron98) you can take a look at them.
 
 ## BugPlus Editor
 Here you can find the link to our BugPlus Editor:
