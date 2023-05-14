@@ -4,11 +4,13 @@
 
 ## Introduction
 
-The language BugPlus can be used to solve logical Problems by placing and connection so called Bugs on a board. Because BugPlus is Turing complete, technically any mathematical function can be solved. This means that teaching an agent how to solve given problems using BugPlus is comparable to teaching an agent how to write code given a problem specification.
+The language BugPlus can be used to solve logical Problems by placing and connecting so called Bugs on a board. As BugPlus is Turing complete, it is possible to solve any mathematical function. Therefore, teaching an agent how to solve problems using BugPlus is comparable to teaching an agent how to write code given a problem specification.
 
-Using the approach described above, we used Reinforcement Learning techniques to train agents to solve a restricted class of problems in BugPlus. To do so an abstracted version of a BugPlus board has been used as a training environment.
+Using the approach described above, we used Reinforcement Learning techniques to train agents to solve a restricted class of problems in BugPlus. To do so, an abstracted version of a BugPlus board has been used as a training environment.
 
-In order to build out problems and possible configurations in BugPlus, we discovered a need for a visual editor. This is why we also created a publicly accessible editor for BugPlus.
+When building possible configurations in BugPlus, we felt the need for a visual editor. This is why we also created a publicly accessible editor for BugPlus.
+
+This GitHub repository serves as a comprehensive resource for BugPlus, providing the the tools to understand and utilize this simple, yet powerful language for logical problem-solving.
 
 ## Participants
 
