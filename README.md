@@ -10,7 +10,7 @@ Using the approach described above, we used Reinforcement Learning techniques to
 
 When building possible configurations in BugPlus, we felt the need for a visual editor. This is why we also created a publicly accessible editor for BugPlus.
 
-This GitHub repository serves as a comprehensive resource for BugPlus, providing the the tools to understand and utilize this simple, yet powerful language for logical problem-solving.
+This GitHub repository serves as a comprehensive resource for BugPlus, providing the tools to understand and utilize this simple, yet powerful language for logical problem-solving.
 
 ## Participants
 
